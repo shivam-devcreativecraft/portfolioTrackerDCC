@@ -1,0 +1,589 @@
+<div class="coins-outer-div p-3 mt-3">
+    <h1 class="box-title">Open Orders</h1>
+
+    <ng-container *ngIf="!IsProcessedTradingPairData">
+        <div class="loader-div d-flex justify-content-center align-items-center flex-column" style="min-height:60vh">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="pt-2">Loading ...</span>
+        </div>
+    </ng-container>
+
+
+
+    <ng-container id="main" *ngIf="IsProcessedTradingPairData">
+
+
+
+        <div class="row d-flex justify-content-center align-items-start " style="margin-top: -30px">
+            <div class="col-6">
+                <mat-form-field appearance="outline" floatLabel="always" >
+                    <mat-label>Search</mat-label>
+                    <input matInput [(ngModel)]="searchTerm" placeholder="BTC, ETH..." />
+                    <button class="text-danger" *ngIf="searchTerm" matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                        (click)="searchTerm = ''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div class="col-6 mb-3 d-flex justify-content-end">
+                <!-- <mat-icon (click)="OnShowAdvanceOptions()">settings</mat-icon> -->
+                <mat-slide-toggle (change)="OnShowAdvanceOptions()">Options</mat-slide-toggle>
+
+            </div>
+
+        </div>
+
+
+        <div class="row">
+            <div class="col-12 total_filtered_trade_count">
+                Open Orders : {{filterData.length}}
+            </div>
+
+        </div>
+
+        <div class="OptionsDivs my-3" *ngIf="show_advance_options">
+
+            <div class="d-flex  row justify-content-sm-end justify-content-lg-start my-3">
+                <div class="col-3">
+                    <span class="h6">Sort :</span>
+                </div>
+
+                <div class="filter-buttons col-10 d-flex flex-wrap">
+
+                    <span class="filter-link h6 ms-2  border rounded-3 px-2 d-flex align-items-center "
+                        (click)="sortOrders('default')"
+                        [ngClass]="{'filter-link-text': sortingOrder == '', 'text-secondary': sortingOrder != ''}">
+                        Sort Group
+                    </span>
+
+
+                    <span class="filter-link h6 ms-2  border rounded-3 px-2 d-flex align-items-center "
+                        (click)="sortOrders('asc_untilTarget')"
+                        [ngClass]="{'filter-link-text': sortingOrder == 'asc', 'text-secondary': sortingOrder != 'asc'}">
+                        Sort Farthest
+                    </span>
+                    <span class="filter-link h6 ms-2  border rounded-3 px-2 d-flex align-items-center "
+                        (click)="sortOrders('desc_untilTarget')"
+                        [ngClass]="{'filter-link-text': sortingOrder == 'desc', 'text-secondary': sortingOrder != 'desc'}">
+                        Sort Closest
+                    </span>
+
+                    <span class="filter-link h6 ms-2  border rounded-3 px-2 d-flex align-items-center "
+                        (click)="sortOrders('pair_A-Z')"
+                        [ngClass]="{'filter-link-text': sortingOrder == 'pair', 'text-secondary': sortingOrder != 'pair'}">
+                        Sort Pair A-Z
+                    </span>
+
+
+                    <span class="filter-link h6 ms-2  border rounded-3 px-2 d-flex align-items-center "
+                        (click)="sortOrders('date_A-Z')"
+                        [ngClass]="{'filter-link-text': sortingOrder == 'date', 'text-secondary': sortingOrder != 'date'}">
+                        Sort Date A-Z
+                    </span>
+                    <span class="filter-link h6 ms-2  border rounded-3 px-2 d-flex align-items-center "
+                        (click)="sortOrders('date_Z-A')"
+                        [ngClass]="{'filter-link-text': sortingOrder == 'date_Z-A', 'text-secondary': sortingOrder != 'date_Z-A'}">
+                        Sort Date Z-A
+                    </span>
+
+
+
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="spacer-20"></div>
+
+        <div class="row" style="margin-top: -20px">
+
+
+            <ng-container *ngIf="sortingActive; else defaultView">
+                <div class="col-lg-6 pt-3 mb-4 col-12 pb-lg-0 pb-0 d-flex justify-content-between align-items-start flex-column"
+                    *ngFor="let sortedOrder of filterData; let i = index">
+                    <div class="card card-trading_Pairs p-0" style="width: 100%">
+                        <div class="card-body">
+                            <h2 class="card-title badge badge-heading pill">
+                                {{sortedOrder.Trading_Pair}}
+                            </h2>
+                            <div class="row" style="margin-top:-25px; margin-bottom:10px">
+                                <div class="col-6 outer-div d-flex align-items-center">
+                                    <p class="mb-0 text-muted" style="font-weight: 600;">
+                                        <span class="card-text text-success" style="font-size:18px"
+                                            *ngIf="sortedOrder.Filled=='NO'"
+                                            [ngClass]="{'text-success': sortedOrder.singleFilteredTradeData.AverageBuyPrice < sortedOrder.singleFilteredTradeData.CurrentStaticPrice, 'text-danger': sortedOrder.singleFilteredTradeData.AverageBuyPrice > sortedOrder.singleFilteredTradeData.CurrentStaticPrice}">
+                                            ₮{{ getCurrentPnl(sortedOrder.singleFilteredTradeData, sortedOrder) |
+                                            number:'1.0-3' }}
+                                        </span>
+                                        <span class="card-text text-success d-flex" style="font-size:18px"
+                                            *ngIf="sortedOrder.Filled=='YES'">
+                                            ₮{{ getEstPnl(sortedOrder.singleFilteredTradeData, sortedOrder) |
+                                            number:'1.0-3'
+                                            }} &nbsp;
+                                            <mat-icon>done_all</mat-icon>
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-6 outer-div justify-content-end d-flex align-items-center">
+                                    <p class="mb-0 text-muted" style="font-weight: 600;">
+                                        <span class="card-text text-success" style="font-size:18px"
+                                            *ngIf="sortedOrder.Filled=='NO'"
+                                            [ngClass]="{'text-success': sortedOrder.singleFilteredTradeData.AverageBuyPrice < sortedOrder.singleFilteredTradeData.CurrentStaticPrice, 'text-danger': sortedOrder.singleFilteredTradeData.AverageBuyPrice > sortedOrder.singleFilteredTradeData.CurrentStaticPrice}">
+                                            {{ getCurrentPnlPercentage(sortedOrder.singleFilteredTradeData, sortedOrder)
+                                            |
+                                            number :'1.0-2'}}%
+                                        </span>
+                                        <span class="card-text text-success d-flex" style="font-size:18px"
+                                            *ngIf="sortedOrder.Filled=='YES'">
+                                            {{ getEstPnlPercentage(sortedOrder.singleFilteredTradeData, sortedOrder) |
+                                            number :'1.0-2'}}% &nbsp;
+                                            <mat-icon>done_all</mat-icon>
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row pt-2">
+
+
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600">Date</p>
+                                    <p>
+                                        <span class="card-text text-muted" style="font-weight: 600; font-size: 16px">
+                                            {{ sortedOrder.Date }}
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600">Order Price</p>
+                                    <p><span class="card-text text-muted" style="font-weight: 600; font-size: 16px">{{
+                                            sortedOrder.Price }}</span></p>
+                                </div>
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600">Order Qty</p>
+                                    <p><span class="card-text text-muted" style="font-weight: 600; font-size: 16px">{{
+                                            sortedOrder.Qty_Open_Order }} <span style="font-size: 12px;"
+                                                *ngIf="(sortedOrder.Filled).toUpperCase() == 'NO'">({{getQtyOpen_Percentage(sortedOrder.singleFilteredTradeData,
+                                                sortedOrder)}} %)</span></span></p>
+                                </div>
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600">Total Qty</p>
+                                    <p>
+                                        <span class="card-text text-muted" style="font-weight: 600; font-size: 16px">{{
+                                            (sortedOrder.Filled).toUpperCase() == 'NO' ?
+                                            sortedOrder.singleFilteredTradeData.TotalBuyQuantity : '-' }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600">Buy Price</p>
+                                    <p><span class="card-text text-muted" style="font-weight: 600; font-size: 16px">₮{{
+                                            sortedOrder.singleFilteredTradeData.AverageBuyPrice | number : "1.0-8"
+                                            }}</span>
+                                    </p>
+                                </div>
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600"><span class="text-muted">Curr.
+                                            Price</span></p>
+                                    <p><span class="card-text d-flex" style="font-weight: 600; font-size: 16px"
+                                            [ngClass]="{'text-success': sortedOrder.singleFilteredTradeData.AverageBuyPrice < sortedOrder.singleFilteredTradeData.CurrentStaticPrice, 'text-danger': sortedOrder.singleFilteredTradeData.AverageBuyPrice > sortedOrder.singleFilteredTradeData.CurrentStaticPrice }">
+                                            {{ sortedOrder.singleFilteredTradeData.CurrentStaticPrice }}</span>
+                                    </p>
+                                </div>
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600">Order Total</p>
+                                    <p><span class="card-text text-muted" style="font-weight: 600; font-size: 16px">₮{{
+                                            sortedOrder.Qty_Open_Order *
+                                            sortedOrder.singleFilteredTradeData.AverageBuyPrice
+                                            | number:'1.0-3' }}</span></p>
+                                </div>
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600">Return Total</p>
+                                    <p><span class="card-text text-success"
+                                            style="font-weight: 600; font-size: 16px">₮{{
+                                            sortedOrder.Qty_Open_Order * sortedOrder.Price | number:'1.0-3' }}</span>
+                                    </p>
+                                </div>
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600">Return Pnl</p>
+                                    <p><span class="card-text text-success"
+                                            style="font-weight: 600; font-size: 16px">₮{{
+                                            getEstPnl(sortedOrder.singleFilteredTradeData, sortedOrder) | number
+                                            :'1.0-3' }}
+                                            <span style="font-size: 12px;">({{
+                                                getEstPnlPercentage(sortedOrder.singleFilteredTradeData, sortedOrder) |
+                                                number :'1.0-2' }} %)</span></span></p>
+                                </div>
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600">Until Target</p>
+                                    <p><span class="card-text " style="font-weight: 600; font-size: 16px"
+                                            [ngClass]="{'text-danger': getUntilTarget(sortedOrder.singleFilteredTradeData, sortedOrder) <=0}"
+                                            *ngIf=" getUntilTarget(sortedOrder.singleFilteredTradeData, sortedOrder) <=0 && (sortedOrder.Filled=='NO') ">
+                                            {{ getUntilTarget(sortedOrder.singleFilteredTradeData, sortedOrder) |
+                                            number:'1.0-2' }} %
+                                        </span><span *ngIf=" sortedOrder.Filled=='YES'" class="text-success"
+                                            style="font-weight: 600">Achieved</span>
+                                    </p>
+                                </div>
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600">
+                                        Filled
+                                    <p>
+                                    <p>
+                                        <span class="card-text " style="font-weight: 600; font-size: 16px"
+                                            *ngIf="(sortedOrder.Filled).toUpperCase() == 'NO'"
+                                            [ngClass]="{'text-success':(sortedOrder.Filled).toUpperCase() == 'YES','text-danger':(sortedOrder.Filled).toUpperCase() == 'NO'}">
+                                            {{
+                                            sortedOrder.Filled
+
+                                            }}</span>
+                                        <span class="text-success" *ngIf="(sortedOrder.Filled).toUpperCase() == 'YES'"
+                                            style="font-weight: 600">YES
+
+                                        </span>
+
+                                        <!-- Add MatIcon based on the comparison of prevPrice and currentPrice -->
+                                    </p>
+                                </div>
+                                <div class="col-12 outer-div">
+                                    <p class="text-muted" style="font-weight: 600">
+                                        Placed
+                                    <p>
+                                    <p>
+                                        <span class="card-text " style="font-weight: 600; font-size: 16px"
+                                            [ngClass]="{'text-success':(sortedOrder.Is_Placed).toUpperCase() == 'YES','text-danger':(sortedOrder.Is_Placed).toUpperCase() == 'NO'}">
+                                            {{
+                                            sortedOrder.Is_Placed
+
+                                            }}</span>
+
+
+                                        <!-- Add MatIcon based on the comparison of prevPrice and currentPrice -->
+                                    </p>
+                                </div>
+                                <div class="col-12 text-danger d-flex justify-content-center align-items-center ">
+                                    <p *ngIf="(sortedOrder.Filled).toUpperCase() == 'YES'" class="my-0">*[ Order Achieved ! Please Delete ]</p>
+                                    <p *ngIf="(sortedOrder.Filled).toUpperCase() == 'NO'" class="my-0">&nbsp;</p>
+
+                                </div>
+                                <div class="col-12 d-flex justify-content-end">
+
+                                    <button mat-icon-button (click)="editItem(sortedOrder)">
+                                        <mat-icon class="text-warning">edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button (click)="deleteEntry(sortedOrder.ID, sortedOrder)">
+                                        <mat-icon class="text-danger">delete</mat-icon>
+                                    </button>
+                                    <button mat-icon-button
+                                        (click)="onOpenChartAnalysisDialog(sortedOrder.Trading_Pair)">
+                                        <mat-icon class="text-primary">insert_chart_outlined</mat-icon>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
+
+
+
+            <ng-template #defaultView>
+
+                <ng-container *ngFor="let singleFilteredTradeData of filterData; let i = index"
+                    class="border border-primary">
+
+
+
+                    <ng-container>
+                        <ng-container *ngIf="(openTradesFilteredData[i].OpenOrders).length != 0">
+                            <div class="d-flex align-items-center position-relative" style="margin-bottom: -1px;">
+                                <div class="flex-grow-1 border-top"></div>
+                                <h2 class="pb-0 mx-3 text-center ">{{
+                                    openTradesFilteredData[i].TradingPair }}</h2>
+                                <div class="flex-grow-1 border-top"></div>
+                            </div>
+                            <div class="spacer-20"></div>
+                        </ng-container>
+                        <div class="col-lg-6 pt-3 mb-4 col-12 pb-lg-0 pb-0 d-flex justify-content-between align-items-start flex-column"
+                            *ngFor="let openOrder of singleFilteredTradeData.OpenOrders; let i = index">
+                            <div class="card card-trading_Pairs p-0" style="width: 100%">
+                                <div class="card-body">
+
+                                    <h2 class="card-title badge badge-heading pill  ">
+                                        <!-- style="position: relative; top: -35px" -->
+                                        {{ openOrder.Trading_Pair }}
+
+
+
+                                    </h2>
+                                    <!-- ---------------------------------------Div details---------------------------------------------STARTS -->
+                                    <div class="row" style="margin-top:-25px; margin-bottom:10px">
+
+
+                                        <div class="col-6 outer-div  d-flex align-items-center">
+                                            <p class=" mb-0 text-muted" style="font-weight: 600;">
+
+                                                <span class="card-text text-success" style="font-size:18px"
+                                                    *ngIf="openOrder.Filled=='NO'"
+                                                    [ngClass]="{'text-success':    singleFilteredTradeData.AverageBuyPrice < singleFilteredTradeData.CurrentStaticPrice, 'text-danger':    singleFilteredTradeData.AverageBuyPrice > singleFilteredTradeData.CurrentStaticPrice  }">₮{{
+                                                    getCurrentPnl(singleFilteredTradeData,openOrder) | number:'1.0-3'
+                                                    }}</span>
+
+                                                <span class="card-text text-success d-flex" style="font-size:18px"
+                                                    *ngIf="openOrder.Filled=='YES'">₮{{getEstPnl(singleFilteredTradeData,openOrder)
+                                                    | number:'1.0-3'
+
+                                                    }} &nbsp;<mat-icon>done_all</mat-icon></span>
+                                                <!-- <span class="card-text" style="font-size:14px" [ngClass]="getPnl(openOrder) < 0 ? 'text-danger' : 'text-success'"> ({{ getPercentagePnl(openOrder) | number:'1.2-2' }}%)</span> -->
+                                                <!-- Add MatIcon based on the comparison of prevPrice and currentStaticPrice -->
+                                            </p>
+                                        </div>
+
+                                        <div class="col-6 outer-div justify-content-end d-flex align-items-center">
+                                            <p class=" mb-0 text-muted" style="font-weight: 600;">
+
+                                                <span class="card-text text-success" style="font-size:18px"
+                                                    *ngIf="openOrder.Filled=='NO'"
+                                                    [ngClass]="{'text-success':    singleFilteredTradeData.AverageBuyPrice < singleFilteredTradeData.CurrentStaticPrice, 'text-danger':    singleFilteredTradeData.AverageBuyPrice > singleFilteredTradeData.CurrentStaticPrice  }">
+                                                    {{
+                                                    getCurrentPnlPercentage(singleFilteredTradeData,openOrder) | number
+                                                    :'1.0-2'}}%</span>
+                                                <span class="card-text text-success d-flex" style="font-size:18px"
+                                                    *ngIf="openOrder.Filled=='YES'"> {{
+                                                    getEstPnlPercentage(singleFilteredTradeData,openOrder) | number
+                                                    :'1.0-2'}}% &nbsp;<mat-icon>done_all</mat-icon>
+
+                                                </span>
+                                            </p>
+
+                                        </div>
+
+
+
+                                    </div>
+
+
+                                    <div class="row pt-2">
+
+
+
+                                        <div class="col-12 outer-div">
+                                            <p class="text-muted" style="font-weight: 600">Date</p>
+                                            <p><span class="card-text text-muted"
+                                                    style="font-weight: 600; font-size: 16px">
+                                                    {{ openOrder.Date }}</span></p>
+                                        </div>
+
+                                        <div class="col-12 outer-div">
+                                            <p class="text-muted" style="font-weight: 600">
+
+                                                Order Price
+                                            <p>
+                                            <p>
+                                                <span class="card-text text-muted"
+                                                    style="font-weight: 600; font-size: 16px">
+
+                                                    {{
+                                                    openOrder.Price
+                                                    }}</span>
+                                            </p>
+                                        </div>
+
+
+
+                                        <div class="col-12 outer-div">
+                                            <p class="text-muted" style="font-weight: 600">
+                                                Order Qty
+                                            <p>
+                                            <p>
+                                                <span class="card-text text-muted"
+                                                    style="font-weight: 600; font-size: 16px">
+                                                    {{ openOrder.Qty_Open_Order }} <span style="font-size: 12px;"
+                                                        *ngIf="(openOrder.Filled).toUpperCase() == 'NO'">({{getQtyOpen_Percentage(singleFilteredTradeData,openOrder)}}
+                                                        %)</span></span>
+                                            </p>
+                                        </div>
+
+                                        <div class="col-12 outer-div">
+                                            <p class="text-muted" style="font-weight: 600">
+                                                Total Qty
+                                            <p>
+                                            <p>
+                                                <span class="card-text text-muted"
+                                                    style="font-weight: 600; font-size: 16px">
+                                                    {{ (openOrder.Filled).toUpperCase() == 'NO' ?
+                                                    singleFilteredTradeData.TotalBuyQuantity : '-' }} </span>
+                                            </p>
+                                        </div>
+
+                                        <div class="col-12 outer-div">
+                                            <p class="text-muted" style="font-weight: 600">
+                                                Buy Price
+                                            <p>
+                                            <p>
+                                                <span class="card-text text-muted"
+                                                    style="font-weight: 600; font-size: 16px">
+                                                    ₮
+                                                    {{
+                                                    singleFilteredTradeData.AverageBuyPrice
+                                                    | number : "1.0-8"
+                                                    }}</span>
+                                                <!-- Add MatIcon based on the comparison of prevPrice and currentStaticPrice -->
+                                            </p>
+                                        </div>
+                                        <div class="col-12 outer-div">
+                                            <p class="" style="font-weight: 600">
+                                                <span class="text-muted">Curr. Price</span>
+                                            <p>
+                                            <p>
+
+                                                <span class="card-text d-flex" style="font-weight: 600; font-size: 16px"
+                                                    [ngClass]="{'text-success':    singleFilteredTradeData.AverageBuyPrice < singleFilteredTradeData.CurrentStaticPrice, 'text-danger':    singleFilteredTradeData.AverageBuyPrice > singleFilteredTradeData.CurrentStaticPrice  }">{{
+                                                    singleFilteredTradeData.CurrentStaticPrice }}
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <div class="col-12 outer-div">
+                                            <p class="text-muted" style="font-weight: 600">
+                                                Order Total
+                                            <p>
+                                            <p>
+                                                <span class="card-text text-muted"
+                                                    style="font-weight: 600; font-size: 16px">
+                                                    ₮ {{ openOrder.Qty_Open_Order *
+                                                    singleFilteredTradeData.AverageBuyPrice |
+                                                    number:'1.0-3' }}</span>
+                                            </p>
+                                        </div>
+                                        <div class="col-12 outer-div">
+                                            <p class="text-muted" style="font-weight: 600">
+                                                Return Total
+                                            <p>
+                                            <p>
+                                                <span class="card-text text-muted"
+                                                    style="font-weight: 600; font-size: 16px">
+                                                    ₮ {{ openOrder.Qty_Open_Order * openOrder.Price | number:'1.0-3'
+                                                    }}</span>
+                                            </p>
+                                        </div>
+
+
+                                        <div class="col-12 outer-div">
+                                            <p class="text-muted" style="font-weight: 600">
+                                                Return Pnl
+                                            <p>
+                                            <p>
+                                                <span class="card-text text-muted"
+                                                    style="font-weight: 600; font-size: 16px">
+                                                    ₮ {{ getEstPnl(singleFilteredTradeData,openOrder) | number :'1.0-3'
+                                                    }}
+                                                    <span style="font-size: 12px;">({{
+                                                        getEstPnlPercentage(singleFilteredTradeData,openOrder) | number
+                                                        :'1.0-2'
+                                                        }} %)</span></span>
+                                            </p>
+                                        </div>
+
+                                        <div class="col-12 outer-div">
+                                            <p class="text-muted" style="font-weight: 600">
+                                                Untill Target
+                                            <p>
+                                            <p>
+                                                <ng-container>
+                                                    <span class="card-text " style="font-weight: 600; font-size: 16px"
+                                                        [ngClass]="{'text-danger':    getUntilTarget(singleFilteredTradeData,openOrder) <=0}"
+                                                        *ngIf=" getUntilTarget(singleFilteredTradeData,openOrder) <=0 && (openOrder.Filled=='NO') ">
+                                                        {{
+                                                        getUntilTarget(singleFilteredTradeData,openOrder) |
+                                                        number:'1.0-2'
+
+                                                        }} %</span>
+                                                </ng-container>
+
+                                                <span *ngIf=" openOrder.Filled=='YES'" class="text-success"
+                                                    style="font-weight: 600">Achived</span>
+                                                <!-- Add MatIcon based on the comparison of prevPrice and currentStaticPrice -->
+                                            </p>
+                                        </div>
+                                        <div class="col-12 outer-div">
+                                            <p class="text-muted" style="font-weight: 600">
+                                                Filled
+                                            <p>
+                                            <p>
+                                                <span class="card-text " style="font-weight: 600; font-size: 16px"
+                                                    *ngIf="(openOrder.Filled).toUpperCase() == 'NO'"
+                                                    [ngClass]="{'text-success':(openOrder.Filled).toUpperCase() == 'YES','text-danger':(openOrder.Filled).toUpperCase() == 'NO'}">
+                                                    {{
+                                                    openOrder.Filled
+
+                                                    }}</span>
+                                                <span class="text-success"
+                                                    *ngIf="(openOrder.Filled).toUpperCase() == 'YES'"
+                                                    style="font-weight: 600">YES
+
+                                                </span>
+
+                                                <!-- Add MatIcon based on the comparison of prevPrice and currentStaticPrice -->
+                                            </p>
+                                        </div>
+                                        <div class="col-12 outer-div">
+                                            <p class="text-muted" style="font-weight: 600">
+                                                Placed
+                                            <p>
+                                            <p>
+                                                <span class="card-text " style="font-weight: 600; font-size: 16px"
+                                                    [ngClass]="{'text-success':(openOrder.Is_Placed).toUpperCase() == 'YES','text-danger':(openOrder.Is_Placed).toUpperCase() == 'NO'}">
+                                                    {{
+                                                    openOrder.Is_Placed
+
+                                                    }}</span>
+
+
+                                                <!-- Add MatIcon based on the comparison of prevPrice and currentPrice -->
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="col-12 text-danger d-flex justify-content-center align-items-center ">
+                                            <p *ngIf="(openOrder.Filled).toUpperCase() == 'YES'" class="my-0">*[ Order Achieved ! Please Delete ]</p>
+                                            <p *ngIf="(openOrder.Filled).toUpperCase() == 'NO'" class="my-0">&nbsp;</p>
+
+                                        </div>
+
+                                        <div class="col-12 d-flex justify-content-end">
+
+                                            <button mat-icon-button (click)="editItem(openOrder)">
+                                                <mat-icon class="text-warning">edit</mat-icon>
+                                            </button>
+                                            <button mat-icon-button (click)="deleteEntry(openOrder.ID, openOrder)">
+                                                <mat-icon class="text-danger">delete</mat-icon>
+                                            </button>
+                                            <button mat-icon-button
+                                                (click)="onOpenChartAnalysisDialog(openOrder.Trading_Pair)">
+                                                <mat-icon class="text-primary">insert_chart_outlined</mat-icon>
+                                            </button>
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                    <!-- ---------------------------------------Div details---------------------------------------------ENDS -->
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </ng-container>
+                </ng-container>
+
+            </ng-template>
+        </div>
+    </ng-container>
+</div>

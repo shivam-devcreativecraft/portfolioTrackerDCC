@@ -1,0 +1,32 @@
+@import '../../../sharedSCSS/portfolioSheets/sheetsOuterMostContainerStyle.scss';
+@import '../../../sharedSCSS/portfolioSheets/sheetsInnerContainerStyle.scss';
+@import '../../../sharedSCSS/scssVariable/colorVariable.scss';
+@import '../../../sharedSCSS/dialogsStyle/dialogsStyle.scss';
+
+
+.no_Order_Text {
+    // color : $base-color_primary;
+}
+
+.outer-div{
+    display: flex;
+    justify-content: space-between;
+    p, span{
+      font-weight: 600;
+      font-size: 14px;
+      --bs-text-opacity: 1;
+      color: rgb(-33, 37, 41, 0.75) ;
+      
+  
+  }
+  }
+  .date_id_div{
+    p, span{
+        font-weight: 600;
+        font-size: 14px;
+        --bs-text-opacity: 1;
+        color: rgb(-33, 37, 41, 0.75) ;
+        
+    
+    }
+  }

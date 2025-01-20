@@ -1,0 +1,556 @@
+<div class="my-3 mx-2">
+
+
+  <ng-container id="file_Explorer">
+
+    <!-- File Explorer section -->
+
+    <div class="row">
+      <div class="col-6 d-flex">
+        <h2 class="page_title">Drive Storage</h2>
+        <button class="btn btn-outline-primary mb-3 ms-2 d-flex align-items-center justify-content-center"
+          (click)="openFileExplorer()" *ngIf="!isFileExplorerOpeningButtonClicked && driveData.length == 0">
+          <img src="assets/google-drive.png" alt="" class="src" style="
+          width: auto;
+        height: 20px;
+        margin-right: 5px;">
+          Open
+        </button>
+
+      </div>
+
+
+
+      <div class="loader-div d-flex justify-content-center align-items-center flex-column loader-overlay"
+        *ngIf="isLoading | async">
+        <div class="spinner-border text-white" role="status">
+          <span class="visually-hidden text-white">Loading...</span>
+        </div>
+        <span class="pt-2 text-white">Processing ...</span>
+      </div>
+
+
+
+
+      <div class="col-6 buttons_center_pannel" style="margin-bottom:3rem">
+
+        <!-- <button class="btn btn-danger mb-3" (click)="closeFileExplorer()"
+          *ngIf="isFileExplorerOpeningButtonClicked && driveData.length != 0">Close File Explorer</button> -->
+        <button class="btn btn-outline-primary mb-3" style="
+    position: absolute;
+    z-index: 1;
+    right: 14px;
+" (click)="onToggleView()" *ngIf="driveData.length != 0">
+          <span *ngIf="!isStructuralView"><i class="bi bi-eye-fill"></i>&nbsp;Structural view</span>
+          <span *ngIf="isStructuralView"><i class="bi bi-eye-fill"></i>&nbsp;Explorer view</span>
+
+
+        </button>
+      </div>
+
+
+
+      <ng-container id="left_right_pannels" *ngIf="driveData.length!=0">
+
+        <div class="col-12 structure_view" *ngIf="isStructuralView">
+
+
+          <div class="file-explorer border rounded-3">
+
+
+            <!-- Recursive template for file and folder rendering -->
+            <ul class="list-group">
+              <ng-container *ngFor="let item of driveData">
+                <ng-template [ngTemplateOutlet]="folderItemTemplate"
+                  [ngTemplateOutletContext]="{ item: item }"></ng-template>
+                <p *ngIf="item.description">{{ item.description }}</p>
+              </ng-container>
+            </ul>
+
+            <!-- Folder-item Template -->
+            <ng-template #folderItemTemplate let-item="item">
+              <div class="folder-item d-flex justify-content-between align-items-center" (click)="toggle(item)"
+                [ngClass]="{ 'expanded': item.expanded}">
+                <!-- Show folder or file icon -->
+                <ng-container *ngIf="item.type === 'file'; else folderIcon">
+                  <img [src]="getFileTypeImage(item.mimeType)" style="height:24px" alt="File Icon">
+                </ng-container>
+                <ng-template #folderIcon>
+                  <img [src]="item.children.length === 0 ? 'assets/folderEmpty.png' : 'assets/folderNotEmpty.png'"
+                    style="height:24px" alt="Folder Icon">
+                </ng-template>
+
+                <!-- File/Folder Name -->
+                <span class="item-name me-auto ms-1"
+                  [ngStyle]="{ 'font-weight':(item.type === 'file' && item.isViewing) ? '800' : ''  }">
+                  {{ item.name }}
+                </span>
+
+                <!-- Expand/collapse icon for folders -->
+                <mat-icon *ngIf="item.type === 'folder' && item.expanded">keyboard_arrow_down</mat-icon>
+
+
+                <!-- File actions (View/Download) -->
+                <div *ngIf="item.type === 'file' && !item.isViewing" class="ml-2">
+                  <button (click)="viewFile(item)" class="btn btn-info btn-sm me-2 text-white">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button (click)="downloadFile(item.id)" class="btn btn-primary btn-sm text-white">
+                    <i class="bi bi-download"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Recursive rendering of children -->
+              <ul *ngIf="item.children && item.expanded">
+                <ng-container *ngIf="item.children.length === 0">
+                  <li class="empty-folder">Empty</li>
+                </ng-container>
+                <ng-container *ngFor="let child of item.children">
+                  <li>
+                    <ng-template [ngTemplateOutlet]="folderItemTemplate"
+                      [ngTemplateOutletContext]="{ item: child }"></ng-template>
+                  </li>
+                </ng-container>
+              </ul>
+              <!-- File preview section -->
+              <div *ngIf="item.isViewing && item.sanitizedFileUrl" class="coins-outer-di">
+                <div class="row coins-div box-shadow-sub-total-stats rounded-3" style="margin-top: -20px;">
+                  <div class="col-lg-12 col-12 pt-4 pb-2 d-flex justify-content-between align-items-start flex-column"
+                    style="padding-right:1rem">
+                    <div class="card card-trading_Pairs p-0" style="width: 100%">
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-12 d-flex align-items-center justify-content-end">
+                            <div *ngIf="item.type === 'file' && item.isViewing"
+                              style="position: relative; top:-33px; right:-14px" class="bg-white">
+                              <button (click)="viewFileFullScreen(item)" class="btn btn-info btn-sm me-2 text-white">
+                                <i class="bi bi-arrows-fullscreen"></i>
+                              </button>
+                              <button (click)="downloadFile(item.id)" *ngIf="!loadingDownload"
+                                class="btn btn-primary me-2 btn-sm text-white">
+                                <i class="bi bi-download"></i>
+                              </button>
+                              <button (click)="downloadFile(item.id)" *ngIf="loadingDownload"
+                                class="btn btn-primary me-2 btn-sm text-white" disabled>
+                                <i>Downloading ...</i>
+                              </button>
+                              <button (click)="closeFile(item)" class="btn btn-danger btn-sm text-white">
+                                <i class="bi bi-x"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <iframe [src]="item.sanitizedFileUrl" frameborder="0"
+                            style="width: 100%; height: 50vh; overflow: hidden;"></iframe>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+
+
+          <div class="spacer-20"></div>
+        </div>
+
+        <div class="col-12 explorer_View" *ngIf="!isStructuralView">
+          <div class="coins-div  box-shadow-sub-total-stats rounded-3" style="height: 84vh">
+            <div class="col-lg-12 col-12 h-100 d-flex justify-content-between align-items-center flex-column">
+              <div class="card card-trading_Pairs h-100 p-0" style="width: 100%; overflow:hidden">
+                <div class="card-body pt-2">
+                  <div class="row">
+                    <!-- Back Button -->
+
+
+                    <!-- Address Bar -->
+                    <!-- <ng-container   [disabled]="currentPath.length > 1 || currentPath[(currentPath.length) - 1].name !== 'Root'"> -->
+                    <div class="col  action_buttons me-2" style="max-width:7rem">
+                      <!-- 
+                      <button class="btn btn-secondary" (click)="goBack()" [disabled]="currentPath.length <= 1">
+                        Back
+                      </button> -->
+                      <i class="bi bi-arrow-left-circle me-2 " (click)="goBack()"
+                        [ngStyle]="{'opacity': (currentPath.length == 0 || currentPath.length == 1) ? '0.5' : '1'}"></i>
+                      <!-- *ngIf="currentPath.length > 1" -->
+
+                      <i class="bi bi-bootstrap-reboot me-2" 
+                      
+                      matTooltip="Reload Drive Data"
+                      matTooltipClass="example-tooltip-uppercase"
+                      aria-label="Button that shows a red tooltip"
+                      (click)="reloadDriveData()"></i>
+
+                      <div class="dropdown-center dropdown d-inline" style="align-content: center;"
+                      
+                      matTooltip="Upload files / Create Folder"
+                      matTooltipClass="example-tooltip-uppercase"
+                      aria-label="Button that shows a red tooltip"
+                      >
+                        <!-- *ngIf="currentPath[(currentPath.length) - 1].name !== 'Root'" -->
+
+                        <!-- Use only the Bootstrap Icon for the dropdown -->
+                        <!-- <i class="bi bi-arrow-down-circle "></i> -->
+                        <i class="bi bi-plus-circle" data-bs-toggle="dropdown" aria-expanded="false"></i>
+
+
+                        <ul class="dropdown-menu dropdown-menu-center p-0 addDroopdown">
+                          <li>
+                            <a class="dropdown-item" (click)="addToGoogleDrive('folder', currentPath)">
+                              <i class="bi bi-folder-plus me-2"></i>
+                              Folder
+                            </a>
+                            <a class="dropdown-item" (click)="addToGoogleDrive('file', currentPath)">
+                              <i class="bi bi-file-earmark-plus me-2"></i>
+                              File
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+
+
+                    </div>
+                    <!-- </ng-container> -->
+
+                    <div class="col-auto  address_bar d-flex align-content-center flex-wrap align-items-center">
+
+                      <div class="dropdown-center dropdown d-inline me-2" style="align-content: center;">
+                        <!-- *ngIf="currentPath[(currentPath.length) - 1].name !== 'Root'" -->
+
+                        <!-- Use only the Bootstrap Icon for the dropdown -->
+                        <i class="bi bi-clock-history " data-bs-toggle="dropdown" aria-expanded="false"
+
+                        matTooltip="Navigation History"
+                        matTooltipClass="example-tooltip-uppercase"
+                        aria-label="Button that shows a red tooltip"
+
+                          style="font-size:24px"></i>
+
+                        <ul class="dropdown-menu dropdown-menu-center p-0">
+                          <li *ngFor="let folder of currentPath">
+                            <a class="dropdown-item" (click)="navigateToFolder(folder)">
+                              <i class="bi bi-folder2-open me-2"></i>
+                              {{ folder.name }} >
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <ng-container *ngFor="let folder of getDisplayedPath(); let last = last">
+                        <span (click)="navigateToFolder(folder)" class="folder-path" [ngClass]="{'active': last}"
+                        
+                        (contextmenu)="handleRightClick($event, folder)"
+                        (touchstart)="handleTouchStart($event, folder)" (touchend)="handleTouchEnd()"
+
+
+                        >
+                          {{ folder.name }} <span *ngIf="!last"> >&nbsp; </span>
+                        </span>
+
+
+
+
+
+
+                      </ng-container>
+
+                      <!-- Show dropdown only when path length is greater than 4 and not in the root directory -->
+
+                    </div>
+
+
+
+                    <hr class="mt-2 mb-0">
+
+
+
+
+                    <div class="col-12" style="
+                    overflow: auto;
+                    max-height: 84vh;
+                    height:77vh;
+                    padding-bottom: 10rem;
+                    
+                ">
+                      <!-- Folders and Files Section -->
+                      <div class="row pt-2">
+                        <ng-container *ngFor="let item of currentFolder.children">
+                          <div class="col d-flex flex-column p-0 align-items-center icon_div fileListDiv"
+                            (click)="handleClick($event, item)" (contextmenu)="handleRightClick($event, item)"
+                            (touchstart)="handleTouchStart($event, item)" (touchend)="handleTouchEnd()"
+                            style="padding: 1rem; max-width:120px; max-height:125px; min-width:120px; min-height:125px">
+
+                            <ng-container *ngIf="item.type === 'file'; else folderIcon">
+                              <!-- <i class="bi bi-x-circle-fill text-danger" 
+                            style="position: absolute;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: flex-end;
+                            width: -webkit-fill-available;
+                             max-width:120px;
+                             z-index:30
+                            "></i> -->
+                              <!-- <img [src]="(item.mimeType).includes('pdf') ? 'assets/pdf' :'assets/image.png'" style="height: 70pxx;" alt="File Icon" -->
+                              <img [src]="getFileTypeImage(item.mimeType)" style="height: 70pxx;" alt="File Icon"
+                                (click)="viewFile(item)">
+                              <p class="ms-1 file-name text-center"
+                                [ngClass]="{'themeColorHighlighted':item.isViewing}">
+                                <!-- [ngStyle]="{ 'font-weight': item.isViewing ? 'bold' : 'normal' }" -->
+
+                                {{ item.name }}
+                              </p>
+                            </ng-container>
+                            <ng-template #folderIcon>
+
+                              <img
+                                [src]="item.children.length === 0 ? 'assets/folderEmpty.png' : 'assets/folderNotEmpty.png'"
+                                style="height: 70pxx;" alt="Folder Icon">
+                              <p class="ms-1 file-name text-center">
+                                {{ item.name }}
+                              </p>
+                            </ng-template>
+                          </div>
+
+                          <!-- File preview section -->
+                          <div *ngIf="item.isViewing " class="coins-outer-di">
+                            <div class="row coins-div box-shadow-sub-total-stats rounded-3" style="margin-top: -20px;">
+                              <div
+                                class="col-lg-12 col-12 pt-5 pb-2 d-flex justify-content-between align-items-start flex-column"
+                                style="padding-right:1rem">
+                                <div class="card card-trading_Pairs p-0" style="width: 100%">
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <!-- <div class="col-6 d-flex align-items-center"></div> -->
+                                      <div class="col-12 d-flex align-items-center justify-content-end">
+                                        <div *ngIf="item.type === 'file' && item.isViewing"
+                                          style="position: relative; top:-33px; right:-14px" class="bg-white">
+                                          <button (click)="viewFileFullScreen(item)"
+                                            class="btn btn-info btn-sm me-2 text-white">
+                                            <i class="bi bi-arrows-fullscreen"></i>
+                                          </button>
+                                          <button (click)="downloadFile(item.id)" *ngIf="!loadingDownload"
+                                            class="btn btn-primary me-2 btn-sm text-white">
+                                            <i class="bi bi-download"></i>
+                                          </button>
+                                          <button (click)="downloadFile(item.id)" *ngIf="loadingDownload"
+                                            class="btn btn-primary me-2 btn-sm text-white" disabled>
+                                            <i>Downloading ...</i>
+                                          </button>
+                                          <button (click)="closeFile(item)" class="btn btn-danger btn-sm text-white">
+                                            <i class="bi bi-x"></i>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-12" style="position: relative; top:-20px; "
+                                      [ngStyle]="{'min-height':!item.sanitizedFileUrl ? '25vh' : '100%' }">
+                                      <img [src]="item.sanitizedFileUrl" frameborder="0" *ngIf="item.sanitizedFileUrl"
+                                        style="width: 100%; height: 100%; overflow: auto; object-fit:contain;" />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </ng-container>
+                      </div>
+
+                      <div *ngIf="currentFolder.children.length === 0" class="empty-folder">
+                        <p class="text-center pt-5 mt-3 ">Empty Folder !</p>
+                      </div>
+                    </div>
+
+
+                    <!-- ------------new ------------STARTS -->
+
+
+                    <!-- ------------new ------------ENDS -->
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+      </ng-container>
+
+    </div>
+
+  </ng-container>
+
+
+
+</div>
+
+
+
+
+
+
+<ng-template #optionsDialogTemplate>
+  <div cdkDrag cdkDragRootElement=".cdk-overlay-pane" class="options_dialog" style="min-width:20rem">
+    <div mat-dialog-title cdkDragHandle class="p-0">
+      <h1 class="px-lg-3 px-md-3 px-2">
+        <p class="mb-0" style='font-size: 12px; margin-top:-6px'>
+          <ng-container *ngIf="currentFileForOptions.type === 'file'; else folderIcon">
+            <img [src]="getFileTypeImage(currentFileForOptions.mimeType)" style="height:24px; padding-right:2px" alt="File Icon">
+          </ng-container>
+          <ng-template #folderIcon>
+            <img *ngIf="currentFileForOptions.id!='root' "
+              [src]="currentFileForOptions.children.length === 0 ? 'assets/folderEmpty.png' : 'assets/folderNotEmpty.png'"
+              style="height:24px; padding-right:2px" alt="Folder Icon">
+              <img *ngIf="currentFileForOptions.id==='root' "
+              src="assets/root_folder.png"
+              style="height:24px; padding-right:2px" alt="Folder Icon">
+          </ng-template>
+          {{currentFileForOptions.name}}
+        </p>
+      </h1>
+      <hr class="mt-2 mb-3">
+    </div>
+
+    <div mat-dialog-content class="content px-3 py-0">
+      <p (click)="onOptionClick('rename')" *ngIf=" currentFileForOptions.id !='root'"><i class="bi bi-pencil-square"></i>&nbsp;&nbsp;Rename</p>
+      <p (click)="onOptionClick('delete')" *ngIf=" currentFileForOptions.id !='root'"><i class="bi bi-trash"></i>&nbsp;&nbsp;Delete</p>
+      <p (click)="onOptionClick('properties')"><i class="bi bi-exclamation-circle"></i>&nbsp;&nbsp;Properties</p>
+      
+    </div>
+    <hr class="mt-2 mb-0">
+
+    <div mat-dialog-actions class="action">
+
+      <button mat-raised-button color="" tabIndex="-1" (click)="closeDialog('cancel')">Close</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #confirmDialogTemplate>
+  <div mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" class=" confirm_dialog">
+    <h1 cdkDragHandle class="text-center">Confirm {{confirmMessage}}!</h1>
+
+    <div mat-dialog-content>
+      <pre class="text-muted text-center">Are you sure?</pre>
+    </div>
+
+    <div mat-dialog-actions class="row flex-row d-flex">
+      <div class="col-6">
+        <button class="w-100" mat-raised-button color="warn" (click)="closeConfirmDialog(false)"
+          tabindex="1">Cancel</button>
+      </div>
+      <div class="col-6">
+        <button class="w-100" mat-raised-button color="" (click)="closeConfirmDialog(true)" tabindex="0"
+          cdkFocusInitial>Yes</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #renameDialogTemplate>
+  <div mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" class="rename_dialog">
+    <h1 cdkDragHandle class="text-center">Rename <br><span  style="font-size:12px">{{currentFileForOptions.name}}</span></h1>
+
+    <div mat-dialog-content>
+      <form #form>
+        <mat-form-field appearance="outline" floatLabel="always">
+          <mat-label>Name</mat-label>
+          <input matInput placeholder="New name" [(ngModel)]="Name" name="Name" required />
+          <button *ngIf="Name" matSuffix mat-icon-button  aria-label="Clear" type="button"  (click)="Name = ''" tabIndex="-1">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </form>
+    </div>
+
+    <div mat-dialog-actions class="row flex-row d-flex">
+      <div class="col-6">
+        <button class="w-100" mat-raised-button color="warn" (click)="closeRenameDialog(false)"
+          tabindex="-1">Cancel</button>
+      </div>
+      <div class="col-6">
+        <button class="w-100" mat-raised-button color="" [disabled]="!Name" (click)="closeRenameDialog(true)"
+          tabindex="-1">Yes</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #propertiesDialogTemplate>
+  <div cdkDrag cdkDragRootElement=".cdk-overlay-pane" class="properties_dialog" style="min-width:20rem; max-width:20rem">
+    <div mat-dialog-title class="text-center">
+      <h1>Properties</h1>
+    </div>
+    <hr class="mt-2 mb-3">
+
+
+    <div mat-dialog-content style="max-height: 400px; overflow-y: auto; padding: 10px;">
+      <!-- <div class="row"> -->
+
+        <div *ngFor="let key of getKeys(currentFileForOptions)" 
+             class="row" 
+             [ngStyle]="{'padding': key !== 'children' ? '6px' : 'none'}">
+          
+          <!-- Exclude 'children' from being displayed -->
+          <ng-container *ngIf="key !== 'children'">
+            <div class="col-4">
+              <strong style="color: #333;">{{ key }}:</strong>
+            </div>
+            <div class="col-8 d-flex justify-content-end">
+              <span style="color: #555;">
+                <!-- Conditionally format ID -->
+                <ng-container *ngIf="key === 'id'; else normalValue">
+                  {{ formatId(currentFileForOptions[key]) }}
+                  <!-- Conditionally show the copy icon only for the 'id' key -->
+                  <i class="bi bi-copy" style="color: #3f51b5; font-size: 14px; cursor:pointer" 
+                     *ngIf="key === 'id'" 
+                     mat-icon-button 
+                     (click)="copyToClipboard(currentFileForOptions[key])" 
+                     aria-label="Copy ID"></i>
+                </ng-container>
+                <ng-template #normalValue>
+                  <ng-container *ngIf="key === 'description'; else otherValues">
+                    <!-- Description shown in rows -->
+                    <div style="display: flex; flex-direction: column;">
+                      <span>{{ currentFileForOptions[key] == '' ? '-' : currentFileForOptions[key] }}</span>
+                    </div>
+                  </ng-container>
+                  <ng-template #otherValues>
+                    <!-- Other values shown in a single line -->
+                    {{
+                      (currentFileForOptions[key].includes('google') && currentFileForOptions[key].includes('spreadsheet')) 
+                        ? 'google/sheets' 
+                        : (currentFileForOptions[key].includes('google') && currentFileForOptions[key].includes('document')) 
+                          ? 'google/docs' 
+                          : (currentFileForOptions[key].includes('zip') && currentFileForOptions[key].includes('compressed')) 
+                          ? 'compressed/zip' 
+                          : (currentFileForOptions[key].includes('compressed')) 
+                          ? 'compressed/rar' 
+                          : currentFileForOptions[key]
+                    }}
+                  </ng-template>
+                </ng-template>
+              </span>
+            </div>
+          </ng-container>
+
+        </div>
+
+      <!-- </div> -->
+
+  
+
+    </div>
+
+    <div mat-dialog-actions class="row flex-row d-flex justify-content-end">
+      <div class="col-6">
+        <button class="w-100" mat-raised-button color="warn" (click)="closePropertiesDialog()" tabindex="-1">Close</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

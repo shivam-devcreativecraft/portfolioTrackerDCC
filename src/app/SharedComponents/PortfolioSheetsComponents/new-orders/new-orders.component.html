@@ -1,0 +1,493 @@
+<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" class="newOrder_Dialog">
+
+
+
+    <div mat-dialog-title cdkDragHandle>
+        <h1>New Orders<br>
+            <p class="mb-0" style='font-size: 10px; margin-top:-6px'>{{newOrdersData[0].ExchangeName}} :
+                {{newOrdersData[0].SheetName}}</p>
+
+        </h1>
+    </div>
+
+    <div mat-dialog-content class="content">
+
+        <ng-container class="noOrders-content" *ngIf="this.newOrdersData[0].NewOrders.length==0">
+            <div class="spacer-20"></div>
+            <div class="d-flex justify-content-center align-items-center">
+                <p class="no_Order_Text text-success">All Orders Uploaded !</p>
+            </div>
+            <div class="spacer-20"></div>
+        </ng-container>
+
+
+        <ng-container class="areOrders-content" *ngIf="this.newOrdersData[0].NewOrders.length!=0">
+            <ng-container class="cards" *ngIf="newOrdersData[0].ExchangeName=='Bybit' || newOrdersData[0].ExchangeName=='Demo_Trading'">
+
+
+                <ng-container *ngIf="newOrdersData[0].SheetName == 'Futures_Closed_Pnl' || newOrdersData[0].SheetName == 'Futures_Closed_Pnl_Demo' || newOrdersData[0].SheetName == 'Futures'">
+
+                    <div class="row coins-div box-shadow-sub-total-statss rounded-3 mt-3">
+                        <!-- -------------------------------------------------------------------------------------------------- -->
+                        <div class="col-lg-6 pt-3 col-12 pb-lg-0 pb-2 d-flex justify-content-between align-items-start flex-column"
+                            *ngFor="let newOrder of newOrdersData[0].NewOrders; let i = index">
+                            <div class="card card-trading_Pairs p-0  mb-3" style="width: 100%">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6 d-flex align-items-center">
+
+                                            <h2 class="card-title badge badge-heading pill "
+                                                style="position: relative; top: -40px">
+                                                {{ (newOrder.symbol).replace('USDT', '')}}
+                                            </h2>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="row  detailsRow " style="margin-top:-20px">
+
+                                        <div class="col-6 justify-content-start d-flex date_id_div">
+                                            <p class="" style="font-size:12px !important">
+
+
+
+
+                                                <span class="card-text">
+
+                                                    {{newOrder.createdTime }}</span>
+                                            </p>
+                                        </div>
+
+                                        <div class="col-6 justify-content-end d-flex date_id_div">
+                                            <p class="" style="font-size:12px !important">
+
+
+                                                <span class="card-text">
+                                                    {{ newOrder.orderId.slice(0, 5) }}...{{ newOrder.orderId.slice(-5)
+                                                    }}
+                                                </span>
+                                            </p>
+                                        </div>
+
+
+
+                                        <!-- -------------------------------------------------------------------------------------------------- -->
+
+                                        <!-- row 1 -->
+
+                                        <div class="col-12 outer-div">
+                                            <p class="">
+
+                                                Avg Entry Price
+                                            </p>
+                                            <p class="card-text">
+
+                                                {{newOrder.avgEntryPrice}}</p>
+                                        </div>
+                                        <div class="col-12 outer-div">
+                                            <p class="">
+
+                                                Avg Exit Price
+                                            </p>
+                                            <p class="card-text">
+
+                                                {{newOrder.avgExitPrice}}</p>
+                                        </div>
+
+                                        <!-- row 2 -->
+
+                                        <div class="col-12 outer-div">
+                                            <p class="">
+
+                                                Direction
+                                            </p>
+                                            <p class="card-text"
+                                                [ngClass]="{'text-danger': (newOrder.side|uppercase) == 'SELL' , 'text-success': (newOrder.side|uppercase) == 'BUY'}">
+
+                                                {{(newOrder.side) | uppercase }}</p>
+                                        </div>
+
+                                        <div class="col-12 outer-div">
+
+                                            <p class="">
+
+                                                Type
+                                            </p>
+                                            <p class="card-text"
+                                                [ngClass]="{'text-danger': (newOrder.orderType ) == 'Market' , 'text-success': (newOrder.orderType ) == 'Limit'}">
+
+                                                {{newOrder.orderType}}</p>
+                                        </div>
+
+                                        <!-- row 3 -->
+
+                                        <div class="col-12 outer-div">
+                                            <p class="">
+
+                                                Quantity
+                                            </p>
+                                            <p class="card-text">
+
+                                                {{newOrder.qty}}</p>
+                                        </div>
+
+
+                                        <div class="col-12 outer-div">
+                                            <p class="">
+
+                                                Leverage
+                                            </p>
+                                            <p class="card-text">
+
+                                                {{newOrder.leverage }}X</p>
+
+                                        </div>
+
+                                        <!-- row 4 -->
+
+                                        <div class="col-12 outer-div">
+                                            <p class="">
+
+                                                Margin
+                                            </p>
+                                            <p class="card-text">
+                                                {{
+                                                newOrder.avgEntryPrice * newOrder.qty / newOrder.leverage
+                                                | number:'1.0-3'
+                                                }}
+                                            </p>
+                                        </div>
+
+                                        <div class="col-12 outer-div">
+                                            <p class="">
+
+                                                Pnl
+                                            </p>
+                                            <p class="card-text"
+                                                [ngClass]="{'text-danger':(newOrder.closedPnl ) <= 0, 'text-success': (newOrder.closedPnl ) > 0}">
+
+                                                {{ newOrder.closedPnl | number:'1.0-3'}}
+                                                <span class="card-text" style="font-size : 12px"
+                                                    [ngClass]="{'text-danger': newOrder.closedPnl <= 0, 'text-success': newOrder.closedPnl > 0}">
+                                                    ( {{calculateClosedPnlPercentage(newOrder) | number:'1.0-3'
+                                                    }}% )
+
+                                                </span>
+                                            </p>
+
+
+
+                                        </div>
+                                        <!-- row 5 -->
+                                        <div class="col-12"  tabindex="0">
+                                     <!-- blank div to fix auto-focus -->
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <mat-form-field appearance="outline" floatLabel="always"
+                                                class="example-full-width w-100">
+                                                <mat-label>Influencer</mat-label>
+                                                <input type="text" placeholder="Influencer Name" aria-label="Influencer"
+                                                    matInput [formControl]="newOrder.influencerControl"
+                                                    [matAutocomplete]="auto" name="Influencer" required >
+                                                <mat-autocomplete #auto="matAutocomplete">
+                                                    <mat-option *ngFor="let option of filteredInfluencers[i] | async"
+                                                        [value]="option">
+                                                        {{option}}
+                                                    </mat-option>
+                                                </mat-autocomplete>
+
+                                                <button class="text-danger" *ngIf="newOrder.influencerControl.value"
+                                                    matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                                                    (click)="clearInfluencer(i)" tabindex="-1">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            </mat-form-field>
+                                        </div>
+
+
+                                        <div class="col-12">
+                                            <mat-form-field appearance="outline" floatLabel="always"
+                                                class="example-full-width w-100">
+                                                <mat-label>Notes</mat-label>
+                                                <textarea matInput placeholder="Notes" [(ngModel)]="notes[i]"
+                                                    name="Notes"></textarea>
+                                                <button class="text-danger" *ngIf="notes[i]" matSuffix mat-icon-button
+                                                aria-label="Clear" type="button"  (click)="notes[i] = ''" tabindex="-1">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            </mat-form-field>
+                                        </div>
+
+
+
+                                    </div>
+
+
+                                    <div class="row uploadButtonDiv">
+                                        <div class="col-12 d-flex justify-content-end">
+                                            <button
+                                                class="btn btn-success upload_button d-flex justify-content-center align-items-center"
+                                                (click)="uplaodData(newOrdersData[0].ExchangeName, newOrdersData[0].SheetName, newOrdersData[0].NewOrders[i], i, notes[i])"
+                                                [disabled]="newOrder.influencerControl.invalid">
+                                                <mat-icon *ngIf="!uploadingStates[i]">cloud_upload</mat-icon>
+                                                <mat-icon *ngIf="uploadingStates[i]" disabled>history</mat-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <!-- -------------------------------------------------------------------------------------------------- -->
+                    </div>
+                </ng-container>
+
+            </ng-container>
+            <!-- -------------------------------------------------------------------------------------------------- -->
+            <ng-container class="cards" *ngIf="newOrdersData[0].ExchangeName=='Mexc'">
+
+                <ng-container *ngIf="newOrdersData[0].SheetName == 'Futures' ">
+
+                    <div class="row coins-div box-shadow-sub-total-statss rounded-3 mt-3">
+                        <!-- -------------------------------------------------------------------------------------------------- -->
+                        <div class="col-lg-6 pt-3 col-12 pb-lg-0 pb-2 d-flex justify-content-between align-items-start flex-column"
+                            *ngFor="let newOrder of newOrdersData[0].NewOrders; let i = index">
+                            <div class="card card-trading_Pairs p-0  mb-3" style="width: 100%">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6 d-flex align-items-center">
+
+                                            <h2 class="card-title badge badge-heading pill "
+                                                style="position: relative; top: -40px">
+                                                {{ (newOrder.symbol).replace('USDT', '')}}
+                                            </h2>
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <div class="row  detailsRow " style="margin-top:-20px">
+
+                                        <div class="col-6 justify-content-start d-flex date_id_div">
+
+                                            <p class="" style="font-size:12px !important">
+
+
+                                                <span class="card-text">
+
+                                                    {{newOrder.updateTime }}</span>
+                                            </p>
+                                        </div>
+
+                                        <div class="col-6 justify-content-end d-flex date_id_div">
+
+                                            <p class="" style="font-size:12px !important">
+
+
+
+
+                                            </p>
+                                            <p class="card-text ">
+
+                                                {{newOrder.positionId }}</p>
+                                        </div>
+
+                                        <!-- -------------------------------------------------------------------------------------------------- -->
+
+                                        <!-- row 1 -->
+
+                                        <div class="col-12 outer-div">
+                                            <p class="">
+
+                                                Avg Entry Price
+                                            </p>
+                                            <p class="card-text">
+
+                                                {{newOrder.openAvgPrice}}</p>
+                                        </div>
+                                        <div class="col-12 outer-div">
+                                            <p class="">
+
+                                                Avg Exit Price
+                                            </p>
+                                            <p class="card-text">
+
+                                                {{newOrder.closeAvgPrice}}</p>
+                                        </div>
+
+                                        <!-- row 2 -->
+
+                                        <div class="col-12 outer-div">
+                                            <p class="">
+
+                                                Direction
+                                            </p>
+                                            <p class="card-text"
+                                                [ngClass]="{'text-danger': (newOrder.positionType|uppercase) == 'SELL' , 'text-success': (newOrder.positionType|uppercase) == 'BUY'}">
+
+                                                {{(newOrder.positionType) | uppercase }}</p>
+                                        </div>
+
+                                        <div class="col-12 outer-div">
+
+                                            <p class="">
+                                                Type
+                                            </p>
+                                            <p class="card-text"
+                                                [ngClass]="{'text-danger': (newOrder.openType|uppercase) == 'MARKET' , 'text-success': (newOrder.openType|uppercase) == 'LIMIT'}">
+                                                {{ newOrder.openType }}
+                                            </p>
+                                        </div>
+
+                                        <!-- row 3 -->
+
+                                        <div class="col-12 outer-div">
+
+                                            <p class="">
+
+                                                Quantity
+                                            </p>
+                                            <p class="card-text">
+
+                                                {{newOrder.closeVol}}</p>
+                                        </div>
+
+
+                                        <div class="col-12 outer-div">
+
+                                            <p class="">
+
+                                                Leverage
+                                            </p>
+                                            <p class="card-text">
+
+                                                {{newOrder.leverage }}X</p>
+
+                                        </div>
+
+                                        <!-- row 4 -->
+
+                                        <div class="col-12 outer-div">
+
+                                            <p class="">
+
+                                                Margin
+                                            </p>
+                                            <p class="card-text">
+                                                {{
+                                                newOrder.openAvgPrice * newOrder.closeVol / newOrder.leverage
+                                                | number:'1.0-3'
+                                                }}
+                                            </p>
+                                        </div>
+
+
+                                        <div class="col-12 outer-div">
+
+                                            <p class="">
+
+                                                Pnl
+                                            </p>
+                                            <p class="card-text "
+                                                [ngClass]="{'text-danger':(newOrder.realised ) <= 0, 'text-success': (newOrder.realised ) > 0}">
+
+                                                {{ newOrder.realised | number:'1.0-5'}}
+                                                <span class="card-text" style="font-size : 12px"
+                                                    [ngClass]="{'text-danger': newOrder.realised <= 0, 'text-success': newOrder.realised > 0}">
+                                                    ( {{calculateClosedPnlPercentage(newOrder) | number:'1.0-3'
+                                                    }}% )
+                                                </span>
+                                            </p>
+
+
+
+                                        </div>
+
+                                        <!-- row 5 -->
+                                        <div class="col-12"  tabindex="0">
+                                            <!-- blank div to fix auto-focus -->
+                                               </div>
+
+                                        <div class="col-12 mt-2">
+                                            <mat-form-field appearance="outline" floatLabel="always"
+                                                class="example-full-width w-100">
+                                                <mat-label>Influencer</mat-label>
+                                                <input type="text" placeholder="Influencer Name" aria-label="Influencer"
+                                                    matInput [formControl]="newOrder.influencerControl"
+                                                    [matAutocomplete]="auto" name="Influencer" required>
+                                                <mat-autocomplete #auto="matAutocomplete">
+                                                    <mat-option *ngFor="let option of filteredInfluencers[i] | async"
+                                                        [value]="option">
+                                                        {{option}}
+                                                    </mat-option>
+                                                </mat-autocomplete>
+                                                <button class="text-danger" *ngIf="newOrder.influencerControl.value"
+                                                    matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                                                    (click)="clearInfluencer(i)"  tabindex="-1">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-12">
+                                            <mat-form-field appearance="outline" floatLabel="always"
+                                                class="example-full-width w-100">
+                                                <mat-label>Notes</mat-label>
+                                                <textarea matInput placeholder="Notes" [(ngModel)]="notes[i]"
+                                                    name="Notes"></textarea>
+                                                <button class="text-danger" *ngIf="notes[i]" matSuffix mat-icon-button
+                                                aria-label="Clear" type="button"  (click)="notes[i] = ''"  tabindex="-1">
+                                                    <mat-icon>close</mat-icon>
+                                                </button>
+                                            </mat-form-field>
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="row uploadButtonDiv">
+                                        <div class="col-12 d-flex justify-content-end">
+                                            <button
+                                                class="btn btn-success upload_button d-flex justify-content-center align-items-center"
+                                                (click)="uplaodData(newOrdersData[0].ExchangeName, newOrdersData[0].SheetName, newOrdersData[0].NewOrders[i], i, notes[i])"
+                                                [disabled]="newOrder.influencerControl.invalid">
+                                                <mat-icon *ngIf="!uploadingStates[i]">cloud_upload</mat-icon>
+                                                <mat-icon *ngIf="uploadingStates[i]" disabled>history</mat-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <!-- -------------------------------------------------------------------------------------------------- -->
+                    </div>
+                </ng-container>
+
+            </ng-container>
+            <!-- -------------------------------------------------------------------------------------------------- -->
+        </ng-container>
+
+    </div>
+
+
+
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button color="warn" (click)="onClose()"  *ngIf="this.newOrdersData[0].NewOrders.length!=0">Close</button>
+        <button mat-raised-button color="warn" (click)="onClose()" tabindex="0" cdkFocusInitial *ngIf="this.newOrdersData[0].NewOrders.length==0">Close</button>
+
+        <p class="mb-0" *ngIf="uploadCount!=0" style="position:absolute; left:20px; padding-right:12px">Uploaded
+            <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">{{uploadCount}}
+            </span>
+        </p>
+    </div>
+
+</div>

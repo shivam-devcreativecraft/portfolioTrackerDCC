@@ -1,0 +1,451 @@
+<div class="total-stats-div p-3 mt-3">
+    <h1 class="box-title">Total Stats</h1>
+  
+  
+    <div class="loader-div  d-flex justify-content-center align-items-center flex-column"
+      *ngIf="!IsSelectedSheetDataLoaded">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="pt-2">Loading ...</span>
+
+  
+    </div>
+  
+  
+    <div class="row" style="margin-top: -20px" *ngIf="IsSelectedSheetDataLoaded">
+      <div class="col-lg-6 col-12   total-stats-inner-div d-flex justify-content-between align-items-start flex-column">
+        <div class="card p-0" style="width: 100%">
+          <div class="card-body">
+  
+  
+  
+  
+  
+            <div class="row ">
+              <h2 class="card-title">Total PNL</h2>
+              <div class="row d-flex flex-row justify-content-center" style="margin-top:-15px">
+  
+                <div class="col-6  inner-div">
+  
+                  <h1 class="card-text text-success" style="font-weight: 600"
+                    [ngClass]="{'text-success' : columnTotals.Closed_Pnl>0 , 'text-danger' : columnTotals.Closed_Pnl<0}">
+                    <sub>₮</sub> {{ columnTotals.Closed_Pnl | number : "1.0-3" }}
+  
+                  </h1>
+                  <h5>USDT</h5>
+                </div>
+                <div class="col-6  inner-div">
+  
+                  <h1 class="card-text text-success" style="font-weight: 600"
+                    [ngClass]="{'text-success' : columnTotals.Closed_Pnl>0 , 'text-danger' : columnTotals.Closed_Pnl<0}">
+                    <sub>₹</sub> {{ (columnTotals.Closed_Pnl)*90 | number : "1.0-3" }}
+                  </h1>
+                  <h5>INR</h5>
+                </div>
+              </div>
+            </div>
+  
+  
+          </div>
+        </div>
+      </div>
+  
+  
+  
+  
+  
+  
+  
+      <div class="col-lg-6 col-12   total-stats-inner-div d-flex justify-content-between align-items-start flex-column">
+        <div class="card p-0" style="width: 100%">
+            <div class="card-body">
+  
+  
+                <div class="row ">
+                  <h2 class="card-title"> Profit</h2>
+  
+                    <div class="row d-flex flex-row justify-content-center" style="margin-top:-15px">
+  
+                        <div class="col-6  inner-div">
+  
+                            <h1 class="card-text text-success" style="font-weight: 600">
+                                <sub>₮</sub> {{ columnTotals.TotalProfit | number : "1.0-3" }}
+  
+                            </h1>
+                            <h5>USDT</h5>
+                        </div>
+                        <div class="col-6  inner-div">
+  
+                            <h1 class="card-text text-success" style="font-weight: 600">
+                                <sub>₹</sub> {{ (columnTotals.TotalProfit)*90 | number : "1.0-3" }}
+                            </h1>
+                            <h5>INR</h5>
+                        </div>
+                    </div>
+                </div>
+  
+            </div>
+        </div>
+    </div>
+  
+  
+    <div class="col-lg-6 col-12   total-stats-inner-div d-flex justify-content-between align-items-start flex-column">
+      <div class="card p-0" style="width: 100%">
+          <div class="card-body">
+  
+  
+              <div class="row ">
+                <h2 class="card-title"> Loss</h2>
+  
+                  <div class="row d-flex flex-row justify-content-center" style="margin-top:-15px">
+  
+                      <div class="col-6  inner-div">
+  
+                          <h1 class="card-text text-danger" style="font-weight: 600">
+                              <sub>₮</sub> {{ columnTotals.TotalLoss | number : "1.0-3" }}
+  
+                          </h1>
+                          <h5>USDT</h5>
+                      </div>
+                      <div class="col-6  inner-div">
+  
+                          <h1 class="card-text text-danger" style="font-weight: 600">
+                              <sub>₹</sub> {{ (columnTotals.TotalLoss)*90 | number : "1.0-3" }}
+                          </h1>
+                          <h5>INR</h5>
+                      </div>
+                  </div>
+              </div>
+  
+          </div>
+      </div>
+  </div>
+  
+  
+  
+  
+  
+  
+      <div class="col-lg-6 col-12   total-stats-inner-div d-flex justify-content-between align-items-start flex-column">
+        <div class="card p-0" style="width: 100%">
+            <div class="card-body">
+    
+    
+                <div class="row ">
+                  <h2 class="card-title">Total BUY | SELL Trades </h2>
+  
+    
+                    <div class="row d-flex flex-row justify-content-center" style="margin-top:-15px">
+    
+                        <div class="col-6  inner-div">
+    
+                            <h1 class="card-text text-success" style="font-weight: 600">
+                                <sub>&nbsp;</sub> {{ columnTotals.TotalBuyTrades  }}
+    
+                            </h1>
+                            <h5>BUY</h5>
+                        </div>
+                        <div class="col-6  inner-div">
+    
+                            <h1 class="card-text text-danger" style="font-weight: 600">
+                                <sub>&nbsp;</sub> {{ (columnTotals.TotalSellTrades)}}
+                            </h1>
+                            <h5>SELL</h5>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      <div class="col-lg-6 col-12   total-stats-inner-div d-flex justify-content-between align-items-start flex-column">
+        <div class="card p-0" style="width: 100%">
+            <div class="card-body">
+    
+    
+                <div class="row ">
+                  <h2 class="card-title">Total Trades</h2>
+  
+    
+                    <div class="row d-flex flex-row justify-content-center" style="margin-top:-15px">
+    
+                        <div class="col-12  inner-div">
+    
+                            <h1 class="card-text text-danger" style="font-weight: 600">
+                                <sub>&nbsp;</sub> {{ columnTotals.TotalTrades }}
+    
+                            </h1>
+                            <h5>TRADES</h5>
+                        </div>
+                       
+                    </div>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+  
+  
+  
+  
+  
+  
+      <div class="col-lg-6 col-12   total-stats-inner-div d-flex justify-content-between align-items-start flex-column">
+        <div class="card p-0" style="width: 100%">
+            <div class="card-body">
+    
+    
+                <div class="row ">
+                  <h2 class="card-title">Trades Winning | Loosing</h2>
+  
+  
+    
+                    <div class="row d-flex flex-row justify-content-center" style="margin-top:-15px">
+    
+                        <div class="col-6  inner-div">
+    
+                            <h1 class="card-text text-success" style="font-weight: 600">
+                                <sub>&nbsp;</sub> {{ columnTotals.TotalProfitTrades  }}
+    
+                            </h1>
+                            <h5>WIN</h5>
+                        </div>
+                        <div class="col-6  inner-div">
+    
+                            <h1 class="card-text text-danger" style="font-weight: 600">
+                                <sub>&nbsp;</sub> {{ (columnTotals.TotalLossTrades)}}
+                            </h1>
+                            <h5>LOSS</h5>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+  
+  
+  
+  
+  
+  
+  
+      <div class="col-lg-6 col-12   total-stats-inner-div d-flex justify-content-between align-items-start flex-column">
+        <div class="card p-0" style="width: 100%">
+            <div class="card-body">
+    
+    
+                <div class="row ">
+                  <h2 class="card-title">Top Coin </h2>
+  
+  
+  
+    
+                    <div class="row d-flex flex-row justify-content-center" style="margin-top:-15px">
+    
+                        <div class="col-6  inner-div">
+    
+                            <h1 class="card-text text-success" style="font-weight: 600">
+                                <sub>&nbsp;</sub> {{ columnTotals.MostFrequentTradingPair  }}
+    
+                            </h1>
+                            <h5>COIN</h5>
+                        </div>
+                        <div class="col-6  inner-div">
+    
+                            <h1 class="card-text text-success" style="font-weight: 600">
+                                <sub>&nbsp;</sub> {{ (columnTotals.HighestCount)}}
+                            </h1>
+                            <h5>TRADES</h5>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+  
+  
+  
+  
+  
+      <div class="col-lg-6 col-12   total-stats-inner-div d-flex justify-content-between align-items-start flex-column">
+        <div class="card p-0" style="width: 100%">
+            <div class="card-body">
+    
+    
+                <div class="row ">
+                  <h2 class="card-title">Most Traded Direction </h2>
+  
+  
+  
+  
+    
+                    <div class="row d-flex flex-row justify-content-center" style="margin-top:-15px">
+    
+                        <div class="col-6  inner-div">
+    
+                            <h1 class="card-text" style="font-weight: 600"
+                            [ngClass]="{'text-danger' : columnTotals.MostTradedDirection=='SELL/SHORT', 'text-success':columnTotals.MostTradedDirection=='BUY/LONG'}"
+                            >
+                                <sub>&nbsp;</sub> {{ columnTotals.MostTradedDirection  }}
+    
+                            </h1>
+                            <h5>SIDE</h5>
+                        </div>
+                        <div class="col-6  inner-div">
+    
+                            <h1 class="card-text " style="font-weight: 600"
+                            [ngClass]="{'text-danger' : columnTotals.MostTradedDirection=='SELL/SHORT', 'text-success':columnTotals.MostTradedDirection=='BUY/LONG'}"
+                            >
+                                <sub>&nbsp;</sub> {{ (columnTotals.MostTradedDirectionTrades)}}
+                            </h1>
+                            <h5>TRADES</h5>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+  
+  
+    </div>
+  
+  
+  </div>
+  
+  
+  <div class="spacer-20"></div>
+  <div class="history-div p-3 mt-3">
+    <h1 class="box-title">Order History</h1>
+  
+  
+    <mat-form-field appearance="outline" floatLabel="always" >
+  
+      <mat-label>Filter Table</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search" #input />
+    </mat-form-field>
+    <div style="overflow-x:  auto; " class="example-container">
+      <ng-container class="table-div">
+        <!-- trading-setup.component.html -->
+  
+        <div class="mat-elevation-z8 example-table-container">
+          <table mat-table [dataSource]="dataSource" matSort matSortActive="Date_Creation" matSortDirection="desc"
+            class="mat-elevation-z8">
+  
+            <!-- Define columns -->
+            <ng-container matColumnDef="Date_Creation">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Date_Creation </th>
+              <td mat-cell *matCellDef="let element" style="font-weight: 600;"> {{ element.Date_Creation }} </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="Contracts">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Contracts </th>
+              <td mat-cell *matCellDef="let element" style="font-weight: 600;"> {{ element.Contracts }} </td>
+            </ng-container>
+            <ng-container matColumnDef="Opening_Direction">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Opening_Direction </th>
+              <td mat-cell *matCellDef="let element" style="font-weight: 600;"
+                [ngClass]="{'text-success': element.Opening_Direction == 'BUY', 'text-danger': element.Opening_Direction == 'SELL'}">
+                {{
+                element.Opening_Direction }} </td>
+            </ng-container>
+        
+  
+            <ng-container matColumnDef="Qty">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Qty </th>
+              <td mat-cell *matCellDef="let element"> {{ element.Qty }} </td>
+            </ng-container>
+            <ng-container matColumnDef="Entry_Price">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Entry_Price </th>
+              <td mat-cell *matCellDef="let element"> <span class="text-success " style="font-weight: 600;">₮ </span>{{
+                element.Entry_Price }} </td>
+            </ng-container>
+            <ng-container matColumnDef="Exit_Price">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Exit_Price </th>
+              <td mat-cell *matCellDef="let element"> <span class="text-success " style="font-weight: 600;">₮ </span>{{
+                element.Exit_Price }} </td>
+            </ng-container>
+            <ng-container matColumnDef="Closed_Pnl">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Closed_Pnl </th>
+              <td mat-cell *matCellDef="let element"
+                [ngClass]="{'text-success':element.Closed_Pnl>0 ,'text-danger':element.Closed_Pnl<0 , 'text-secondary':element.Closed_Pnl==0}">
+                <span *ngIf="element.Closed_Pnl" style="font-weight: 600;">₮ </span>{{ element.Closed_Pnl }} </td>
+            </ng-container>
+            <ng-container matColumnDef="Closed_Pnl_Percentage">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Closed_Pnl_Percentage </th>
+              <td mat-cell *matCellDef="let element"
+                [ngClass]="{'text-success':element.Closed_Pnl_Percentage>0 ,'text-danger':element.Closed_Pnl_Percentage<0 , 'text-secondary':element.Closed_Pnl_Percentage==0}">
+                <span *ngIf="element.Closed_Pnl_Percentage" style="font-weight: 600;">₮ </span>{{ element.Closed_Pnl_Percentage }} <span *ngIf="element.Closed_Pnl_Percentage" style="font-weight: 600;"> &#65130;</span></td>
+            </ng-container>
+      
+            <ng-container matColumnDef="Influencer">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Influencer</th>
+              <td mat-cell *matCellDef="let element" class="" style="font-weight: 600">
+                {{ element.Influencer ? element.Influencer : '-' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="Notes">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Notes</th>
+              <td mat-cell *matCellDef="let element" class="" style="font-weight: 600" matTooltip="{{ element.Notes }}">
+                {{ element.Notes ? (element.Notes?.slice(0,12)) : '-' }}<span *ngIf="element.Notes?.length > 12">...</span>
+              </td>
+            </ng-container>
+  
+  
+  
+            <!-- Actions column with Edit and Delete buttons -->
+            <ng-container matColumnDef="actions" sticky>
+              <th mat-header-cell *matHeaderCellDef> Actions </th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button (click)="editItem(element)">
+                    <mat-icon class="text-warning">edit</mat-icon>
+                  </button>
+                <button mat-icon-button (click)="deleteEntry(element.ID, element)">
+                  <mat-icon class="text-danger">delete</mat-icon>
+                </button>
+  
+  
+              </td>
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky:true" class="table-header">
+            </tr>
+  
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;let odd = odd; " [class.striped-row]="odd"></tr>
+  
+          </table>
+  
+          <!-- Pagination -->
+          <div class="loader-div  d-flex justify-content-center align-items-center flex-column"
+            *ngIf="!IsSelectedSheetDataLoaded">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+        <span class="pt-2">Loading ...</span>
+
+  
+          </div>
+        </div>
+        <!-- <app-new></app-new> -->
+      </ng-container>
+  
+    </div>
+    <mat-paginator [pageSizeOptions]="[ 5, pageSizeOptions]" showFirstLastButtons></mat-paginator>
+  
+  
+  </div>

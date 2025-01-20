@@ -1,0 +1,98 @@
+<div class="modal-container">
+    <div class="modal-header">
+        <div class="header-content">
+            <!-- <h2>&nbsp;</h2> -->
+            <!-- <div class="trade-type text-center" [ngClass]="data?.Type?.toLowerCase()">{{data?.Type || 'N/A'}}</div>
+            <div class="date">{{data?.Date ? (data.Date | date:'medium') : 'N/A'}}</div> -->
+
+        </div>
+        <button mat-icon-button class="close-btn text-danger" (click)="onClose()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <!-- Coin Info -->
+        <div class="coin-info">
+            <div class="coin-symbol" [ngClass]="{'text-success': (data.Type).toUpperCase() === 'BUY', 'text-danger': (data.Type).toUpperCase() === 'SELL'}"> <mat-icon class="trade-arrow">
+                    {{(data.Type).toUpperCase() === 'BUY' ? 'arrow_upward' : 'arrow_downward'}}
+                </mat-icon>{{data?.Coin || 'N/A'}}</div>
+            <div class="date">{{data?.Date ? (data.Date | date:'medium') : 'N/A'}}</div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="label">Contracts</div>
+                <div class="value">{{data?.Contracts || 'N/A'}}</div>
+            </div>
+            <div class="metric-item">
+                <div class="label">Leverage</div>
+                <div class="value">{{data?.Leverage ? (data.Leverage + ' X') : 'N/A'}}</div>
+            </div>
+            <div class="metric-item">
+                <div class="label">Size</div>
+                <div class="value">{{((data?.Contracts ? data.Contracts : 0)*(data?.Lot_Value ? data.Lot_Value : 0)) |
+                    number:'1.2-2'}} {{data?.Coin || 'N/A'}}</div>
+            </div>
+            <div class="metric-item">
+                <div class="label">Open_Margin</div>
+                <div class="value">${{data?.Open_Margin ? (data.Open_Margin | number:'1.2-2') + '' : 'N/A'}}</div>
+            </div>
+        </div>
+
+        <!-- Price Info -->
+        <div class="price-info">
+            <div class="price-box">
+                <div class="label">Open Price</div>
+                <div class="value">{{data?.Open_Price ? (data.Open_Price | number:'1.2-2') : 'N/A'}}</div>
+                <!-- <div class="time">{{data?.Date ? (data.Date | date:'medium') : 'N/A'}}</div> -->
+            </div>
+            <mat-icon>arrow_forward</mat-icon>
+            <div class="price-box">
+                <div class="label">Close Price</div>
+                <div class="value">{{data?.Close_Price ? (data.Close_Price | number:'1.2-2') : 'N/A'}}</div>
+                <!-- <div class="time">{{data?.Date ? (data.Date | date:'medium') : 'N/A'}}</div> -->
+            </div>
+        </div>
+
+        <!-- PNL Info -->
+        <div class="pnl-info" [ngClass]="data?.Pnl ? (data.Pnl > 0 ? 'profit' : 'loss') : ''">
+            <div class="pnl-header">
+                <span>Profit/Loss</span>
+                <mat-icon>{{data?.Pnl ? (data.Pnl > 0 ? 'trending_up' : 'trending_down') : 'remove'}}</mat-icon>
+            </div>
+            <div class="pnl-value">
+                {{data?.Pnl ? ((data.Pnl > 0 ? '+' : '') + (data.Pnl | number:'1.2-2') + ' USDT') : 'N/A'}}
+            </div>
+            <div class="pnl-percentage">
+                {{data?.Pnl_Percentage ? ((data.Pnl_Percentage > 0 ? '+' : '') + (data.Pnl_Percentage | number:'1.2-2')
+                + '%') : 'N/A'}}
+            </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="additional-info">
+            <!-- <div class="info-row">
+                <span class="label">Trade Type</span>
+                <span class="value" [ngClass]="{'text-success': data?.Type?.toLowerCase() === 'buy', 'text-danger': data?.Type?.toLowerCase() === 'sell'}">{{data?.Type || 'N/A'}}</span>
+            </div> -->
+            <div class="info-row">
+                <span class="label">Lot Value</span>
+                <span class="value">{{data?.Lot_Value || 'N/A'}} = 1 {{data?.Coin || 'N/A'}}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Influencer</span>
+                <span class="value">{{data?.Influencer || 'N/A'}}</span>
+            </div>
+
+
+
+        <div class="info-row d-flex align-items-between">
+            <button class="btn btn-warning btn-sm">Update</button>
+                <button class="btn btn-danger btn-sm">Delete</button>
+
+            </div>
+        </div>
+    </div>
+</div>

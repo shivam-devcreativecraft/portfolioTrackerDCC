@@ -1,0 +1,136 @@
+@use '@angular/material' as mat;
+@include mat.core();
+$DrkDr-primary: mat.define-palette(mat.$indigo-palette);
+$DrkDr-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$DrkDr-warn: mat.define-palette(mat.$red-palette);
+$DrkDr-theme: mat.define-light-theme((color: (primary: $DrkDr-primary,
+        accent: $DrkDr-accent,
+        warn: $DrkDr-warn,
+      )));
+@include mat.all-component-themes($DrkDr-theme);
+
+
+
+
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+@import 'ngx-toastr/toastr';
+@import '../src/app/sharedSCSS/scssVariable/colorVariable.scss';
+
+// @import '/src/app/sharedSCSS/animationStyle.scss';
+
+html{
+  scroll-behavior:smooth;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//spacing
+.ptb_100 {
+  padding: 100px 0px;
+}
+
+.pb_30 {
+  padding-bottom: 30px
+}
+
+.pb_15 {
+  padding-bottom: 15px
+}
+
+//background color
+.theme-bg-dark {
+  background-color: #151f20 !important;
+}
+
+.opacity_50{
+  opacity: 50%;
+}
+
+.opacity_100{
+  opacity: 100%;
+}
+
+/* Custom CSS class for Toastr notifications */
+
+
+
+// .scroller {
+//   width: 100%;
+//   height: 5px;
+//   overflow-y: hidden;
+// }
+
+// /* width */
+// ::-webkit-scrollbar {
+//   width: 5px;
+//   height : 5px;
+//   border-radius: 20px !important;
+// }
+
+// /* Track */
+// ::-webkit-scrollbar-track {
+//   background: #eee;
+// }
+
+// /* Handle */
+// ::-webkit-scrollbar-thumb {
+//   background: 
+//   #f7a50070;
+//   // rgba(0, 0, 0, 0.336);
+// }
+
+// /* Handle on hover */
+// // ::-webkit-scrollbar-thumb:hover {
+// //   background: #00000071;
+// // }
+
+
+
+// // floating button
+
+
+
+
+
+
+
+/* Hide the scroll bar by default */
+::-webkit-scrollbar {
+  width: 6px !important;
+  max-height: 6px !important;
+}
+
+/* Show the scroll bar when scrolling */
+::-webkit-scrollbar-thumb {
+  background: rgb($base-color_primary, 25%); /* Customize the scroll bar color */
+  border-radius: 20px !important;
+  width: 3px;
+  height: 3px;
+}
+
+/* Track when scrolling */
+::-webkit-scrollbar-track {
+  background: #eeeeee00;
+}
+
+/* Show the scroll bar when hovering over it */
+::-webkit-scrollbar-thumb:hover {
+  width: 3px;
+  height: 3px;
+  background:rgb( $base-color_primary, 75%); /* Adjust the scroll bar color on hover */
+}
+
+.fit-content {
+  width: fit-content;
+}
+
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css");
+
+
+.spacer-20{
+  padding-top: 20px;
+  padding-bottom: 20px;
+}/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

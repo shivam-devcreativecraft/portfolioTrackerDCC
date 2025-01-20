@@ -1,0 +1,8 @@
+@import '../../../sharedSCSS/dialogsStyle/dialogsStyle.scss';
+
+@import '../../../sharedSCSS/scssVariable/colorVariable.scss';
+
+.content p{
+    color : $base-color-primary;
+    font-weight: 600;
+}

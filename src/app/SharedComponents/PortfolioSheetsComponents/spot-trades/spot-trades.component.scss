@@ -1,0 +1,19 @@
+@import '../../../sharedSCSS/portfolioSheets/sheetsOuterMostContainerStyle.scss';
+@import '../../../sharedSCSS/portfolioSheets/sheetsInnerContainerStyle.scss';
+
+.disabled-icon {
+
+  color: rgb(255, 0, 0) !important;
+  /* Change the color to gray to indicate it is disabled */
+  cursor: not-allowed !important;
+  transform:none !important
+
+  /* Change cursor to not-allowed as a visual cue */
+
+
+}
+
+.disabled-icon :hover {
+  transform:none !important;
+  color:red !important
+}

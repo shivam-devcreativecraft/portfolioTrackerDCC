@@ -1,0 +1,114 @@
+<div class="coins-outer-div  mx-2 ">
+
+    <h1 class="box-title">API Logs</h1>
+
+    <button mat-icon-button class="clear_log_button" *ngIf="logs.length === 0" style="cursor:not-allowed">
+        <mat-icon class="text-light">delete</mat-icon>
+    </button>
+
+    <button mat-icon-button (click)="clearLogs()" class="clear_log_button" *ngIf="logs.length !== 0">
+        <mat-icon class="text-light">delete</mat-icon>
+    </button>
+
+
+    <mat-tab-group mat-stretch-tabs="true" mat-align-tabs="center" *ngIf="logs.length != 0">
+
+        <mat-tab label="Error">
+            <ng-template mat-tab-label>
+                <span matBadge="{{ (errorLogs.length>0) ? errorLogs.length : '' }}" matBadgePosition="after" matBadgeColor="warn">Error &nbsp;&nbsp;</span>
+              </ng-template>
+            <div class="row coins-div box-shadow-sub-total-stats mt-4  pb-4 rounded-3 px-2"
+                *ngIf="errorLogs.length !== 0">
+                <div *ngFor="let log of errorLogs; let i = index"
+                    class="api_content col-lg-12 pt-3 col-12  pb-4 d-flex justify-content-between align-items-start flex-column">
+
+                    <div class="card card-trading_Pairs p-0" style="width: 100%">
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <!-- <h2 class="card-title badge badge-heading pill "> {{ log.timestamp }}</h2> -->
+                                    <h2 class="card-title badge badge-heading pill "> Error #{{i+1}}</h2>
+
+                                </div>
+
+                                <div class="col-12" style="    margin-top: -30px;">
+                                    <pre>{{ log.message }}</pre>
+
+                                </div>
+                                <div class="col-12">
+                                    <pre>{{ log.data | json }}</pre>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div *ngIf="errorLogs.length === 0" class="no-logs" style="border:none !important">
+                <p>No logs registered!</p>
+            </div>
+
+
+        </mat-tab>
+
+        <mat-tab label="Success">
+            <ng-template mat-tab-label>
+                <span matBadge="{{ (successLogs.length>0) ? successLogs.length : '' }}" matBadgePosition="after" matBadgeColor="warn">Success &nbsp;&nbsp;</span>
+              </ng-template>
+            <div class="row coins-div box-shadow-sub-total-stats mt-4  pb-4 rounded-3 px-2"
+            *ngIf="successLogs.length !== 0">
+            <div *ngFor="let log of successLogs; let i = index"
+                class="api_content col-lg-12 pt-3 col-12  pb-4 d-flex justify-content-between align-items-start flex-column">
+
+                <div class="card card-trading_Pairs p-0" style="width: 100%">
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-6 d-flex align-items-center">
+                                <!-- <h2 class="card-title badge badge-heading pill "> {{ log.timestamp }}</h2> -->
+                                <h2 class="card-title badge badge-heading pill "> Success #{{i+1}}</h2>
+
+                            </div>
+
+                            <div class="col-12" style="    margin-top: -30px;">
+                                <pre>{{ log.message }}</pre>
+
+                            </div>
+                            <div class="col-12">
+                                <pre>{{ log.data | json }}</pre>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+            <div *ngIf="successLogs.length === 0" class="no-logs" style="border:none !important">
+                <p>No logs registered!</p>
+            </div>
+
+
+        </mat-tab>
+
+    </mat-tab-group>
+
+
+
+    <div *ngIf="logs.length === 0" class="no-logs" style="border:none !important">
+        <p>No logs registered!</p>
+    </div>
+
+
+
+
+</div>

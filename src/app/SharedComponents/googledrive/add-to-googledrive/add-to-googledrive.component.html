@@ -1,0 +1,85 @@
+<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" class="add_Dialog">
+
+
+    <div mat-dialog-title cdkDragHandle>
+        <h1>Add Entry<br>
+            <p class="mb-0" style='font-size: 10px; margin-top:-6px'>Add: {{type}}</p>
+        </h1>
+
+    </div>
+
+    <div mat-dialog-content class="content">
+        
+        <form #form>
+            <ng-container *ngIf="uploadData.type === 'file'">
+                <div class="">
+                    <h2 class="text-center mb-4">File Upload to Google Drive</h2>
+
+                    <div class="mb-3 input-group">
+                        <input type="file" (change)="onFilesSelected($event)"  accept="*/*" class="form-control" multiple />
+                        <span class="input-group-text bg-white" id="basic-addon2" *ngIf="selectedFiles.length">
+                            <mat-icon class="text-danger" style="cursor:pointer" (click)="resetFileUpload()">close</mat-icon>
+                        </span>
+                    </div>
+
+                    <div *ngFor="let file of selectedFiles; let i = index" class="mb-3">
+                        <p><strong>File:</strong> {{ file.name }}</p>
+                        <label for="customFileName{{i}}" class="form-label">Optional File Name:</label>
+                        <input id="customFileName{{i}}" [(ngModel)]="customFileNames[i]" name="customFileName{{i}}"
+                            placeholder="Enter custom file name (optional)" class="form-control" />
+                        
+                        <label for="fileDescription{{i}}" class="form-label">File Description:</label>
+                        <input id="fileDescription{{i}}" [(ngModel)]="fileDescriptions[i]" name="fileDescription{{i}}"
+                            placeholder="Enter file description" class="form-control" />
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <label for="folderName" class="form-label">Folder Name (Optional if Folder ID is provided):</label>
+                        <input id="folderName" [(ngModel)]="folderName" name="folderName"
+                            placeholder="Enter folder name" class="form-control"  />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="folderId" class="form-label">Folder ID (Optional if Folder Name is provided):</label>
+                        <input id="folderId" [(ngModel)]="folderId" name="folderId" placeholder="Enter folder ID"
+                            class="form-control" />
+                    </div>
+                    <hr>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="uploadData.type === 'folder'">
+                <div class="mb-3">
+                    <label for="folderName" class="form-label">Folder Name:</label>
+                    <input id="folderName" [(ngModel)]="folderName" name="folderName" placeholder="Enter folder name"
+                        class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="folderId" class="form-label">Folder ID (Optional if Folder Name is provided):</label>
+                    <input id="folderId" [(ngModel)]="folderId" name="folderId" placeholder="Enter folder ID"
+                        class="form-control" disabled />
+                </div>
+            </ng-container>
+        </form>
+    </div>
+
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button color="" tabIndex="-1" (click)="onClose()">Cancel</button>
+        <ng-container *ngIf="type==='file'">
+            <button mat-raised-button color="primary"
+                [disabled]="selectedFiles.length === 0 || (!folderName && !folderId) || isUploadClicked" (click)="onSubmit()">
+                <span *ngIf="!isUploadClicked">Upload</span>
+                <span *ngIf="isUploadClicked">Uploading...</span>
+            </button>
+        </ng-container>
+        <ng-container *ngIf="type==='folder'">
+            <button mat-raised-button color=""
+            [disabled]="(!folderName && !folderId) || isUploadClicked" (click)="onSubmit()">
+            <span *ngIf="!isUploadClicked">Upload</span>
+            <span *ngIf="isUploadClicked">Uploading...</span>
+        </button>
+        </ng-container>
+    </div>
+</div>

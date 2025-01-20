@@ -1,0 +1,35 @@
+<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" class="chartAnalysis_Dialog">
+
+<div mat-dialog-title cdkDragHandle>
+  <h1 style="margin-top: -26px; margin-bottom: 5px !important;" class="mb-0 text-center ">ANALYSIS</h1>
+</div>
+<hr class="m-0" />
+
+<div mat-dialog-content class="content">
+  <div class="row d-flex flex-row justify-content-center align-items-center p-0 m-0">
+
+    <div class="col-12 my-3 resizable">
+      <div id="tv_chart_container"></div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-12 mt-3 ">
+      <div id="technicalAnalysis"></div>
+    </div>
+  <div class="col-lg-6 col-md-6 col-12 mt-3 ">
+    <div id="tv_symbol_overview"></div>
+  </div>
+
+ 
+
+
+
+
+</div>
+
+</div>
+
+<hr class="m-0" />
+
+<div mat-dialog-actions class="action">
+  <button mat-raised-button color="warn" (click)="onClose()">Close</button>
+</div>
+</div>

@@ -1,0 +1,119 @@
+@import '../../sharedSCSS/scssVariable/colorVariable.scss';
+
+// ---------------Global for all dialogs-------STARTS
+
+//mat diaoog dragable title style
+[mat-dialog-title] {
+    cursor: grab;
+
+h1{
+    margin-top:-25px ;
+    margin-bottom: 0px;
+    color: $base_color_primary;
+    text-align: center;
+    font-weight: 500;
+
+}
+}
+
+// ---------------Global for all dialogs-------ENDS
+
+// ------------Common Styles for dialogs--------STARTS
+.searchCoin_Dialog,
+.binanceAdd_Dialog,
+.bybitAdd_Dialog,
+.mexcAdd_Dialog,
+.kucoinAdd_Dialog,
+.gateioAdd_Dialog,
+.deltaAdd_Dialog,
+.freebitcoAdd_Dialog,
+.openOrdersSheet_Dialog,
+.sidenavMenu_asDialog
+// .history_Dialog
+// .openOrdersSheet_Dialog
+
+
+
+
+{
+  
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  
+    resize: both;
+    overflow: auto;   
+
+   
+.content{
+  padding-top: 12px;
+  padding-right:20px;
+  padding-left : 20px
+}
+    
+
+}
+
+
+.binanceAdd_Dialog,
+.bybitAdd_Dialog,
+.mexcAdd_Dialog,
+.kucoinAdd_Dialog,
+.gateioAdd_Dialog
+{
+    min-width: 260px;
+    min-height: 375px;
+    max-height:752px;
+}
+
+
+
+// ------------Common Styles for dialogs--------ENDS
+
+
+.searchCoin_Dialog{
+    min-width: 200px ;
+    min-height: 237px ;
+}
+// .history_Dialog{
+//   min-width:329.5px;
+//   min-height:736.750px;
+//   max-height:736.750px
+// }
+
+::ng-deep:root {
+    .mat-mdc-form-field {
+      // max-width: 100% !important;
+    }
+  
+    // .mdc-dialog__title {
+    //   color: $base_color_primary;
+    // }
+  
+    .mat-dialog-title,
+    .mat-dialog-actions {
+      flex: 0 0 auto;
+      /* Keeps title and actions static in size */
+    }
+  
+    .mat-mdc-dialog-content .mdc-dialog__content .content {
+      flex: 1 1 auto;
+      /* Makes content flexible */
+      overflow: auto;
+      /* Adds scroll to content if overflow */
+    }
+    .action {
+      justify-content: end;
+    
+      // padding: 0px 25px 0px;
+      button {
+        // flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 0px;
+        margin-right: 0px
+      }
+    }
+  
+  }

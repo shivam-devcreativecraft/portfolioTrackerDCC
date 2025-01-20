@@ -1,0 +1,357 @@
+@import '../../sharedSCSS/dialogsStyle/dialogsStyle.scss';
+@import '../../sharedSCSS/scssVariable/colorVariable.scss';
+
+/* Global transition for all elements, excluding elements with the `.btn` class */
+*:not(.btn, .dropdown) {
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* Also exclude any descendants of elements with the .btn class */
+.btn *,
+.dropdown * {
+  transition: none !important;
+  /* Override transitions for anything inside .btn */
+}
+
+.spacer-20 {
+  padding: 20px
+}
+
+.page_title {
+  color: $base-color_primary;
+}
+
+.image-preview {
+  margin: 20px 0;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 300px; // Limit height for the preview
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+
+
+.themeColorHighlighted {
+  color: $base-color_primary !important;
+  font-weight: 800 !important;
+}
+
+
+.fileListDiv {
+  transition: transform 0.3s ease, color 0.3s ease;
+  /* Add transition for smooth animation */
+
+  .file-name {
+    // transition: color 0.3s ease, font-weight 0.3s ease; /* Add transition for smooth text color and weight change */
+  }
+
+  /* Hover effect */
+  &:hover {
+    transform: scale(1.05);
+    /* Zoom effect */
+
+    .file-name {
+      color: $base-color_primary;
+      /* Change color on hover */
+      font-weight: 800;
+      /* Bold text on hover */
+    }
+  }
+}
+
+
+
+
+// #region folder-view
+
+.list-group {
+  display: flex;
+
+}
+
+
+.folder-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #e6e6e6;
+    /* Light gray hover effect */
+  }
+
+  &.expanded {
+    background-color: #f0f0f0;
+    color: $base-color_primary;
+
+    /* Slightly darker gray when expanded */
+    .item-name {
+      font-weight: 800;
+      color: $base-color_primary;
+
+    }
+  }
+
+  .backgroundColor {
+    background-color: #f0f0f0;
+
+  }
+
+
+
+  /* Adding a vertical line to the folder item */
+  position: relative;
+  /* Required for absolute positioning of lines */
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    /* Adjust based on your design */
+    top: 0;
+    /* Start from the top */
+    height: 100%;
+    /* Full height */
+    width: 2px;
+    /* Thickness of the line */
+    background-color: #f0f0f0;
+    /* Color for the vertical line */
+    z-index: -1;
+    /* Place behind folder items */
+  }
+}
+
+.folder-item:hover {
+
+  .item-name {
+    color: $base-color_primary ;
+    font-weight: 800;
+
+  }
+}
+
+.folder-icon,
+.file-icon {
+  margin-right: 8px;
+  color: #4a4a4a;
+  /* Icon color */
+}
+
+.item-name {
+  font-size: 14px;
+  /* Adjust font size */
+  color: #000;
+  /* Text color */
+
+
+}
+
+ul {
+  list-style-type: none;
+  /* Remove bullet points */
+  // padding-left: 20px; /* Indentation for nested folders */
+  margin-top: 10px !important;
+  margin-bottom: 10px;
+  /* Remove default margin */
+}
+
+.empty-folder {
+  color: #888;
+  /* Gray color for empty folder message */
+  font-style: italic;
+  /* Italic for emphasis */
+}
+
+.nested-list {
+  padding-left: 20px;
+  /* Indentation for nested lists */
+  position: relative;
+  /* Required for positioning horizontal lines */
+}
+
+.nested-list li {
+  position: relative;
+  cursor: pointer;
+  /* Pointer cursor for nested items */
+}
+
+.nested-list li::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  /* Align horizontal line */
+  top: 12px;
+  /* Center the horizontal line */
+  width: 20px;
+  /* Length of the line */
+  height: 2px;
+  /* Thickness of the line */
+  background-color: #f0f0f0;
+  /* Color of the line */
+}
+
+.nested-list li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: -10px;
+  /* Align with folder item */
+  top: 12px;
+  /* Position it at the center of the item */
+  height: 100%;
+  /* Fill to bottom */
+  border-left: 2px solid #f0f0f0;
+  /* Improved color for the vertical line */
+}
+
+.folder-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  // i {
+  //   margin-left: 8px; // Add some space between item name and icon
+  //   color: #f0f0f0; // Adjust color as needed
+  // }
+}
+
+
+
+
+
+
+// #endregion
+
+* {
+  animation: transform 2s ease
+}
+
+.folder-path,
+.back_Arror,
+.dropdown_Arrow,
+.dropdown {
+  cursor: pointer;
+  font-size: 14px !important
+}
+
+.folder-path:hover {
+  font-weight: 800;
+  transform: scale(1.05);
+  color: $base-color_primary;
+}
+
+.back_Arror:hover {
+  font-weight: 800;
+  transform: scale(1.05);
+}
+
+.dropdown_Arrow:hover {
+  font-weight: 800;
+  transform: scale(1.05);
+}
+
+.dropdown-item:active,
+.dropdown-item:focus {
+  background-color: #f0f0f0;
+  color: $base-color_primary;
+
+}
+
+.file-name {
+  width: 100%;
+  /* Ensure span takes the full width of the li */
+  white-space: nowrap;
+  /* Prevent the text from wrapping to the next line */
+  overflow: hidden;
+  /* Hide overflow */
+  text-overflow: ellipsis;
+  /* Add ellipsis if text overflows */
+  display: block;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  /* Ensure it behaves as a block-level element */
+}
+
+.list-group-item {
+  position: relative;
+  /* Ensure the relative position for overflow control */
+  width: 102px;
+  height: auto;
+  text-align: start;
+}
+
+.list-group-item:hover .file-name {
+  overflow: auto;
+  /* Enable scrolling when hovering over the li */
+  text-overflow: clip;
+  /* Disable ellipsis while scrolling */
+  white-space: nowrap;
+  /* Keep the text in a single line */
+}
+
+img {
+  height: 95px;
+}
+
+.icon_div:hover {
+  background-color: #e6e6e6;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+
+
+.action_buttons {
+  i {
+    font-size: 24px;
+
+    &:hover {
+      cursor: pointer;
+      font-weight: 800 !important;
+      color: $base-color_primary;
+    }
+  }
+
+}
+
+.action_buttons,
+.address_bar {
+  background-color: #e6e6e6;
+  border-radius: 12px;
+  padding: 0.5rem;
+  border: 2px solid #f0f0f0
+}
+
+.options_dialog {
+  .content {
+    p {
+      transition: color 0.3s, font-weight 0.3s; // Add smooth transition to p
+      color: inherit; // Ensure p uses its default color
+      &:hover {
+        color: $base-color_primary;
+        cursor: pointer;
+        font-weight: 500;
+        
+        i {
+          color: inherit !important; // Prevent i from changing color on p hover
+        }
+      }
+    }
+
+    i {
+      transition: none; // Ensure i does not have any transitions/animations
+      &:hover {
+        animation: none; // Explicitly remove animation from i when hovered
+      }
+    }
+  }
+
+  hr {
+    border: none; // Remove default border
+    border-top: 2px solid $base-color_primary; // Change color and thickness
+  }
+}
