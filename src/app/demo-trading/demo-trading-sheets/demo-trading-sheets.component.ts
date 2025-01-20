@@ -36,7 +36,7 @@ export class DemoTradingSheetsComponent implements OnInit {
 
 ngOnInit(): void {
 
-  this.googleSheetAPIServiceRef.setSheetName(this.selectedSheetName)
+  // this.googleSheetAPIServiceRef.setSheetName(this.selectedSheetName)
 
 
   this.googleSheetAPIServiceRef.checkMasterControlSubject$.subscribe((IsEnabled: boolean) => {
@@ -45,52 +45,10 @@ ngOnInit(): void {
 
 
   
-  this.googleSheetAPIServiceRef.selectedSheetName$.subscribe(
-    (sheetName) => {
-      this.selectedSheetName = sheetName;
-    }
-  );
-
-  
 }
 
 
-  // <!-- -----------------------ENDS floating sheet button --------------------------- -->
-  onSheetSelect(sheetName: string) {
-    this.googleSheetAPIServiceRef.setSheetName(sheetName)
 
-
-    switch (sheetName) {
-      case 'Delta_Futures':
-        // this.googleSheetApiRef.selectedSheetName='SIP'
-        this.router.navigate([
-          'demo-trading',
-          'demo-trading-sheets',
-          'delta-exchange',
-        ]);
-        this.openMenu = false;
-
-        break;
-
-
-
-
-      case 'Futures':
-
-        this.router.navigate([
-          'demo-trading',
-          'demo-trading-sheets',
-          'futures',
-        ]);
-        this.openMenu = false;
-        break;
-
-   
-
-
-
-    }
-  }
 
 
   IsAddDialogOpened: boolean = false;

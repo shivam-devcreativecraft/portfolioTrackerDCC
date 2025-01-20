@@ -7,7 +7,6 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, filter, map, startWith } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { GoogleSheetApiService } from 'src/app/services/google-sheet-api.service';
-import { AddDemoTradingEntryMarginBasedComponent } from '../add-demo-trading-entry-margin-based/add-demo-trading-entry-margin-based.component';
 
 @Component({
   selector: 'app-add-demo-trading-delta-futures',
@@ -59,7 +58,7 @@ export class AddDemoTradingDeltaFuturesComponent implements OnInit {
     private datePipe: DatePipe,
     private toastr: ToastrService,
     private dataService: DataService,
-    public dialogRef: MatDialogRef<AddDemoTradingEntryMarginBasedComponent>,
+    public dialogRef: MatDialogRef<AddDemoTradingDeltaFuturesComponent>,
     private router: Router,
 
   ) {

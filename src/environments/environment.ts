@@ -19,53 +19,43 @@ export const environment = {
   // BINANCE_API_KEY_23_02_24: 'MwV2cAPX6RQjApOvs7tLKQiWHCq4Dxy7hjYPgKEXsuy96lkc0jvIwOqw7uO4KwH5',
   // BINANCE_API_SECRETE_23_02_24: 'M8xSFAXUH8hL5TWTLuyiEAXOCSMJ5WgdAEvflsdwvyisfrWoUjcGUEmBc29IUVMA',
 
-  MEXC_API_KEY: 'mx0vgl83tstJdaOcYa',
-  MEXC_SECRETE: 'af05beacdb3d448abb3e95eb6b4e0741',
+  MEXC_API_KEY: '',
+  MEXC_SECRETE: '',
   // MEXC_DAYS: 90,
 
-  BYBIT_API_KEY: 'F246RzDFIsvVs8JVxA',
-  BYBIT_SECRETE: 'MHyujpcOv4kEfczXrvwO34OQ06MtshgKPGEa',
+  BYBIT_API_KEY: '',
+  BYBIT_SECRETE: '',
   BYBIT_DAYS: 90,
 
 
-  BYBIT_API_KEY_Copy_Trading_Master: 'dIsUFYeS2TXC92J8fT',
-  BYBIT_SECRETE_Copy_Trading_Master: 'ezZe9yhOmxDzYkQdedLE5HeaQgeNSGUFVrSw',
+  BYBIT_API_KEY_Copy_Trading_Master: '',
+  BYBIT_SECRETE_Copy_Trading_Master: '',
   BYBIT_DAYS_Copy_Trading_Master: 90,
 
 
-  BYBIT_API_KEY_DEMO: 'E0Sen27eGd5da3rc1O',
-  BYBIT_API_SECRETE_DEMO: 'GJ9xWFN34nRSY4IDMRcMitX2NPbpD8Zrehcw',
+  BYBIT_API_KEY_DEMO: '',
+  BYBIT_API_SECRETE_DEMO: '',
   BYBIT_DAYS_DEMO: 90,
 
-  BYBIT_API_KEY_TESTNET: '0IYebyZD9ciPt2nUEo',
-  BYBIT_API_SECRETE_TESTNET: 'ffwjorcmxKxmdt9yJzD8ObXBeDUnuhTHg5Yw',
+  BYBIT_API_KEY_TESTNET: '',
+  BYBIT_API_SECRETE_TESTNET: '',
   BYBIT_DAYS_TESTNET: 90,
 
 
 
-  // KUCOIN_KEY_15_01_24: '66fb11b256720c000186787d',
-  // KUCOIN_SECRETE_15_01_24: 'cbea3b9d-af3e-4da7-a803-a92bc52ac12c',
-
-  // GATE_KEY_21_01_24: '23c9499ca8240e93873b465e8361654f',
-  // GATE_SECRETE_21_01_24: 'a837a683ac88e0e8e43473740c1ec0378b37a530b136edaa4c307d4bf3a55af1',
-  // GATE_DAYS: 90,
-
-  // GOOGLE_CLIENT_ID: '231907482879-vmig9709cjasr0333agalrhvco7o51bv.apps.googleusercontent.com',  //shivamcp10
-
-  GOOGLE_CLIENT_ID: '622087305671-vu3d4gbj33a90dt1pqhfmlph748s89sk.apps.googleusercontent.com',  //drkdr.shivamji
-  GOOGLE_CLIENT_SECRETE: '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',
+  GOOGLE_CLIENT_ID: '',  //drkdr.shivamji
+  GOOGLE_CLIENT_SECRETE: '',
 
 
 
 
-  GOOGLE_CLOUD_API_KEY_YOUTUBE_VIDEO_INFO: 'AIzaSyAa9NQvZ8dHm2tzldcyGpFHYqSNJA8byCQ',
+  GOOGLE_CLOUD_API_KEY_YOUTUBE_VIDEO_INFO: '',
 
   
 
-  RENDER_SERVER:'Frankfurt (EU Central)',
+  // RENDER_SERVER:'Frankfurt (EU Central)',
   BACKEND_URL: 'http://localhost:3000',
 
-  // BACKEND_URL: 'https://backend-shivamc/p10.onrender.com',     //     |   shivamcp10's render.com
 // 
 
 

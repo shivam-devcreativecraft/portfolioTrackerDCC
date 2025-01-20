@@ -8,7 +8,7 @@ declare const TradingView: any;
   styleUrls: ['./tradingview.component.scss']
 })
 export class TradingviewComponent implements AfterViewInit {
-  constructor(private googleSheetAPIRef: GoogleSheetApiService) {
+  constructor() {
 
   }
   ngAfterViewInit(): void {

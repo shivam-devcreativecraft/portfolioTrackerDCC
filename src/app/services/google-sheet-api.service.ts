@@ -8,8 +8,8 @@ export class GoogleSheetApiService {
   constructor(private httpClientRef: HttpClient) { }
 
 
-private selectedSheetNameSubject = new BehaviorSubject<string>('');
-selectedSheetName$ = this.selectedSheetNameSubject.asObservable();
+// private selectedSheetNameSubject = new BehaviorSubject<string>('');
+// selectedSheetName$ = this.selectedSheetNameSubject.asObservable();
 
 
 
@@ -61,9 +61,9 @@ selectedSheetName$ = this.selectedSheetNameSubject.asObservable();
 
 
   // ------------------------------- Setting SheetName Observables portfolio-sheets -------------------------------
-  setSheetName(sheetName: string) {
-    this.selectedSheetNameSubject.next(sheetName);
-  }
+  // setSheetName(sheetName: string) {
+  //   this.selectedSheetNameSubject.next(sheetName);
+  // }
 
 
 

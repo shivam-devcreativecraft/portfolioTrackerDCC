@@ -8,9 +8,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subject } from 'rxjs';
-import { BybitAPIDemoService } from 'src/app/services/WorkingExchangeAPI/bybit-api-demo.service';
 import { DataService } from 'src/app/services/data.service';
-import { AddDemoTradingEntryMarginBasedComponent } from '../add-demo-trading-entry-margin-based/add-demo-trading-entry-margin-based.component';
+import { AddDemoTradingDeltaFuturesComponent } from '../add-demo-trading-delta-futures/add-demo-trading-delta-futures.component';
 @Component({
   selector: 'app-demo-trading-dashboard',
   templateUrl: './demo-trading-dashboard.component.html',
@@ -20,7 +19,7 @@ export class DemoTradingDashboardComponent {
  
   IsMasterControlEnabled: boolean = false;
   exchangeName: string = 'Demo_Trading';
-  sheetName: string = 'Futures'
+  sheetName: string = 'Delta_Futures'
 
 
   sheetData_FilteredBy_Influencers: any[] = [];
@@ -86,8 +85,6 @@ export class DemoTradingDashboardComponent {
     private toastr: ToastrService,
     private _dialog: MatDialog,
     private functionsServiceRef: FunctionsService,
-    private dataServiceRef: DataService,
-    private bybitAPIDemoServiceRef: BybitAPIDemoService,
 
 
 
@@ -130,9 +127,7 @@ export class DemoTradingDashboardComponent {
           this.sheetData_FilteredBy_Influencers = influencerData;
           
           if (this.sheetData_FilteredBy_Influencers) {
-            if (this.orderHistoryRealtime) {
-              // this.checkForNewEntries();
-            }
+        
             console.log(this.sheetData,this.sheetData_FilteredBy_Influencers);
      
           }
@@ -142,115 +137,6 @@ export class DemoTradingDashboardComponent {
 
 
 
-
-
-  // ----------------New ORder--------------STARTS
-  private orderHistoryRealtime: any;
-
-  async getTradeHistoryRealtime(exchangeName: string) {
-
-
-
-    const category = 'limit';
-    const limit = 1000
-    try {
-
-      // --------------
-      if (exchangeName.toUpperCase() === 'BYBIT') {
-
-
-        const tradeHistory = await this.bybitAPIDemoServiceRef.getClosedPnl_Bybit('linear', 1000);
-
-        if (tradeHistory) {
-
-
-          const orderHistoryRealtime_temp = tradeHistory.map((element: any) => {
-            const formatDate = (timestamp: string) => {
-              const myDate = new Date(parseInt(timestamp))
-              return `${myDate.getFullYear()}-${(myDate.getMonth() + 1).toString().padStart(2, '0')}-${myDate.getDate().toString().padStart(2, '0')} ${myDate.getHours().toString().padStart(2, '0')}:${myDate.getMinutes().toString().padStart(2, '0')}:${myDate.getSeconds().toString().padStart(2, '0')}`;
-
-            }
-
-            const formattedCreatedTime = formatDate(element.createdTime);
-            const formattedUpdateTime = formatDate(element.updatedTime);
-
-            return {
-              ...element,
-              createdTime: formattedCreatedTime,
-              updatedTime: formattedUpdateTime,
-              // positionType: element.positionType == 1 ? 'BUY' : element.positionType == 2 ? 'SELL' : 'error changing positionType',
-              side: element.side == 'Sell' ? 'BUY' : element.side == 'Buy' ? 'SELL' : 'error changing side',
-
-
-              openType: element.openType == 1 ? 'Market' : element.openType == 2 ? 'Limit' : 'error changing openType',
-
-              symbol: element.symbol.replace('_USDT', ''),  // Update the symbol
-              closedSize: this.dataServiceRef.getStaticSymbolContractValue(element.closedSize, element.symbol),
-
-
-            };
-
-          });
-
-          this.orderHistoryRealtime = orderHistoryRealtime_temp
-            .sort((a: any, b: any) => {
-              const timeA = new Date(a.updatedTime).getTime();
-              const timeB = new Date(b.updatedTime).getTime();
-              return timeB - timeA;
-            });
-
-        }
-
-      }
-      // -----------------
-
-    }
-    catch (error) {
-      // Handle errors here if needed
-      console.error('Error in fetching trade history:', error);
-    }
-  }
-
-  orderHistoryRealtime_NotSaved: any[] = [];
-
-  IsNewOrder: boolean = false;
-
-  checkForNewEntries() {
-
-    this.IsNewOrder = false;
-    const newUniqueTrades = [];
-
-    // Iterate through orderHistoryRealtime
-    for (const order of this.orderHistoryRealtime) {
-      const createdTime = order.createdTime;
-
-      // Check if the trade is unique
-      const isPresentInSheetData = this.sheetData.some(
-        (sheetTrade) => sheetTrade.Date_Creation === createdTime
-      );
-
-
-
-
-
-      if (!isPresentInSheetData) {
-        // Add the trade to the NewOrders array
-        newUniqueTrades.push(order);
-      }
-    }
-
-    // Add a new entry to orderHistoryRealtime_NotSaved
-    this.orderHistoryRealtime_NotSaved.push({
-      ExchangeName: this.exchangeName, // Set your predefined value here
-      SheetName: this.sheetName,    // Set your predefined value here
-      NewOrders: newUniqueTrades,
-    });
-    this.dataServiceRef.updateOrderHistory(this.orderHistoryRealtime_NotSaved);
-
-    this.IsNewOrder = true;
-
-  }
-  // ----------------New ORder--------------ENDS
 
 
   IsAddDialogOpened: boolean = false;
@@ -267,7 +153,7 @@ export class DemoTradingDashboardComponent {
 
         dialogRef.afterClosed().subscribe((result) => {
           if (result) {
-            const dialogRef = this._dialog.open(AddDemoTradingEntryMarginBasedComponent, {
+            const dialogRef = this._dialog.open(AddDemoTradingDeltaFuturesComponent, {
               data: { ExchangeName : this.exchangeName, SheetName: this.sheetName },
               disableClose: false, // Prevent the dialog from closing on click outside
               hasBackdrop: false, // Allow interaction with the underlying page
@@ -281,7 +167,7 @@ export class DemoTradingDashboardComponent {
         });
       }
     } else {
-      const dialogRef = this._dialog.open(AddDemoTradingEntryMarginBasedComponent, {
+      const dialogRef = this._dialog.open(AddDemoTradingDeltaFuturesComponent, {
         data: { ExchangeName : this.exchangeName, SheetName: this.sheetName },
         disableClose: false, // Prevent the dialog from closing on click outside
         hasBackdrop: false, // Allow interaction with the underlying page

@@ -6,12 +6,7 @@ import { DashboardComponent } from './dashboard.component';
 import { SearchSpotCoinDialogComponent } from '../SharedComponents/search-spot-coin-dialog/search-spot-coin-dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedMaterialImportsModule } from '../shared-material-imports/shared-material-imports.module';
-import { GoogledriveComponent } from '../SharedComponents/googledrive/googledrive.component';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ApiInterceptor } from '../api-interceptor';
 // import { GoogleLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
-import { environment } from 'src/environments/environment';
-import { ConsoleService } from '../services/console.service';
 import { } from '@abacritt/angularx-social-login';
 import {
   GoogleLoginProvider, FacebookLoginProvider,
@@ -23,7 +18,6 @@ import {
 
 
 } from '@abacritt/angularx-social-login';
-import { AddToGoogledriveComponent } from '../SharedComponents/googledrive/add-to-googledrive/add-to-googledrive.component';
 // import { FolderItemComponent } from '../SharedComponents/googledrive/folder-item/folder-item.component';
 
 @NgModule({

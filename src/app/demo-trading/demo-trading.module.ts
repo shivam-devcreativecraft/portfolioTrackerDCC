@@ -9,7 +9,6 @@ import { DemoTradingDashboardComponent } from './demo-trading-dashboard/demo-tra
 import { SharedMaterialImportsModule } from '../shared-material-imports/shared-material-imports.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
-import { AddDemoTradingEntryMarginBasedComponent } from './add-demo-trading-entry-margin-based/add-demo-trading-entry-margin-based.component';
 import { DisableNumberInputScrollDirective } from '../directives/disable-number-input-scroll.directive';
 import { AddDemoTradingDeltaFuturesComponent } from './add-demo-trading-delta-futures/add-demo-trading-delta-futures.component';
 
@@ -19,7 +18,6 @@ import { AddDemoTradingDeltaFuturesComponent } from './add-demo-trading-delta-fu
     DemoTradingComponent,
     DemoTradingSheetsComponent,
     DemoTradingDashboardComponent,
-    AddDemoTradingEntryMarginBasedComponent,
     AddDemoTradingDeltaFuturesComponent,
     // DisableNumberInputScrollDirective
 
