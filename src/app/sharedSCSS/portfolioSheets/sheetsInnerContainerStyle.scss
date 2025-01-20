@@ -1,0 +1,109 @@
+// [ ORDERS #6 ] For MAIN INNERMOST Container in  $exchange-$sheetname.component for inner shadow div that contains COINs Card
+@import '../../sharedSCSS/scssVariable/colorVariable.scss';
+
+h2,
+h3,
+h4 {
+  color: $base_color_primary;
+  font-weight: 500;
+  margin: 0;
+}
+
+h4>span {
+  font-weight: 600;
+  margin: 0
+}
+
+.badge-heading {
+  position: relative;
+  top: -36px;
+  left: -5px;
+  color: $base-color_Text;
+
+  mat-icon {
+    color: $base-color_Text !important
+  }
+}
+
+
+.show-less {
+  max-height: 1050px;
+  /* Default max height for screens wider than 768px */
+
+  @media (min-width: 768px) {
+    max-height: 1000px;
+    /* Override max height for screens 768px and wider */
+  }
+
+  border: 1px solid rgb($base-color_primary, 0.1);
+  overflow: auto;
+}
+
+.spinner-border {
+  color: $base_color_primary !important;
+}
+
+
+.badge-heading{
+    position: relative;
+    top : -20px;
+    left: 10px
+}
+.box-shadow-total-stats{
+    box-shadow: 0px 0px 4px 2px #ffc10769 ;
+    border-radius : 20px;
+  }
+
+.total_filtered_trade_count {
+  color: $base_color_primary;
+  font-size: 16px;
+  text-decoration: solid;
+
+}
+
+.modalButtons-row {
+
+  // border-radius: 10px;
+  border-radius: 0px 0px 8px 8px;
+
+  border-top: 1px solid $base-color_primary;
+  position: relative;
+  bottom: -16px;
+  margin-left: -11px;
+  margin-right: -11px;
+  padding-bottom: 0px;
+  padding-top: 15px;
+  // background-color: rgb($base_color_primary, 1);
+
+
+}
+
+.modalButtons-col {
+
+  padding: 0px;
+
+  p {
+
+    padding: 0px !important;
+    margin-bottom: 0;
+    color: $base-color_primary
+  }
+
+  p:hover {
+    scale: 1.1;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  mat-icon {
+    background-color: $base_color_Text;
+    color: $base-color_primary !important;
+    // border: 1px solid grey;
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+}

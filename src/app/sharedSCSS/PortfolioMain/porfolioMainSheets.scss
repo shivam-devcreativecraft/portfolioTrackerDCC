@@ -1,0 +1,359 @@
+
+// [ ORDERS #2 ] FOR SHEET CHANGE Button IN Potfolio-$exchange-sheets.component
+@import '../../sharedSCSS/scssVariable/colorVariable.scss';
+
+.sheet-name{
+color : $base-color_primary
+}
+
+// mat-button-toggle-styling
+::ng-deep:root {
+
+
+  
+    .mat-button-toggle-checked {
+        background-color:$base-color_primary;
+        color: rgba(0, 0, 0, 0.75)
+    }
+
+    .mat-button-toggle-group-appearance-standard {
+        border-radius: 8px;
+    }
+
+    .mat-mdc-tab:not(.mat-mdc-tab-disabled).mdc-tab--active .mdc-tab__text-label {
+        color: $base-color_primary;
+    }
+
+    .mat-mdc-tab:not(.mat-mdc-tab-disabled) .mdc-tab-indicator__content--underline {
+        border-color: $base-color_primary;
+    }
+
+    .mat-button-toggle-group-appearance-standard {
+        border: solid 1px $base-color_primary;
+        overflow: auto
+    }
+
+    .mat-button-toggle-group {
+        width: fit-content;
+    //     position: fixed;
+    // bottom: 0;
+    }
+
+    .disabled-mouse {
+        pointer-events: none;
+        color: rgba(0, 0, 0, 1)
+    }
+
+
+
+    .mat-button-toggle-appearance-standard.mat-button-toggle-disabled.mat-button-toggle-checked {
+        background-color:  $base-color_primary;
+    }
+
+
+}
+
+.vrt-cntr_hor-cntr {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.opacity_50{
+    opacity: 50%;
+}
+.opacity_100{
+    opacity: 100
+    0%;
+}
+
+// For Angular Material buttons
+::ng-deep {
+  
+  .mat-mdc-fab.mat-accent, .mat-mdc-mini-fab.mat-accent {
+    background-color: $base-color_primary ;
+    color: $base-color_Text; 
+  }
+
+  
+  .mat-mdc-fab.mat-warn, .mat-mdc-mini-fab.mat-warn {
+    background-color: $base-color_primary ;
+    color: $base-color_Text;
+  }
+
+
+}
+  .menu-button{
+    position: fixed;
+    bottom: 4.5rem;
+    right: 1.5rem;
+    z-index: 10;
+  }
+  
+  @keyframes moveOne {
+    from {bottom: 2rem; opacity: 0;}
+    to {bottom: 9rem;}
+  }
+  @keyframes moveOneLabel {
+    from {bottom: 2rem; opacity: 0;}
+    to {bottom: 9.5rem;}
+  }
+  
+  @keyframes moveTwo {
+    from {bottom: 2rem; opacity: 0;}
+    to {bottom: 13rem;}
+  }
+  @keyframes moveTwoLabel {
+    from {bottom: 2rem; opacity: 0;}
+    to {bottom: 13.5rem;}
+  }
+
+
+
+
+  @keyframes moveThree {
+    from {bottom: 2rem; opacity: 0;}
+    to {bottom: 17rem;}
+  }
+  @keyframes moveThreeLabel {
+    from {bottom: 2rem; opacity: 0;}
+    to {bottom: 17.5rem;}
+  }
+
+
+  @keyframes moveFour {
+    from {bottom: 2rem; opacity: 0;}
+    to {bottom: 21rem;}
+  }
+  @keyframes moveFourLabel {
+    from {bottom: 2rem; opacity: 0;}
+    to {bottom: 21.5rem;}
+  }
+  
+
+
+@keyframes moveFive {
+  from {bottom: 2rem; opacity: 0;}
+  to {bottom: 25rem;}
+}
+@keyframes moveFiveLabel {
+  from {bottom: 2rem; opacity: 0;}
+  to {bottom: 25.5rem;}
+}
+
+
+
+@keyframes moveSix {
+  from {bottom: 2rem; opacity: 0;}
+  to {bottom: 29rem;}
+}
+@keyframes moveSixLabel {
+  from {bottom: 2rem; opacity: 0;}
+  to {bottom: 29.5rem;}
+}
+
+
+@keyframes moveSeven {
+  from {bottom: 2rem; opacity: 0;}
+  to {bottom: 33rem;}
+}
+@keyframes moveSevenLabel {
+  from {bottom: 2rem; opacity: 0;}
+  to {bottom: 33.5rem;}
+}
+
+
+
+@keyframes moveEight {
+  from {bottom: 2rem; opacity: 0;}
+  to {bottom: 37rem;}
+}
+@keyframes moveEightLabel {
+  from {bottom: 2rem; opacity: 0;}
+  to {bottom: 37.5rem;}
+}
+
+@keyframes moveNine {
+  from {bottom: 2rem; opacity: 0;}
+  to {bottom: 41rem;}
+}
+@keyframes moveNineLabel {
+  from {bottom: 2rem; opacity: 0;}
+  to {bottom: 41.5rem;}
+} 
+
+.action-button{
+    position: fixed;
+    right: 2rem;
+    transition-property: opacity;
+  }
+  .label{
+    position: fixed;
+    right: 5rem;
+    left: auto;
+    height: 25px;
+    width: 180px;
+    line-height: 25px;
+    min-height: 25px;
+    vertical-align: top;
+    font-size: 12px;
+    padding: 0 0;
+    margin: 0;
+  }
+  
+  .one{
+    bottom: 9rem;
+    animation: moveOne 0.2s;
+    z-index: 10;
+    background-color: $base-color_primary;
+  }
+  .labelone{
+    bottom: 9.5rem;
+    animation: moveOneLabel 0.2s;
+    z-index: 10;
+
+    background-color: $base-color_primary;
+  }
+    
+  .two{
+    bottom: 13rem;
+    animation: moveTwo 0.25s;
+    z-index: 10;
+
+    background-color: $base-color_primary;
+  }
+  .labeltwo{
+    bottom: 13.5rem;
+    animation: moveTwoLabel 0.25s;
+    z-index: 10;
+
+    background-color: $base-color_primary;
+  }
+  
+  .three{
+    bottom: 17rem;
+    animation: moveThree 0.25s;
+    z-index: 10;
+
+    background-color: $base-color_primary;
+  }
+  .labelthree{
+    bottom: 17.5rem;
+    animation: moveThreeLabel 0.25s;
+    z-index: 10;
+
+    background-color: $base-color_primary;
+  }
+
+  .four{
+    bottom: 21rem;
+    animation: moveFour 0.25s;
+    z-index: 10;
+
+    background-color: $base-color_primary;
+  }
+  .labelfour{
+    bottom: 21.5rem;
+    animation: moveFourLabel 0.25s;
+    z-index: 10;
+    background-color: $base-color_primary;
+  }
+
+
+
+
+
+
+  .five{
+    bottom: 25rem;
+    animation: moveOne 0.25s;
+    z-index: 10;
+    background-color: $base-color_primary;
+  }
+  .labelfive{
+    bottom: 25.5rem;
+    animation: moveOneLabel 0.25s;
+    z-index: 10;
+  
+    background-color: $base-color_primary;
+  }
+  
+  
+  .six{
+    bottom: 29rem;
+    animation: moveOne 0.1s;
+    z-index: 10;
+    background-color: $base-color_primary;
+  }
+  .labelsix{
+    bottom: 29.5rem;
+    animation: moveOneLabel 0.1s;
+    z-index: 10;
+  
+    background-color: $base-color_primary;
+  }
+  
+  
+  .seven{
+    bottom: 33rem;
+    animation: moveOne 0.1s;
+    z-index: 10;
+    background-color: $base-color_primary;
+  }
+  .labelseven{
+    bottom: 33.5rem;
+    animation: moveOneLabel 0.1s;
+    z-index: 10;
+  
+    background-color: $base-color_primary;
+  }
+  
+  
+
+
+  .eight{
+    bottom: 37rem;
+    animation: moveOne 0.1s;
+    z-index: 10;
+    background-color: $base-color_primary;
+  }
+  .labeleight{
+    bottom: 37.5rem;
+    animation: moveOneLabel 0.1s;
+    z-index: 10;
+  
+    background-color: $base-color_primary;
+  }
+
+  
+  .nine{
+    bottom: 41rem;
+    animation: moveOne 0.1s;
+    z-index: 10;
+    background-color: $base-color_primary;
+  }
+  .labelnine{
+    bottom: 41.5rem;
+    animation: moveOneLabel 0.1s;
+    z-index: 10;
+  
+    background-color: $base-color_primary
+  }
+
+  .dialog_scrim {
+    background: black;
+    opacity: 0.4;
+    position: fixed;
+    top: 0;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+  }  
+  .mat-mdc-raised-button:not(:disabled) {
+    background-color: $base-color_primary
+}
+  
+  // <!-- -----------------------ENDS floating sheet button --------------------------- -->

@@ -86,7 +86,7 @@ export class SearchSpotCoinDialogComponent {
 
     this.dataServiceRef.setSearchTerm(this.coinName);
 
-
+return
     switch (exchangeName) {
       case 'Binance':
         this.router.navigate([

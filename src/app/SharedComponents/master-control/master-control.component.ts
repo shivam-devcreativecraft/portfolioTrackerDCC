@@ -1,22 +1,13 @@
-import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { ToastrService } from 'ngx-toastr';
 import { FunctionsService } from 'src/app/SharedFunctions/functions.service';
 import { GoogleSheetApiService } from 'src/app/services/google-sheet-api.service';
-import { SharedMaterialImportsModule } from 'src/app/shared-material-imports/shared-material-imports.module';
 
 @Component({
   selector: 'app-master-control',
   templateUrl: './master-control.component.html',
-  styleUrls: ['./master-control.component.scss'],
-  standalone: true,
-  imports: [ SharedMaterialImportsModule, ReactiveFormsModule, FormsModule, CommonModule, MatIconModule, MatButtonModule, MatChipsModule]
-
+  styleUrls: ['./master-control.component.scss']
 })
 export class MasterControlComponent {
   

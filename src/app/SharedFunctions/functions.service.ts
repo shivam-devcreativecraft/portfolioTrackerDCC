@@ -8,7 +8,7 @@ import { GoogleSheetApiService } from '../services/google-sheet-api.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import { LoaderService } from '../loader.service'; 
+import { LoaderService } from '../loader.service';
 
 @Injectable({
   providedIn: 'root',

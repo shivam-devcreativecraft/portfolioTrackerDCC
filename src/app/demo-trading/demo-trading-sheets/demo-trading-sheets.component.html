@@ -1,0 +1,47 @@
+<div class="main-container  " style="padding-bottom: 0px">
+    <!-- --------------------------   row 1   ------------------------- -->
+    <div class="row d-flex justify-content-between pb-2" >
+      <div class="form-floating mb-3 d-flex col-sm-auto col-6">
+  
+      </div>
+      <div class="example-button-row col-sm-auto col-6 justify-content-end justify-content-sm-start d-flex">
+        <button mat-fab extended matTooltip="Add New"
+          (click)="openAddNewEntryDialogForm()"
+          [disabled]="IsAddDialogOpened"
+          >
+          <mat-icon>add</mat-icon>
+          Add
+        </button>
+  
+      </div>
+    </div>
+  
+    <!-- -----------------------STARTS floating sheet button --------------------------- -->
+ 
+
+  
+   
+  
+  
+    <!-- -----------------------ENDS floating sheet button --------------------------- -->
+  
+    <!-- --------------------------   row 3 Main nested Container  STARTS  ------------------------- -->
+  
+    <div class="sheet-div row ">
+
+      <h2 style="font-weight:500">
+  
+        &nbsp;&nbsp;<img src="../../../assets/delta.svg" alt="" srcset=""
+          style="height:30px; width:30px;background-color: black; border-radius: 20px;;"><span class="sheet-name"> {{
+          selectedSheetName }}</span>
+      </h2>
+      <router-outlet></router-outlet>
+  
+    </div>
+    <!-- --------------------------   row 3 Main nested Container   ENDS ------------------------- -->
+    <div class="spacer py-5"></div>
+  
+  </div>
+  
+  
+  
