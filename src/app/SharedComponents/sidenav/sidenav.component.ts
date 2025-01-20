@@ -183,122 +183,103 @@ export class SidenavComponent implements OnInit {
 
   // ------------------------------STARTS to block changing of route url on re press nav link of portfolio section for bybit and binance ------------------------------
 
-  isPortfolioBybitActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/portfolio-bybit/portfolio-bybit';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
+  // isPortfolioBybitActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/portfolio-bybit/portfolio-bybit';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
 
-  isPortfolioBinanceActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/portfolio-binance/portfolio-binance';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
+  // isPortfolioBinanceActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/portfolio-binance/portfolio-binance';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
 
-  isPortfolioMexcActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/portfolio-mexc/portfolio-mexc';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  isPortfolioFreebitcoActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/portfolio-freebitco/portfolio-freebitco';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
+  // isPortfolioMexcActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/portfolio-mexc/portfolio-mexc';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
+  // isPortfolioFreebitcoActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/portfolio-freebitco/portfolio-freebitco';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
   isPortfolioMainDashboardActive(): boolean {
     const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
     const targetUrlPrefix = '/dashboard';
     return currentUrl.startsWith(targetUrlPrefix);
   }
-  // -------------------------------
-  isPortfolioMainWatchlistActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/watchlist';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  // -------------------------------
-  isPortfolioLoggingActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/logging';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
+  // // -------------------------------
+  // isPortfolioMainWatchlistActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/watchlist';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
+  // // -------------------------------
+  // isPortfolioLoggingActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/logging';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
 
-  isPortfolioMainAssetsDetailActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/assets';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  isPortfolioMainOpenOrdersAIOActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/open-orders-aio';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  isGoogleDriveActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/google-drive';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  isPortfolioExnessActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/portfolio-exness';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  isPortfolioKucoinActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/portfolio-kucoin';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  isPortfolioDeltaActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/portfolio-delta';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  isPortfolioGateioActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/portfolio-gateio';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  isPortfolioOurbitActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/portfolio-ourbit';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
+  // isPortfolioMainAssetsDetailActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/assets';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
+  // isPortfolioMainOpenOrdersAIOActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/open-orders-aio';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
+  // isGoogleDriveActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/google-drive';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
+  // isPortfolioExnessActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/portfolio-exness';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
+  // isPortfolioKucoinActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/portfolio-kucoin';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
+  // isPortfolioDeltaActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/portfolio-delta';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
+  // isPortfolioGateioActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/portfolio-gateio';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
+  // isPortfolioOurbitActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/portfolio-ourbit';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
 
   isDemoTradingActive(): boolean {
     const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
     const targetUrlPrefix = '/demo-trading';
     return currentUrl.startsWith(targetUrlPrefix);
   }
-  isTradeSetupActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/trade-setup';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
+  // isTradeSetupActive(): boolean {
+  //   const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+  //   const targetUrlPrefix = '/trade-setup';
+  //   return currentUrl.startsWith(targetUrlPrefix);
+  // }
   isTradingViewActive(): boolean {
     const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
     const targetUrlPrefix = '/tradingview';
     return currentUrl.startsWith(targetUrlPrefix);
   }
-  isTrackerActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/tracker';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  isPasswordManagerActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/password-manager';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  isPortfolioTradingToolsActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/trading-tools';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
-  isPortfolioNotesActive(): boolean {
-    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
-    const targetUrlPrefix = '/portfolio-notes';
-    return currentUrl.startsWith(targetUrlPrefix);
-  }
+ 
   // ------------------------------ENDS to block changing of route url on re press nav link of portfolio section for bybit and binance ------------------------------
 
   // to close the sidenav on click on nav-links (On mobile screens) STARTS
@@ -336,46 +317,12 @@ export class SidenavComponent implements OnInit {
 
   refresh() {
 
-
-    // Get the current route snapshot
-    const snapshot: RouterStateSnapshot = this.router.routerState.snapshot;
-    const componentName = snapshot.url.split('/').pop(); // Assuming the component name is the last segment of the URL
-
-    switch (componentName) {
-      case 'assets-detail-exchange': {
-        localStorage.removeItem('AssetsDetail');
-        let AssetsDetailExchangeComponent_componentInstance = this.componentInstanceServiceRef.getComponentInstance('AssetsDetailExchangeComponent');
-        if (AssetsDetailExchangeComponent_componentInstance) {
-          AssetsDetailExchangeComponent_componentInstance.initialize();
-        }
-
-        break;
-      }
-
-      case 'assets-detail-history': {
-
-        let AssetsDetailHistoryComponent_componentInstance = this.componentInstanceServiceRef.getComponentInstance('AssetsDetailHistoryComponent');
-        if (AssetsDetailHistoryComponent_componentInstance) {
-          AssetsDetailHistoryComponent_componentInstance.isSheetDataLoaded = {};
-          AssetsDetailHistoryComponent_componentInstance.loadSheetDataForExchange(0);
-        }
-        break;
-      }
-      default: {
-        const currentUrl = this.router.url;
-        // console.log(currentUrl)
+ const currentUrl = this.router.url;
+        console.log(currentUrl)
         this.router.navigateByUrl('', { skipLocationChange: true }).then(() => {
 
           this.router.navigate([currentUrl]);
         });
-      }
-
-    }
-
-
-
-
-
 
   }
 

@@ -1,0 +1,562 @@
+@import '../../sharedSCSS/portfolioSheets/sheetsOuterMostContainerStyle.scss';
+@import '../../sharedSCSS/portfolioSheets/sheetsInnerContainerStyle.scss';
+@import '../../sharedSCSS/scssVariable/colorVariable.scss';
+@import '../../sharedSCSS/PortfolioMain/porfolioMainSheets.scss';
+
+/* Analytics Section Styles */
+.analytics-section {
+  padding: 1.5rem 0;
+
+  .portfolio-overview {
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid rgba($base_color_primary, 0.5);
+    box-shadow: 0 4px 15px rgba($base_color_primary, 0.1);
+    overflow: hidden;
+
+    .value-section {
+      padding: 2rem;
+      background: linear-gradient(145deg, rgba($base_color_primary, 0.05), rgba($base_color_primary, 0.1));
+      border-right: 1px solid rgba($base_color_primary, 0.1);
+      min-height: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      @media (max-width: 991px) {
+        border-right: none;
+        border-bottom: 1px solid rgba($base_color_primary, 0.1);
+      }
+
+      .total-value {
+        text-align: center;
+        width: 100%;
+        
+        .value-label {
+          color: $base_color_primary;
+          font-size: 1rem;
+          font-weight: 600;
+          margin-bottom: 1rem;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          opacity: 0.9;
+        }
+        
+        .value-amount {
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: $base_color_primary;
+          line-height: 1.2;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          margin-bottom: 1.5rem;
+          
+          .currency {
+            font-size: 1.5rem;
+            font-weight: 600;
+            opacity: 0.8;
+
+            &:last-child {
+              margin-left: 0.25rem;
+              font-size: 1.2rem;
+              opacity: 0.7;
+            }
+          }
+          
+          .amount {
+            font-family: 'Roboto Mono', monospace;
+            letter-spacing: -1px;
+          }
+        }
+
+        .portfolio-stats {
+          margin-top: 1rem;
+
+          .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0 1rem;
+
+            .stat-label {
+              font-size: 0.875rem;
+              color: rgba($base_color_primary, 0.7);
+              text-transform: uppercase;
+              letter-spacing: 1px;
+            }
+
+            .stat-value {
+              font-size: 1.1rem;
+              font-weight: 600;
+              font-family: 'Roboto Mono', monospace;
+
+              &.positive {
+                color: #4caf50;
+              }
+
+              &.neutral {
+                color: #ff9800;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .chart-section {
+      padding: 1.5rem;
+      background: white;
+
+      .distribution-chart {
+        height: 100%;
+        min-height: 350px;
+        overflow: hidden;
+        position: relative;
+
+        ::ng-deep {
+          .highcharts-container {
+            width: 100% !important;
+            height: 100% !important;
+            position: relative !important;
+          }
+
+          .highcharts-root {
+            width: 100% !important;
+            height: 100% !important;
+          }
+
+          .highcharts-background {
+            fill: transparent;
+          }
+
+          .highcharts-plot-border, .highcharts-plot-background {
+            fill: none;
+          }
+
+          .highcharts-label text {
+            fill: #666;
+          }
+
+          .highcharts-title {
+            fill: #666 !important;
+            font-size: 16px !important;
+          }
+
+          .highcharts-legend-item text {
+            fill: #666 !important;
+          }
+
+          .highcharts-tooltip {
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.1));
+          }
+        }
+      }
+    }
+  }
+
+  .exchange-card {
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid rgba($base_color_primary, 0.5);
+    padding: 1.5rem;
+    height: 100%;
+    box-shadow: 0 4px 15px rgba($base_color_primary, 0.05);
+
+    .exchange-header {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba($base_color_primary, 0.1);
+      
+      .exchange-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+
+        h3 {
+          margin: 0;
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: $base_color_primary;
+        }
+
+        .percentage {
+          font-size: 0.875rem;
+          color: rgba($base_color_primary, 0.6);
+          font-weight: 500;
+        }
+      }
+
+      .total-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $base_color_primary;
+        font-family: 'Roboto Mono', monospace;
+      }
+    }
+
+    .value-details {
+      .value-distribution {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+
+        .distribution-item {
+          background: rgba($base_color_primary, 0.03);
+          border-radius: 0.75rem;
+          padding: 1.25rem;
+
+          &.available {
+            border-left: 4px solid #4caf50;
+            .status {
+              color: #4caf50;
+            }
+          }
+
+          &.locked {
+            border-left: 4px solid #ff9800;
+            .status {
+              color: #ff9800;
+            }
+          }
+
+          .distribution-info {
+            .info-label {
+              display: grid;
+              grid-template-columns: 100px 1fr auto;
+              align-items: center;
+              gap: 1rem;
+
+              .status {
+                font-size: 0.875rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              }
+
+              .amount {
+                font-size: 1rem;
+                font-weight: 600;
+                font-family: 'Roboto Mono', monospace;
+                color: $base_color_primary;
+              }
+
+              .percentage {
+                font-size: 0.875rem;
+                color: rgba($base_color_primary, 0.6);
+                font-weight: 500;
+                min-width: 60px;
+                text-align: right;
+              }
+            }
+          }
+        }
+      }
+
+      .progress-container {
+        padding: 0 0.5rem;
+        margin-top: 0.5rem;
+
+        .progress {
+          height: 8px;
+          background: rgba($base_color_primary, 0.1);
+          border-radius: 4px;
+          overflow: hidden;
+
+          .progress-bar {
+            &.bg-success {
+              background: #4caf50;
+            }
+
+            &.bg-warning {
+              background: #ff9800;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Custom Navigation Styles */
+.custom-nav {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  display: flex;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  justify-content: start;
+
+  .mat-mdc-raised-button[_ngcontent-ng-c1719285809]:not(:disabled) {
+    color: white;
+}
+
+
+
+}
+
+/* Coin Search Styles */
+.coin-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 4px 0;
+
+  .coin-name {
+    font-weight: 600;
+    color: $base_color_primary;
+  }
+
+  .exchange-count {
+    font-size: 0.9rem;
+    color: rgba($base_color_primary, 0.6);
+  }
+}
+
+.analytics-table-section {
+  th{
+    color: $base_color_primary;
+    opacity: 0.75; 
+  }
+
+  .table-responsive {
+    max-height: 350px;
+    overflow-y: auto;
+  }
+
+  .table-header {
+    h3 {
+      color: $base_color_primary;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    .table-search {
+      width: 300px;
+      margin-bottom: 0;
+
+      ::ng-deep {
+        .mat-form-field-wrapper {
+          padding-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .table-container {
+    transition: all 0.3s ease;
+  border: 1px solid rgba($base_color_primary, 0.5);
+    
+    .mat-mdc-table {
+      background: transparent;
+      
+      .mat-mdc-header-row {
+        background-color: #f8f9fa;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        
+        .mat-mdc-header-cell {
+          color: #495057;
+          font-weight: 600;
+          white-space: nowrap;
+        }
+      }
+
+      .table-responsive {
+        max-height: 50vh;
+        overflow-y: auto;
+      }
+      
+      .mat-mdc-row {
+        transition: background-color 0.2s ease;
+        
+        &:hover {
+          background-color: #f8f9fa;
+        }
+        
+        .mat-mdc-cell {
+          color: #212529;
+          padding: 12px 8px;
+          
+          &.fw-semibold {
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  .mat-paginator {
+    background: transparent;
+    border-top: 1px solid rgba($base_color_primary, 0.05);
+    margin-top: 1rem;
+
+    ::ng-deep {
+      .mat-paginator-container {
+        min-height: 48px;
+      }
+
+      .mat-paginator-range-label,
+      .mat-paginator-page-size-label {
+        color: rgba($base_color_primary, 0.6);
+      }
+
+      .mat-paginator-page-size-select {
+        margin: 0 8px;
+      }
+
+      .mat-icon-button {
+        color: $base_color_primary;
+
+        &:disabled {
+          color: rgba($base_color_primary, 0.3);
+        }
+      }
+    }
+  }
+
+  // Exchange Filters Styling
+  .exchange-filters {
+    border-radius: 50px !important;
+    width: fit-content;
+    .mat-button-toggle-group {
+      border: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      .mat-button-toggle {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        margin: 0;
+        
+        &.mat-button-toggle-checked {
+          background: #0d6efd;
+          color: white;
+        }
+      }
+    }
+  }
+  
+  // Search Field Styling
+  .mat-mdc-form-field {
+    .mat-mdc-form-field-wrapper {
+      padding-bottom: 0;
+    }
+  }
+  
+  // Responsive Adjustments
+  @media (max-width: 768px) {
+    .table-responsive {
+      margin: 0 -1rem;
+      
+      .mat-mdc-table {
+        min-width: 1200px; // Ensure horizontal scroll on small screens
+      }
+    }
+    
+    .exchange-filters {
+      .mat-button-toggle-group {
+        justify-content: center;
+        
+        .mat-button-toggle {
+          flex: 1;
+          min-width: calc(33.333% - 8px);
+          
+          ::ng-deep .mat-button-toggle-label-content {
+            line-height: 36px;
+          }
+        }
+      }
+    }
+  }
+  
+  // Exchange Chip Styling
+  .exchange-chip {
+    font-size: 0.875rem;
+    font-weight: 500;
+    min-width: 80px;
+    text-align: center;
+    display: inline-block;
+  }
+  
+  // No Data Styling
+  .mat-mdc-row.mat-mdc-no-data-row {
+    td {
+      padding: 2rem 0;
+      
+      .mat-icon {
+        font-size: 2rem;
+        height: 2rem;
+        width: 2rem;
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+// Paginator Styling
+.mat-mdc-paginator {
+  background: transparent;
+  border-top: 1px solid #dee2e6;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.exchange-filters {
+  .mat-button-toggle-group {
+    border-radius: 15px;
+    overflow: hidden;
+    width: auto;
+    // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    .mat-button-toggle {
+      background-color: #ffffff;
+      color: #666;
+      padding: 4px 12px;
+      font-size: 14px;
+      border: none;
+      transition: all 0.3s ease;
+      
+      &.mat-button-toggle-checked {
+        background-color: #1976d2;
+        color: white;
+      }
+      
+      &:hover:not(.mat-button-toggle-checked) {
+        background-color: #f5f5f5;
+      }
+    }
+  }
+}
+
+.table-header {
+  background-color: #ffffff;
+  padding: 16px;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+  
+  h3 {
+    color: #333;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  
+  .table-search {
+    width: 250px;
+    margin-left: 16px;
+    
+    .mat-form-field-wrapper {
+      margin-bottom: -1.25em;
+    }
+  }
+}

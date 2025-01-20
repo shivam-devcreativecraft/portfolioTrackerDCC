@@ -1,0 +1,240 @@
+<div class="main-container" style="padding-bottom: 0px">
+    <!-- --------------------------   row 1   ------------------------- -->
+    <div class="row d-flex justify-content-between pb-2">
+      <div class="form-floating mb-3 d-flex col-sm-auto col-6">
+     
+      </div>
+      <div
+        class="example-button-row col-sm-auto col-6 justify-content-end justify-content-sm-start d-flex"
+      >
+        <button mat-fab extended color="warn" matTooltip="New Entry" (click)="openAddNewEntryDialogForm()" 
+        [disabled]="IsAddDialogOpened"
+        style="cursor: pointer;">
+        <!-- <button mat-fab extended color="warn"  (click)="openAddNewEntryDialogForm()" > -->
+
+          <mat-icon>add</mat-icon>
+          Add
+        </button>
+     
+      </div>
+    </div>
+  
+    <!-- -----------------------STARTS floating sheet button --------------------------- -->
+    <div class="dialog_scrim" *ngIf="openMenu"></div>
+    <button
+      mat-fab
+      color="accent"
+      (click)="clickMenu()"
+      class="menu-button"
+      [class.mat-elevation-z2]="!isOver"
+      [class.mat-elevation-z8]="isOver"
+      (mouseover)="isOver = true"
+      (mouseleave)="isOver = false"
+      matTooltip="Change Sheet"
+      matTooltipPosition="above"
+    >
+      <!-- <i class="material-icons" *ngIf="!openMenu">menu</i> -->
+      <!-- <i class="material-icons  " *ngIf="openMenu">close</i> -->
+      <mat-icon *ngIf="!openMenu" class="rotate">cached</mat-icon>
+      <mat-icon *ngIf="openMenu">closed</mat-icon>
+    </button>
+  
+    <!-- menu button -->
+   
+    <!-- button2 -->
+  
+    <button
+      [disabled]="selectedSheetName === 'P2P'"
+      mat-mini-fab
+      class="action-button one text-white"
+      *ngIf="openMenu"
+      color="basic"
+      (click)="onSheetSelect('P2P')"
+    >
+      <i class="material-icons">done_all</i>
+    </button>
+    <button
+      [disabled]="selectedSheetName === 'P2P'"
+      mat-raised-button
+      class="label labelone text-white"
+      *ngIf="openMenu"
+      color="basic"
+      (click)="onSheetSelect('P2P')"
+    >
+      P2P
+    </button>
+
+
+
+
+
+
+
+
+    <button
+    [disabled]="selectedSheetName === 'Spot_Trades'"
+    mat-mini-fab
+    class="action-button two text-white"
+    *ngIf="openMenu"
+    color="basic"
+    (click)="onSheetSelect('Spot_Trades')"
+  >
+    <i class="material-icons">done_all</i>
+  </button>
+  <button
+    [disabled]="selectedSheetName === 'Spot_Trades'"
+    mat-raised-button
+    class="label labeltwo text-white"
+    *ngIf="openMenu"
+    color="basic"
+    (click)="onSheetSelect('Spot_Trades')"
+  >
+  Spot_Trades
+  </button>
+  <button
+
+
+  [disabled]="selectedSheetName === 'FunBuySell_For_FreeBitco'"
+  mat-mini-fab
+  class="action-button three text-white"
+  *ngIf="openMenu"
+  color="basic"
+  (click)="onSheetSelect('FunBuySell_For_FreeBitco')"
+>
+  <i class="material-icons">done_all</i>
+</button>
+<button
+  [disabled]="selectedSheetName === 'FunBuySell_For_FreeBitco'"
+  mat-raised-button
+  class="label labelthree text-white"
+  *ngIf="openMenu"
+  color="basic"
+  (click)="onSheetSelect('FunBuySell_For_FreeBitco')"
+>
+FunBuySell_For_FreeBitco
+</button>
+
+
+<button
+[disabled]="selectedSheetName === 'Money_Flow_Crypto'"
+mat-mini-fab
+class="action-button four text-white"
+*ngIf="openMenu"
+color="basic"
+(click)="onSheetSelect('Money_Flow_Crypto')"
+>
+<i class="material-icons">done_all</i>
+</button>
+<button
+[disabled]="selectedSheetName === 'Money_Flow_Crypto'"
+mat-raised-button
+class="label labelfour text-white"
+*ngIf="openMenu"
+color="basic"
+(click)="onSheetSelect('Money_Flow_Crypto')"
+>
+Money_Flow_Crypto
+</button>
+
+
+
+
+<button
+[disabled]="selectedSheetName === 'Futures_PNL'"
+mat-mini-fab
+class="action-button five text-white"
+*ngIf="openMenu"
+color="basic"
+(click)="onSheetSelect('Futures_PNL')"
+>
+<i class="material-icons">done_all</i>
+</button>
+<button
+[disabled]="selectedSheetName === 'Futures_PNL'"
+mat-raised-button
+class="label labelfive text-white"
+*ngIf="openMenu"
+color="basic"
+(click)="onSheetSelect('Futures_PNL')"
+>
+Futures_PNL
+</button>
+
+
+
+
+<button
+[disabled]="selectedSheetName === 'Old_Withdraws'"
+mat-mini-fab
+class="action-button six text-white"
+*ngIf="openMenu"
+color="basic"
+(click)="onSheetSelect('Old_Withdraws')"
+>
+<i class="material-icons">done_all</i>
+</button>
+<button
+[disabled]="selectedSheetName === 'Old_Withdraws'"
+mat-raised-button
+class="label labelsix text-white"
+*ngIf="openMenu"
+color="basic"
+(click)="onSheetSelect('Old_Withdraws')"
+>
+Old_Withdraws
+</button>
+
+
+
+<button
+[disabled]="selectedSheetName === 'Futures_Trade'"
+mat-mini-fab
+class="action-button seven text-white"
+*ngIf="openMenu"
+color="basic"
+(click)="onSheetSelect('Futures_Trade')"
+>
+<i class="material-icons">done_all</i>
+</button>
+<button
+[disabled]="selectedSheetName === 'Futures_Trade'"
+mat-raised-button
+class="label labelseven text-white"
+*ngIf="openMenu"
+color="basic"
+(click)="onSheetSelect('Futures_Trade')"
+>
+Futures_Trade
+</button>
+
+
+
+
+
+
+
+
+
+    <!-- -----------------------ENDS floating sheet button --------------------------- -->
+  
+    <!-- --------------------------   row 3 Main nested Container  STARTS  ------------------------- -->
+  
+    <div
+      class="sheet-div row  "
+    >
+      <!-- style="
+        box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+          0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+          0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+      " -->
+      <h1 style="font-weight:500">
+
+       &nbsp;&nbsp;<img src="../../../assets/binance.png" alt="" srcset="" style="height:30px; width:30px; border-radius: 20px;"><span class="sheet-name">   {{ selectedSheetName }}</span>
+      </h1>
+      <router-outlet></router-outlet>
+    </div>
+    <!-- --------------------------   row 3 Main nested Container   ENDS ------------------------- -->
+    <div class="spacer py-5"></div>
+
+  </div>
+  

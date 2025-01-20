@@ -1,0 +1,166 @@
+<div class="modal-container">
+  <div class="modal-header">
+    <h2>{{ data.coinName }} Trade Details</h2>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="modal-content">
+
+ <!-- Holdings Section -->
+ <div class="detail-section">
+  <h3>Current Holdings</h3>
+  <div class="detail-grid">
+    <div class="detail-item">
+      <div class="detail-label">Average Buy Price</div>
+      <div class="detail-value">
+        {{ getAverageBuyPrice() | number:'1.2-8' }} USDT
+      </div>
+    </div>
+
+    <div class="detail-item">
+      <div class="detail-label">Current Quantity</div>
+      <div class="detail-value">
+        {{ getRemainingQuantity() | number:'1.2-8' }} {{ data.coinName }}
+      </div>
+    </div>
+
+    <div class="detail-item">
+      <div class="detail-label">Current Value</div>
+      <div class="detail-value">
+        {{ getCurrentValue() | number:'1.2-2' }} USDT
+      </div>
+    </div>
+
+    <div class="detail-item">
+      <div class="detail-label">Status</div>
+      <div class="detail-value" [ngClass]="{'holdings-color': isHolding(), 'sold-color': !isHolding()}">
+        {{ isHolding() ? 'HOLDINGS' : 'SOLD' }}
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Trade Summary Section -->
+    <div class="summary-section">
+      <h3>Trade Count</h3>
+      <div class="trade-counts">
+        <div class="trade-count buy">
+          <i class="bi bi-arrow-up-circle-fill"></i>
+          <span>{{ getBuyTrades() }} Buys</span>
+        </div>
+        <div class="trade-count sell">
+          <i class="bi bi-arrow-down-circle-fill"></i>
+          <span>{{ getSellTrades() }} Sells</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trade Duration Section -->
+    <div class="detail-section">
+      <h3>Trade Duration</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">First Trade Date</div>
+          <div class="detail-value">
+            {{ getFirstTradeDate() | date:'medium' }}
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Most Recent Trade</div>
+          <div class="detail-value">
+            {{ getLastTradeDate() | date:'medium' }}
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Trading Duration</div>
+          <div class="detail-value">
+            {{ getTradingDuration() }} days
+          </div>
+        </div>
+
+        <div class="detail-item" *ngIf="isHolding()">
+          <div class="detail-label">Holding Duration</div>
+          <div class="detail-value">
+            {{ getHoldingDuration() }} days
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Latest Trade Section -->
+    <div class="detail-section">
+      <h3>Latest Trade Information</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">Last Trade Date</div>
+          <div class="detail-value">
+            {{ getTradeDate() | date:'medium' }}
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Trade Type</div>
+          <div class="detail-value" [ngClass]="{'buy-color': getTradeType() === 'BUY', 'sell-color': getTradeType() === 'SELL'}">
+            {{ getTradeType() }}
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Trade Price</div>
+          <div class="detail-value">
+            {{ getTradePrice() | number:'1.2-8' }} USDT
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Trade Quantity</div>
+          <div class="detail-value">
+            {{ getTradeQuantity() | number:'1.2-8' }} {{ data.coinName }}
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Total Value</div>
+          <div class="detail-value">
+            {{ getTotalValue() | number:'1.2-2' }} USDT
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Influencer</div>
+          <div class="detail-value">
+            {{ getInfluencer() }}
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">Period</div>
+          <div class="detail-value">
+            {{ getPeriod() }}
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-item notes-section">
+        <div class="detail-label">Notes</div>
+        <div class="detail-value notes">
+          {{ getNotes() }}
+        </div>
+      </div>
+    </div>
+
+   
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="modal-footer">
+    <button mat-raised-button color="warn" (click)="close()">Close</button>
+  </div>
+</div> 

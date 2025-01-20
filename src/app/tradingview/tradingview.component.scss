@@ -1,0 +1,9 @@
+@import '../sharedSCSS/scssVariable/colorVariable.scss';
+
+.spacer-20 {
+    padding: 20px;
+  }
+
+  h2{
+    color : $base-color_primary
+  }

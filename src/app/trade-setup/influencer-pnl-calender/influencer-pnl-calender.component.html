@@ -1,0 +1,87 @@
+<!-- <section id="pnl-calender total-stats-div">
+    <h1 class="sectionTitle pb-4">PNL Calendar</h1>
+    <div class="row box-shadow-total-stats rounded-2 py-3 justify-content-center">
+      <div class="row justify-content-between align-items-center px-0">
+        <div class="filter-buttons d-flex align-content-center">
+          <span class="filter-link h6 border rounded-3 px-2 mb-0 d-flex align-items-center"
+                (click)="togglePnlDisplay(false)"
+                [ngClass]="{'filter-link-text': !showPnlPerDay, 'text-secondary': showPnlPerDay}">
+            Monthly
+          </span>
+          <span class="filter-link h6 ms-2 border rounded-3 px-2 mb-0 d-flex align-items-center"
+                (click)="togglePnlDisplay(true)"
+                [ngClass]="{'filter-link-text': showPnlPerDay, 'text-secondary': !showPnlPerDay}">
+            Daily
+          </span>
+        </div>
+        <div class="p-2 ms-2">
+          <button class="btn btn-outline-primary" (click)="prevMonth()" [disabled]="isPreDisabled()">&lt;</button>
+          <span class="text-center mx-1">{{ showPnlPerDay ? currentMonthYear : currentYear }}</span>
+          <button class="btn btn-outline-primary" (click)="nextMonth()" [disabled]="isNextDisabled()" 
+                  [ngClass]="{'bg-light': isNextDisabled()}">
+            &gt;
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="table-responsive mt-3 calendarDiv px-0">
+          <table class="table table-bordered table-responsive">
+            <thead *ngIf="showPnlPerDay">
+              <tr>
+                <th *ngFor="let dayName of dayNames">{{ dayName }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let week of calendar">
+                <td *ngFor="let day of week" [ngClass]="{
+                    'bg-white': day !== null && pnlDataPerDay[getDateKey(day)],
+                    'bg-light': day !== null && !pnlDataPerDay[getDateKey(day)]
+                  }" class="px-0">
+                  <div *ngIf="day">
+                    <p>{{ showPnlPerDay ? day.getDate() : day.toLocaleString('en-IN', { month: 'long' }) }}</p>
+
+                    ---------per day pnl--------STARTS
+                    <ng-container *ngIf="showPnlPerDay">
+                      <div *ngIf="pnlDataPerDay[getDateKey(day)]">
+                        <p style="font-weight:600" [ngClass]="{
+                            'text-danger': pnlDataPerDay[getDateKey(day)].pnl < 0,
+                            'text-success': pnlDataPerDay[getDateKey(day)].pnl > 0,
+                            'text-muted': pnlDataPerDay[getDateKey(day)].pnl === 0
+                          }">
+                          <ng-container *ngIf="pnlDataPerDay[getDateKey(day)].pnl >= 0">+</ng-container>
+                          {{ pnlDataPerDay[getDateKey(day)].pnl.toFixed(2) }}
+                        </p>
+                      </div>
+                      <div *ngIf="!pnlDataPerDay[getDateKey(day)]">
+                        <p>--</p>
+                      </div>
+                    </ng-container>
+                    ---------per day pnl--------ENDS
+
+                    ---------per month pnl--------STARTS
+                    <ng-container *ngIf="!showPnlPerDay">
+                      <div *ngIf="pnlDataPerMonth[getMonthKey(day)]">
+                        <p style="font-weight:600" [ngClass]="{
+                            'text-danger': pnlDataPerMonth[getMonthKey(day)].pnl < 0,
+                            'text-success': pnlDataPerMonth[getMonthKey(day)].pnl > 0,
+                            'text-muted': pnlDataPerMonth[getMonthKey(day)].pnl === 0
+                          }">
+                          <ng-container *ngIf="pnlDataPerMonth[getMonthKey(day)].pnl >= 0">+</ng-container>
+                          {{ pnlDataPerMonth[getMonthKey(day)].pnl.toFixed(4) }} USDT
+                        </p>
+                      </div>
+                      <div *ngIf="!pnlDataPerMonth[getMonthKey(day)]">
+                        <p>--</p>
+                      </div>
+                    </ng-container>
+                    ---------per month pnl--------ENDS
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section> -->

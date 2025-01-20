@@ -1,0 +1,22 @@
+1. portfolioMain.scss : 
+[order #1]
+for navbar in portfolio-$exchange-component
+to select dashboard-sheets module
+
+2. portfolioMainSheets.scss :
+[order #2]
+for sheet change button on portfoio-$exchange-sheets.component
+to change sheet for  the exchange
+
+3. sidebarBellIconAnimationStyle.scss :
+[order #3] For BELL ICON Animation in  top nav bar 
+for new order notification
+
+4. sheetsOuterMostContainerStyle.scss :
+[order #4]
+For MAIN OUTERMOST Container in  $exchange-$sheetname.component 
+for outermost shadow div that contains total stats and coins dive and hsitory divs
+
+5. portfolioDashboardOuterMostContainerStyle.scss :
+[order #5] For MAIN OUTERMOST Container in  portfolio-$exchange-dashboard.component 
+for outermost shadow div that contains porfolio-dashboard-$exchange-$sheet.component (all sheet's dashboard components)

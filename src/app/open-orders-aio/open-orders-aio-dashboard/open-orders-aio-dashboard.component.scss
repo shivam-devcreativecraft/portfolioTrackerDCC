@@ -1,0 +1,165 @@
+@import '../../sharedSCSS/scssVariable/colorVariable.scss';
+@import '../../sharedSCSS/portfolioSheets/sheetsOuterMostContainerStyle.scss';
+@import '../../sharedSCSS/PortfolioDashboard/potfolioDashboard.scss';
+@import '../../sharedSCSS/PortfolioMain/porfolioMainSheets.scss';
+// @import '../../sharedSCSS/portfolioSheets/sheetsInnerContainerStyle.scss';
+
+
+
+
+// #region table 
+
+.trade-table, .table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+    border-radius: 8px 8px 0px 0px;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+
+    thead {
+        background-color: $base-color_primary;
+        position: relative;
+
+        tr {
+            background: linear-gradient(to right, $base-color_primary, lighten($base-color_primary, 10%));
+
+            th {
+                padding: 1.125rem 1rem;
+                text-align: left;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: #e2e8f0;
+                white-space: nowrap;
+                border-right: 1px solid rgba(255, 255, 255, 0.1);
+
+                &:last-child {
+                    border-right: none;
+                }
+            }
+        }
+    }
+
+    tbody {
+        td {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            color: #334155;
+            background: #ffffff;
+            font-weight: 500;
+            text-align: left;
+
+            &:not(:first-child) {
+                font-family: 'JetBrains Mono', monospace;
+                letter-spacing: -0.3px;
+            }
+        }
+
+        tr {
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+
+            &:hover {
+                background: #f8fafc;
+                transform: translateY(-1px);
+                box-shadow:
+                    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                z-index: 1;
+                position: relative;
+
+                td {
+                    background: #f8fafc;
+                }
+            }
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+    }
+}
+
+.text-success {
+    color: #059669 !important;
+    font-weight: 600;
+}
+
+.text-danger {
+    color: #e11d48 !important;
+    font-weight: 600;
+}
+
+.text-muted {
+    color: #64748b !important;
+    font-size: 0.75rem;
+}
+
+// #endRegion 
+
+
+h2,
+h3 {
+  color: $base-color_primary;
+  font-weight: 500;
+  margin: 0;
+}
+
+.badge-heading {
+  position: relative;
+  top: -20px;
+  left: 10px
+}
+
+.box-shadow-total-stats {
+  box-shadow: 0px 0px 4px 2px $base-color_primary ;
+  border-radius: 20px;
+}
+
+.box-shadow-sub-total-stats {
+  box-shadow: 0px 0px 2px 1px $base-color_primary;
+  border-radius: 5px;
+}
+
+h4 {
+  // color : $base-color_primary;
+  font-weight: 500;
+  margin: 0
+}
+
+h4>span {
+  font-weight: 600;
+  margin: 0
+}
+
+
+.total-stats-sub-div-h-100-w1-100 {
+  height: 100%;
+  width: 100%
+}
+
+.total-stats-div {
+  .card:hover {
+    transform: scale(1) !important;
+  }
+} 
+
+
+.open_order_card_table
+  {
+th,td{
+  padding: 1rem;
+}
+  }
+
+.open_order_card{
+  border: 1px solid $base-color_primary;
+}
+.open_orders_card_header{
+  background-color: $base-color_primary;
+  color: white;
+} 

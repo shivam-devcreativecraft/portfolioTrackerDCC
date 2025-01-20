@@ -1,0 +1,359 @@
+
+<div class="row d-flex justify-content-between gx-0  px-2 mt-2">
+    <div class="form-floating mb-3 d-flex col-sm-auto col-6">
+
+    </div>
+    <div class="example-button-row col-sm-auto col-6 justify-content-end justify-content-sm-start d-flex">
+        <button mat-fab extended color="warn" matTooltip="Add New" (click)="openAddNewEntryDialogForm()"
+        [disabled]="IsAddDialogOpened"
+        
+        >
+            <mat-icon>add</mat-icon>
+            Add
+        </button>
+
+    </div>
+</div>
+
+<div class="spacer-20"></div>
+
+
+<div class="coins-outer-di p-3">
+    <!-- <h1 class="box-title">
+        Coins
+    </h1> -->
+
+
+    <div class="loader-div d-flex justify-content-center align-items-center flex-column" style="height:75vh"
+        *ngIf="!IsSelectedSheetDataLoaded">
+
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <span class="pt-2">Loading ...</span>
+
+    </div>
+    <div class="row d-flex justify-content-center align-items-start " style="margin-top: -30px"
+        *ngIf="IsSelectedSheetDataLoaded">
+
+
+
+
+
+        <div class="col-12 mb-3 d-flex justify-content-end">
+
+            <!-- <mat-icon (click)="OnShowAdvanceOptions()">settings</mat-icon> -->
+            <mat-slide-toggle (change)="OnShowAdvanceOptions()">Options</mat-slide-toggle>
+
+
+        </div>
+
+    </div>
+    <ng-container *ngIf="show_advance_options">
+
+        <div class="OptionsDivs" *ngIf="IsSelectedSheetDataLoaded">
+            <!-- Sorting buttons -->
+            <div class="d-flex  row justify-content-sm-end justify-content-lg-start my-3">
+                <div class="col-3">
+                    <span class="h6 ms-2">Sort :</span><br><br>
+                </div>
+
+                <div class="filter-buttons col-10 d-flex flex-row">
+
+                    <span class="filter-link h6 ms-2  border rounded-3 px-2 d-flex align-items-center "
+                        (click)="sortData('asc')"
+                        [ngClass]="{'filter-link-text': currentSort == 'asc', 'text-secondary': currentSort !== 'asc'}">
+                        Oldest
+                    </span>
+
+                    <span class="filter-link h6 ms-2 border rounded-3 px-2 d-flex align-items-center "
+                        (click)="sortData('desc')"
+                        [ngClass]="{'filter-link-text': currentSort == 'desc', 'text-secondary': currentSort !== 'desc'}">
+                        Newest
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+
+
+            <div class="d-flex  row justify-content-sm-end justify-content-lg-start my-3">
+                <div class="col-12 mb-3">
+                    <span class="h6 ms-2">Search :</span>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <mat-form-field appearance="outline" floatLabel="always" >
+                        <mat-label> Date</mat-label>
+                        <input matInput [(ngModel)]="dateSearchTerm" placeholder="Search by Date" />
+                    </mat-form-field>
+                </div>
+
+                <div class="col-lg-3 col-6">
+                    <mat-form-field appearance="outline" floatLabel="always" >
+                        <mat-label> Exchange</mat-label>
+                        <input matInput [(ngModel)]="exchangeSearchTerm" placeholder="Search by Exchange" />
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <mat-form-field appearance="outline" floatLabel="always" >
+                        <mat-label> Sheet</mat-label>
+                        <input matInput [(ngModel)]="sheetSearchTerm" placeholder="Search by Sheet" />
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <mat-form-field appearance="outline" floatLabel="always" >
+                        <mat-label> Note</mat-label>
+                        <input matInput [(ngModel)]="noteSearchTerm" placeholder="Search by Note" />
+                    </mat-form-field>
+                </div>
+
+
+
+
+            </div>
+
+
+            <button class="btn btn-danger" (click)="setDefaultOptions()"
+                [disabled]="!isDefaultOption()">Defaults</button>
+
+
+        </div>
+
+
+
+    </ng-container>
+
+    <div class="spacer-20"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="row coins-div box-shadow-sub-total-stats  pb-4 rounded-3 px-2" style="margin-top: -20px;"
+        *ngIf="IsSelectedSheetDataLoaded ">
+
+
+        <div class="col-lg-12 pt-3 col-12  pb-4 d-flex justify-content-between align-items-start flex-column"
+            *ngFor="let item of filterData()">
+            <div class="card card-trading_Pairs p-0" style="width: 100%">
+                <div class="card-body">
+
+
+
+
+
+
+
+
+
+                    <div class="row">
+                        <div class="col-6 d-flex align-items-center">
+                            <h2 class="card-title badge badge-heading pill ">
+                                <!-- [ngClass]="{
+                        'text-success':
+                          getCurrentValue(item.TradingPair) >=
+                          item.TotalInvestedAmount,
+                        'text-danger':
+                          getCurrentValue(item.TradingPair) < item.TotalInvestedAmount
+                      }" -->
+                                {{ item.Date }}
+
+
+
+                            </h2>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <div class="row">
+                        <!-- <div class="col-6">
+                            <p class="px-3 text-muted" style="font-weight: 600">
+                                ID
+
+                                <span class="card-text text-muted" style="font-weight: 600; font-size: 16px">
+                                    : {{ item.ID}}</span>
+                               
+                            </p>
+                        </div> -->
+
+
+
+
+                        <div class="col-12">
+                            <p class="px-3 " style="font-weight: 600">
+                                Exchange
+
+                                <span class="card-text text-muted" style="font-weight: 500; font-size: 16px">
+                                    : {{ item.Exchange}}</span>
+                                <!-- Add MatIcon based on the comparison of prevPrice and currentPrice -->
+                            </p>
+                        </div>
+
+
+                        <div class="col-12">
+                            <p class="px-3 " style="font-weight: 600">
+                                Sheet
+
+                                <span class="card-text text-muted" style="font-weight: 500; font-size: 16px">
+                                    : {{ item.Sheet}}</span>
+                                <!-- Add MatIcon based on the comparison of prevPrice and currentPrice -->
+                            </p>
+                        </div>
+
+                        <div class="col-6">
+                            <p class="px-3 " style="font-weight: 600">
+                                Type
+
+                                <span class="card-text" style="font-weight: 600; font-size: 16px"
+                                    [ngClass]="{'text-success':(item.Type).toUpperCase()==='STARTS' , 'text-danger':(item.Type).toUpperCase()==='ENDS'}">
+                                    : {{ item.Type}}</span>
+                            </p>
+                        </div>
+
+                        <div class="col-12">
+                            <p class="px-3 pt-2 " style="font-weight: 600">
+                                Notes :
+
+                                <span class="card-text text-muted" style="font-weight: 500; font-size: 16px">
+                                    {{ item.Notes}}</span>
+                                <!-- Add MatIcon based on the comparison of prevPrice and currentPrice -->
+                            </p>
+                        </div>
+
+
+
+
+
+
+
+
+                        <!-- Inside your HTML template -->
+                        <div class="col-12 d-flex justify-content-end">
+
+                            <button mat-icon-button (click)="editItem(item)">
+                                <mat-icon class="text-warning">edit</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="deleteEntry(item.ID, item)">
+                                <mat-icon class="text-danger">delete</mat-icon>
+                            </button>
+
+
+                        </div>
+                        <!-- Inside your HTML template -->
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>

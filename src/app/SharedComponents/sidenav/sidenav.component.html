@@ -19,9 +19,9 @@
     </div>
     <mat-nav-list>
       <!-- -------------------------STARTS main accordion (binance , bybit,....,etc)------------------- -->
-      <!-- <hr class="mt-0"> -->
+      <hr class="mt-0"> 
 
-      <p class="text-muted pb-2 mb-0 ">ACCOUNT</p>
+   <p class="text-muted pb-2 mb-0 ">ACCOUNT</p>
       <div class="title-text fw-600 d-flex flex-column top-link">
         <a mat-list-item [routerLink]="isPortfolioMainDashboardActive() ? [] :['dashboard']"
           [ngClass]="{'active-bg': isPortfolioMainDashboardActive() }" (click)="handleNavLinkClickAutoCollapse()">
@@ -33,160 +33,26 @@
 
       <hr />
 
-      <p class="text-muted pb-2 mb-0 ">PORTFOLIO </p>
-
-      <div class="title-text fw-600 d-flex flex-column">
-        <!-- routerLink="portfolio-bybit" -->
-        <a mat-list-item [ngClass]="{'active-bg': isPortfolioBinanceActive()}" [routerLink]=" isPortfolioBinanceActive() ? [] : ['portfolio-binance']
-          " (click)="handleNavLinkClickAutoCollapse()">
-          <!-- <mat-icon>computer</mat-icon> Binance -->
-          <img src="../../assets/binance.png" class="bg-white p-0" alt="" srcset="">&nbsp;&nbsp;Binance
-
-        </a>
-
-
-
-
-
-        <a mat-list-item [ngClass]="{'active-bg': isPortfolioBybitActive() }" [routerLink]="
-            isPortfolioBybitActive() ? [] : ['portfolio-bybit']" (click)="handleNavLinkClickAutoCollapse()">
-          <img src="../../assets/bybit-seeklogo.com.svg" alt="" srcset="">&nbsp;&nbsp;Bybit
-
-        </a>
-        <a mat-list-item [ngClass]="{'active-bg': isPortfolioMexcActive()}" [routerLink]="
-            isPortfolioMexcActive() ? [] : ['portfolio-mexc']
-            " (click)="handleNavLinkClickAutoCollapse()">
-          <img src="../../assets/mexc-logo.png" alt="" srcset="">&nbsp;&nbsp;Mexc <i class="bi bi-info-circle text-warning"
-          style="float: right; margin-left: auto;" matTooltip="Websocket unavaible"
-          ></i>
-        </a>
-
-        <a mat-list-item [ngClass]="{'active-bg': isPortfolioKucoinActive() }" [routerLink]="
-        isPortfolioKucoinActive() ? [] : ['portfolio-kucoin']" (click)="handleNavLinkClickAutoCollapse()">
-          <img src="../../assets//kucoin.png" alt="" srcset="">&nbsp;&nbsp;KuCoin
-
-        </a>
-
-        <a mat-list-item [ngClass]="{'active-bg': isPortfolioGateioActive() }" [routerLink]="
-        isPortfolioGateioActive() ? [] : ['portfolio-gateio']" (click)="handleNavLinkClickAutoCollapse()">
-          <img src="../../assets/gate.io.png" alt="" srcset="">&nbsp;&nbsp;Gateio <i class="bi bi-info-circle text-warning"
-            style="float: right; margin-left: auto;" matTooltip="Websocket unavaible"
-            ></i>
-
-        </a>
-
-
-        <a mat-list-item [ngClass]="{'active-bg': isPortfolioOurbitActive() }" [routerLink]="
-        isPortfolioOurbitActive() ? [] : ['portfolio-ourbit']" (click)="handleNavLinkClickAutoCollapse()">
-          <img src="../../assets/ourbit-logo.png" alt="" srcset="">&nbsp;&nbsp;Ourbit
-
-        </a>
-
-
-        <!-- <a mat-list-item [ngClass]="{'active-bg': isPortfolioExnessActive() }" [routerLink]="
-        isPortfolioExnessActive() ? [] : ['portfolio-exness']" (click)="handleNavLinkClickAutoCollapse()">
-          <img src="../../assets//exness-seeklogo.com.svg" alt="" srcset="">&nbsp;&nbsp;Exness
-
-        </a> -->
-        <!-- <a mat-list-item [ngClass]="{'active-bg': isPortfolioDeltaActive() }" [routerLink]="
-          isPortfolioDeltaActive() ? [] : ['portfolio-delta']" (click)="handleNavLinkClickAutoCollapse()">
-          <img src="../../assets/delta.svg" alt="" srcset="">&nbsp;&nbsp;Delta Exchange
-
-        </a> -->
-
-
-
-        <!-- -------------------------STARTS------------------- -->
-        <a mat-list-item [ngClass]="{'active-bg': isPortfolioFreebitcoActive()}" [routerLink]="
-            isPortfolioFreebitcoActive() ? [] : ['portfolio-freebitco']
-            " (click)="handleNavLinkClickAutoCollapse()">
-          <img src="../../assets/freebitcoin-seeklogo.com.svg.svg" alt="" srcset="">&nbsp;&nbsp;FreeBitco
-        </a>
-        <!-- -------------------------ENDS------------------- -->
-      </div>
-
-      <hr />
-      <p class="text-muted pb-2 mb-0 ">INFORMATION / DATA </p>
-
-      <div class="title-text fw-600 d-flex flex-column">
-
-
-        <a mat-list-item [routerLink]="isPortfolioMainAssetsDetailActive() ? [] :['assets']"
-          [ngClass]="{'active-bg': isPortfolioMainAssetsDetailActive() }" (click)="handleNavLinkClickAutoCollapse()">
-          <i class="bi bi-wallet2" style="font-size: 24px;"></i>&nbsp;&nbsp;Assets
-        </a>
-
-        <a mat-list-item [routerLink]="isPortfolioMainOpenOrdersAIOActive() ? [] :['open-orders-aio']"
-          [ngClass]="{'active-bg': isPortfolioMainOpenOrdersAIOActive() }" (click)="handleNavLinkClickAutoCollapse()">
-          <i class="bi bi-clipboard-data" style="font-size: 24px;"></i>&nbsp;&nbsp;Open Orders
-        </a>
-        <a mat-list-item [routerLink]="isGoogleDriveActive() ? [] :['google-drive']"
-          [ngClass]="{'active-bg': isGoogleDriveActive() }" (click)="handleNavLinkClickAutoCollapse()">
-          <img src="../../assets/google-drive.png" alt="" srcset="" style="background:transparent">&nbsp;&nbsp;Google
-          Drive
-
-        </a>
-        <a mat-list-item [ngClass]="{'active-bg': isPortfolioNotesActive()}" [routerLink]="
-        isPortfolioNotesActive() ? [] : ['portfolio-notes']
-        " (click)="handleNavLinkClickAutoCollapse()">
-          <i class="bi bi-file-earmark-text" style="font-size: 24px;"></i>&nbsp;&nbsp;Portfolio Notes
-        </a>
-        <a mat-list-item [routerLink]="isPortfolioMainWatchlistActive() ? [] :['watchlist']"
-          [ngClass]="{'active-bg': isPortfolioMainWatchlistActive() }" (click)="handleNavLinkClickAutoCollapse()">
-          <i class="bi bi-watch" style="font-size: 24px;"></i>&nbsp;&nbsp;Watchlist
-        </a>
-        <a mat-list-item [routerLink]="isPortfolioLoggingActive() ? [] :['logging']"
-          [ngClass]="{'active-bg': isPortfolioLoggingActive() }" (click)="handleNavLinkClickAutoCollapse()"
-          (contextmenu)="onMenuItemRightClick($event, 'logging')"
-          (touchstart)="onMenuItemTouchStart($event, 'logging')">
-          <i class="bi bi-tools" style="font-size: 24px;"></i>&nbsp;&nbsp;Api Logs *
-        </a>
-
-
-      </div>
-
-
-      <hr />
-
+   
+   
       <p class="text-muted pb-2 mb-0">TOOLS</p>
 
       <div class="title-text fw-600 d-flex flex-column">
 
-        <a mat-list-item [routerLink]=" isPortfolioTradingToolsActive() ? []:['trading-tools']"
-          [ngClass]="{'active-bg': isPortfolioTradingToolsActive()}" (click)="handleNavLinkClickAutoCollapse()"
-          (contextmenu)="onMenuItemRightClick($event, 'trading-tools')"
-          (touchstart)="onMenuItemTouchStart($event, 'trading-tools')">
 
-          <i class="bi bi-calculator" style="font-size: 24px;"></i>&nbsp;&nbsp;Calculator *
-        </a>
 
         <a mat-list-item [routerLink]=" isDemoTradingActive() ? []:['demo-trading']"
           [ngClass]="{'active-bg': isDemoTradingActive()}" (click)="handleNavLinkClickAutoCollapse()">
           <i class="bi bi-bar-chart-line" style="font-size: 24px;"></i>&nbsp;&nbsp;Demo Trading
         </a>
 
-        <a mat-list-item [routerLink]=" isTradeSetupActive() ? []:['trade-setup']"
-          [ngClass]="{'active-bg': isTradeSetupActive()}" (click)="handleNavLinkClickAutoCollapse()">
-          <i class="bi bi-journal-code" style="font-size: 24px;"></i>&nbsp;&nbsp;Trade Setup
-        </a>
-
+      
 
 
         <a mat-list-item [routerLink]=" isTradingViewActive() ? []:['tradingview']"
           [ngClass]="{'active-bg': isTradingViewActive()}" (click)="handleNavLinkClickAutoCollapse()">
           <img src="../../../assets/icons8-tradingview-240.png" alt="" srcset="">&nbsp;&nbsp;Tradingview
         </a>
-
-
-        <!-- <a mat-list-item [routerLink]=" isTrackerActive() ? []:['tracker']" [ngClass]="{'active-bg': isTrackerActive()}"
-          (click)="handleNavLinkClickAutoCollapse()">
-          <mat-icon>poll</mat-icon>Tracker
-        </a> -->
-
-        <!-- <a mat-list-item [routerLink]=" isPasswordManagerActive() ? []:['password-manager']"
-          [ngClass]="{'active-bg': isPasswordManagerActive()}" (click)="handleNavLinkClickAutoCollapse()">
-          <img src="../../../assets/icons8-password-240.png" alt="" srcset="">&nbsp;&nbsp;Password Manager
-        </a> -->
 
 
 
@@ -210,11 +76,6 @@
       </button>
 
 
-      <!-- <p class="text-white mb-0" style="font-size: small;">
-  {{selectedSheetName}}
-
-</p> -->
-
 
       <span class="example-spacer"></span>
 
@@ -228,47 +89,20 @@
           <button mat-icon-button (click)="open_SpotCoin_Search_Dialog()" matTooltip="Search Coin">
             <mat-icon>search</mat-icon>
           </button>
-          <button mat-icon-button (click)="refresh()" matTooltip="Refresh">
+          <!-- <button mat-icon-button (click)="refresh()" matTooltip="Refresh">
             <mat-icon>refresh</mat-icon>
-          </button>
+          </button> -->
 
 
-          <!-- 
-          <ng-container *ngIf="AreNewOrders">
-            <button mat-icon-button [matMenuTriggerFor]="NewOrdersMenu" #NewOrders_menuTrigger="matMenuTrigger"
-              (click)="NewOrders_menuTrigger.openMenu()">
-              <mat-icon>notifications_active</mat-icon>
-            </button>
-            <mat-menu #NewOrdersMenu="matMenu" [overlapTrigger]="false" [ngClass]="'custom-menu_NewOrders_matMenu'">
-              <span (mouseclick)="NewOrders_menuTrigger.closeMenu()">
-
-                <ng-container *ngTemplateOutlet="newOrdersTemplate"></ng-container>
-                <app-new-orders *ngIf="AreNewOrders"></app-new-orders>
-              </span>
-            </mat-menu>
-          </ng-container> -->
+   
 
 
-
-
-
-          <!-- <ng-container *ngIf="AreNewOrders; else noNewOrders">
-            <button mat-icon-button (click)="openNewOrderDialog()" matTooltip="New Orders Found!">
-              <mat-icon class="text-warning">notifications_active</mat-icon>
-            </button>
-          </ng-container> 
-          
-          <ng-template #noNewOrders>
-            <button mat-icon-button matTooltip="No New Orders">
-              <mat-icon class="text-light" disabled>notifications</mat-icon>
-            </button>
-          </ng-template> -->
-
+<!--         
           <ng-container *ngIf="AreNewOrders && !destroyedComponentFlag && !allNewOrdersUploadedFlag; else noNewOrders">
             <button mat-icon-button (click)="openNewOrderDialog()" matTooltip="New Orders Found!">
               <mat-icon class="bell text-warning">notifications_active</mat-icon>
             </button>
-          </ng-container>
+          </ng-container> -->
 
           <ng-template #noNewOrders>
             <button mat-icon-button matTooltip="No New Orders" style="cursor: not-allowed;">
@@ -278,24 +112,7 @@
 
 
 
-          <!-- <button mat-icon-button (click)="onOpenAssetDialog()">
-          <mat-icon>account_balance_wallet</mat-icon>
-        </button> -->
-
-          <!-- ----------------second drpdown------------ -->
-
-
-
-          <!-- <button mat-icon-button (click)="openMasterControlModal()" matTooltip="MasterControl"
-            *ngIf="!masterControl_Token">
-            <img src="../../assets/security_locked.png" class="bg-white p-0" alt="" srcset="">
-          </button>
-          
-          <button mat-icon-button di matTooltip="MasterControl"
-            *ngIf="masterControl_Token" disabled>
-            <img src="../../assets/security_unlocked.png" class="bg-white p-0" alt="" srcset="">
-          </button> -->
-
+       
 
           <button mat-icon-button *ngIf="IsMasterControlEnabled" (click)="onDisableMasterControl()"
             matTooltip="Disable Master Control">
@@ -321,25 +138,11 @@
 
           <mat-menu #accountsMenu="matMenu" [overlapTrigger]="false">
 
-            <!-- <button mat-menu-item *ngIf="IsMasterControlEnabled" (click)="onDisableMasterControl()">
-              <mat-icon>security</mat-icon>
-              <span>Disable Master Control </span>
-            </button>
-
-            <button mat-menu-item *ngIf="!IsMasterControlEnabled" (click)="openMasterControlDialog()">
-              <mat-icon>security</mat-icon>
-              <span>Enable Master Control </span>
-            </button> -->
-
             <button mat-menu-item (click)="onLogout()">
               <mat-icon>exit_to_app</mat-icon>
               <span>Logout</span>
             </button>
-            <!-- <div style="display: flex; align-items: center; padding: 8px;">
-              <mat-icon style="margin-right: 8px;">security</mat-icon>
-              <span style="flex-grow: 1;">Master Control </span>
-              <mat-slide-toggle [checked]="isMasterControlChecked"  (change)="onMasterControlChange($event)"></mat-slide-toggle>
-            </div> -->
+      
           </mat-menu>
 
 
@@ -370,17 +173,3 @@
 
 
 
-
-
-<!-- <ng-template #newOrdersTemplate>
-  <p class="text-center text-secondary">New Orders</p>
-
-  <ng-container *ngFor="let newOrder of newOrdersData, let i = index">
-    <p *ngIf="newOrder.ExchangeName">{{i}}. {{newOrder.ExchangeName}} => {{newOrder.SheetName}}</p>
-
-
-
-  </ng-container>
-
-
-</ng-template> -->

@@ -1,0 +1,323 @@
+<div class="main-container px-2">
+
+
+    <!-- Loader -->
+    <ng-container *ngIf="!IsSelectedSheetDataLoaded">
+
+        <div class="loader-div d-flex justify-content-center align-items-center flex-column total-stats-divv "
+            style="height:87vh; border : none !important">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="pt-2">Loading ...</span>
+        </div>
+    </ng-container>
+    <!-- Content -->
+    <ng-container *ngIf="IsSelectedSheetDataLoaded">
+
+        <div class="row p-3 mt-4">
+            <!-- [ngClass]="index % 2 === 0 ? 'initial_div_bg' : 'next_div_bg'" -->
+            <h1 >Search :</h1>
+
+
+            <div class="col-lg-6 col-12 mb-lg-0 mb-2">
+                <mat-form-field appearance="outline" floatLabel="always" >
+                    <mat-label>Search Market</mat-label>
+                    <input matInput [(ngModel)]="searchTermMarket" placeholder="Search Market" placeholder="BTC, ETH..." />
+                    <button class="text-danger" *ngIf="searchTermMarket" matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                        (click)="searchTermMarket = ''" tabindex="-1">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-6 col-12">
+                <mat-form-field appearance="outline" floatLabel="always" >
+                    <mat-label>Search Influencer</mat-label>
+                    <input matInput [(ngModel)]="searchTermInfluencer" placeholder="Search influencer"/>
+                    <button class="text-danger" *ngIf="searchTermInfluencer" matSuffix mat-icon-button
+                    aria-label="Clear" type="button"  (click)="searchTermInfluencer = ''" tabindex="-1">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div class="col-12 mb-3 d-flex justify-content-end">
+                <mat-slide-toggle (change)="OnShowAdvanceOptions()">Options</mat-slide-toggle>
+
+            </div>
+
+            </div>
+            
+
+
+        <div class="spacer"></div>
+
+
+
+        <div class="OptionsDivs" *ngIf="show_advance_options">
+            <div class="d-flex  row justify-content-sm-end justify-content-lg-start my-3">
+                <div class="col-3">
+                    <span class="h6">Sort :</span>
+                </div>
+                <div class="filter-buttons col-10 d-flex flex-wrap">
+                    <span class="filter-link h6 ms-2  border rounded-3 px-2 d-flex align-items-center "
+                        (click)="toggleSort('Date')"
+                        [ngClass]="{'filter-link-text': sortingKey == 'Date', 'text-secondary': sortingKey != 'Date'}">
+                        Date
+                        <mat-icon *ngIf="sortingKey === 'Date' && sortingOrder === 'asc'">arrow_drop_up</mat-icon>
+                        <mat-icon *ngIf="sortingKey === 'Date' && sortingOrder === 'desc'">arrow_drop_down</mat-icon>
+                    </span>
+                    <span class="filter-link h6 ms-2  border rounded-3 px-2 d-flex align-items-center "
+                        (click)="toggleSort('Market')"
+                        [ngClass]="{'filter-link-text': sortingKey == 'Market', 'text-secondary': sortingKey != 'Market'}">
+                        Market
+                        <mat-icon *ngIf="sortingKey === 'Market' && sortingOrder === 'asc'">arrow_drop_up</mat-icon>
+                        <mat-icon *ngIf="sortingKey === 'Market' && sortingOrder === 'desc'">arrow_drop_down</mat-icon>
+                    </span>
+                    <span class="filter-link h6 ms-2  border rounded-3 px-2 d-flex align-items-center "
+                        (click)="toggleSort('until_target')"
+                        [ngClass]="{'filter-link-text': sortingKey == 'until_target', 'text-secondary': sortingKey != 'until_target'}">
+                        Until Target
+                        <mat-icon
+                            *ngIf="sortingKey === 'until_target' && sortingOrder === 'asc'">arrow_drop_up</mat-icon>
+                        <mat-icon
+                            *ngIf="sortingKey === 'until_target' && sortingOrder === 'desc'">arrow_drop_down</mat-icon>
+                    </span>
+                </div>
+
+
+            </div>
+
+
+
+            <button class="btn btn-danger" (click)="setDefaultOptions()"
+                [disabled]="!isDefaultOption()">Defaults</button>
+        </div>
+
+
+
+        <div class="spacer-20" *ngIf="show_advance_options"></div>
+
+
+        <ng-container *ngFor="let sheet of filterData | keyvalue; let index=index">
+            <div class="total-stats-div p-3 mt-4">
+                <!-- [ngClass]="index % 2 === 0 ? 'initial_div_bg' : 'next_div_bg'" -->
+                <h1 class="box-title">{{ sheet.key }}</h1>
+
+                <!-- Data -->
+
+
+
+                <div class="row" style="margin-top: -20px">
+                    <div class="col-lg-6 col-12 total-stats-inner-div d-flex justify-content-between align-items-start flex-column"
+                        *ngFor="let data of sheet.value; let i = index">
+                        <div class="card p-0" style="width: 100%">
+                            <div class="card-body">
+                                <div class="row">
+                                    <h2 class="card-title">{{ data.Market }}</h2>
+                                    <div style="display: flex; justify-content: center;">
+                                        <div class="row d-flex flex-row justify-content-center p-0"
+                                            style="margin-top:-15px; width: -webkit-fill-available;">
+
+                                            <!-- inner content STARTS-->
+
+                                            <div class="col-12 outer-div">
+                                                <p class="text-muted" style="font-weight: 600">Date</p>
+                                                <p>
+                                                    <span class="card-text text-muted"
+                                                        style="font-weight: 600; font-size: 16px">
+                                                        {{ data.Date }}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div class="col-12 outer-div">
+                                                <p class="text-muted" style="font-weight: 600">Mark_Price</p>
+                                                <p>
+                                                    <span class="card-text text-muted"
+                                                        style="font-weight: 600; font-size: 16px">
+                                                        ₮ {{ data.Mark_Price | number : "1.0-8" }}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div class="col-12 outer-div">
+                                                <p class="text-muted" style="font-weight: 600">CurrentStaticPrice</p>
+                                                <p>
+                                                    <span class="card-text" style="font-weight: 600; font-size: 16px"
+                                                        *ngIf="data.CurrentStaticPrice"
+                                                        [ngClass]="{'text-success':data.CurrentStaticPrice>data.Mark_Price, 'text-danger':data.CurrentStaticPrice<data.Mark_Price, 'text-muted':data.CurrentStaticPrice==data.Mark_Price}">
+                                                        ₮ {{ data.CurrentStaticPrice | number : "1.0-8" }}
+                                                    </span>
+                                                    <span class="card-text text-muted"
+                                                        style="font-weight: 600; font-size: 16px"
+                                                        *ngIf="!data.CurrentStaticPrice">
+                                                        -
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div class="col-12 outer-div">
+                                                <p class="text-muted" style="font-weight: 600">Target_Price</p>
+                                                <p>
+                                                    <span class="card-text text-muted"
+                                                        style="font-weight: 600; font-size: 16px">
+                                                        ₮ {{ data.Target_Price | number : "1.0-8"}}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div class="col-12 outer-div">
+                                                <ng-container
+                                                    *ngIf=" until_Target(data.CurrentStaticPrice, data.Target_Price) < 0">
+                                                    <p class="text-muted" style="font-weight: 600">
+                                                        Until_Target</p>
+
+                                                    <span class="card-text" style="font-weight: 600; font-size: 16px"
+                                                        [ngClass]="{'text-danger': until_Target(data.CurrentStaticPrice, data.Target_Price) < 0, 'text-success': until_Target(data.CurrentStaticPrice, data.Target_Price) > 0 }">
+                                                        {{ until_Target(data.CurrentStaticPrice, data.Target_Price) |
+                                                        number:'1.0-2' }}%
+                                                    </span>
+                                                </ng-container>
+                                                <ng-container
+                                                    *ngIf=" until_Target(data.CurrentStaticPrice, data.Target_Price) > 0">
+
+                                                    <p class="text-muted" style="font-weight: 600">
+                                                        More_Than_Target</p>
+
+                                                    <span class="card-text" style="font-weight: 600; font-size: 16px"
+                                                        [ngClass]="{'text-danger': until_Target(data.CurrentStaticPrice, data.Target_Price) < 0, 'text-success': until_Target(data.CurrentStaticPrice, data.Target_Price) > 0 }">
+                                                        -
+                                                    </span>
+
+
+                                                </ng-container>
+                                            </div>
+
+                                            <div class="col-12 outer-div">
+                                                <p class="text-muted" style="font-weight: 600">Percentage Increase</p>
+                                                <p *ngIf="data.CurrentStaticPrice && data.Mark_Price">
+                                                    <span class="card-text" style="font-weight: 600; font-size: 16px"
+                                                        *ngIf="getPercentageIncrease(data.Market, data.CurrentStaticPrice)">
+                                                        {{ getPercentageIncrease(data.Mark_Price,
+                                                        data.CurrentStaticPrice) | number:'1.0-2' }}%
+                                                    </span>
+                                                    <span class="card-text" style="font-weight: 600; font-size: 16px"
+                                                        *ngIf="!getPercentageIncrease(data.Market, data.CurrentStaticPrice)">
+                                                        -
+                                                    </span>
+                                                </p>
+                                            </div>
+
+                                            <div class="col-12 outer-div">
+                                                <p class="text-muted" style="font-weight: 600">Profit Multiplier</p>
+                                                <p>
+                                                    <span class="card-text text-muted"
+                                                        style="font-weight: 600; font-size: 16px">
+                                                        {{ data.Multiplier }} X
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <ng-container *ngIf="data.CurrentStaticPrice && data.Percentage">
+                                                <div class="col-12 outer-div">
+                                                    <p class="text-muted" style="font-weight: 600">Portfolio Percentage
+                                                    </p>
+                                                    <p>
+                                                        <span class="card-text text-muted"
+                                                            style="font-weight: 600; font-size: 16px"
+                                                            *ngIf="data.Percentage">
+                                                            {{ data.Percentage }} %
+                                                        </span>
+                                                        <span class="card-text text-muted"
+                                                            style="font-weight: 600; font-size: 16px"
+                                                            *ngIf="!data.Percentage">
+                                                            -
+                                                        </span>
+                                                    </p>
+                                                </div>
+
+                                                <div class="col-12 outer-div">
+                                                    <p class="text-muted" style="font-weight: 600">
+                                                        pnl_Portfolio_Percentage</p>
+                                                    <p *ngIf="data.CurrentStaticPrice">
+                                                        <span class="card-text"
+                                                            style="font-weight: 600; font-size: 16px"
+                                                            [ngClass]="{'text-danger': getPnlPortfolioPercentage(data.Mark_Price, data.CurrentStaticPrice, data.Percentage) < 0, 'text-success': getPnlPortfolioPercentage(data.Mark_Price, data.CurrentStaticPrice, data.Percentage) > 0}">
+                                                            {{ getPnlPortfolioPercentage(data.Mark_Price,
+                                                            data.CurrentStaticPrice, data.Percentage) | number:'1.0-2'
+                                                            }}%
+                                                        </span>
+                                                    </p>
+                                                </div>
+
+                                            </ng-container>
+
+                                            <div class="col-12 outer-div">
+                                                <p class="text-muted" style="font-weight: 600">Influencer</p>
+                                                <p>
+                                                    <span class="card-text text-muted"
+                                                        style="font-weight: 600; font-size: 16px">
+                                                        {{ data.Influencer ? data.Influencer : '-' }}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div class="col-12 outer-div">
+                                                <p class="text-muted" style="font-weight: 600">Reference Vedio Link</p>
+                                                <p class="card-text"
+                                                    style="font-weight: 600; font-size: 16px; cursor:pointer"
+                                                    matTooltip="{{data.Link}}" (click)="openVideoDialog(data.Link)">
+                                                    <mat-icon class="text-info">open_in_new</mat-icon>
+                                                </p>
+                                            </div>
+                                            <div class="col-12 outer-div">
+                                                <p class="text-muted" style="font-weight: 600">Notes</p>
+                                                <p class="card-text  text-muted"
+                                                    style="font-weight: 600; font-size: 16px"
+                                                    matTooltip="{{ data.Notes }}">
+                                                    {{ data.Notes ? (data.Notes?.slice(0,12)) : '-'}}
+                                                    <span *ngIf="data.Notes?.length > 12">...</span>
+                                                </p>
+                                            </div>
+
+                                            <!-- inner content STARTS-->
+
+                                            <!-- inner chart STARTS-->
+                                            <!-- <div class="col-12 inner-div">
+                                                <div class="tv_symbol_overview"
+                                                    [id]="'symbolOverview-' + sheet.key + '-' + i"
+                                                    [ngClass]="{'expanded': isCollapsed[sheet.key + '-' + i], 'collapsed': !isCollapsed[sheet.key + '-' + i]}">
+                                                </div>
+
+                                                <div class="div buttons_div mt-3 d-flex justify-content-between">
+                                                <button (click)="toggleHeight(sheet.key + '-' + i)" mat-stroked-button
+                                                    class="">
+                                                    <mat-icon>{{ isCollapsed[sheet.key + '-' + i] ? 'keyboard_arrow_up'
+                                                        : 'keyboard_arrow_down' }}</mat-icon>
+                                                    Expand Chart
+                                                </button>
+
+                                                <button mat-stroked-button (click)="onOpenChartAnalysisDialog(data.Market, data.Available_Exchanges[0])">Advanced Chart</button>
+
+                                                </div>
+                                            </div> -->
+                                            <!-- inner chart STARTS-->
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" *ngIf="filterData[sheet.key]?.length === 0">
+                    <div class="col-12 d-flex justify-content-center align-items-center" style="height:200px">
+                        <p class="text-center">Not Found!</p>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="spacer-20" *ngIf="index != (sheetData | keyvalue).length-1"></div>
+
+        </ng-container>
+    </ng-container>
+
+
+
+</div>

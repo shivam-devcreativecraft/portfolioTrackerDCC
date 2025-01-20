@@ -1,0 +1,79 @@
+@import '../../sharedSCSS/scssVariable/colorVariable.scss';
+
+
+
+
+.total-stats-div {
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0px !important;
+
+  .card {
+    margin-bottom: 2rem
+  }
+
+}
+
+.sectionTitle , .differentiatorTitle{
+  color: rgb($base_color_primary, 0.75);
+  font-size:18px;
+  margin-bottom:0px;
+}
+
+.sectionTitle{
+  font-weight: 800;
+}
+.differentiatorTitle{
+  font-weight: 500;
+
+}
+
+
+// -----------------NEW------------------------
+
+.spacer-20 {
+  padding: 20px;
+
+}
+
+.section {
+  min-height: 200px;
+  // border: 2px solid;
+}
+
+.main {
+  margin-top: -1rem;
+  margin-bottom: -1rem;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+
+
+}
+
+.section {
+  // padding: 100px;
+  // border: 2px solid;
+
+  &:nth-child(odd) {
+    // background-color: #f4ecf785;
+    background-color: rgb($base_color_primary, 0.05)
+  }
+
+  &:nth-child(even) {
+    // background-color: #f4ecf7;
+    background-color: rgb($base_color_primary, 0.01)
+  }
+}
+
+
+// .sectionTitle {
+//   color: rgb($base_color_primary, 0.75);
+//   // text-align: center;
+//   // width: fit-content;
+//   box-shadow: 0px 5px 5px -4px $base_color_primary; 
+//   // border: 1px solid $base_color_primary;
+//   border-radius: 10px;
+//   // font-size:18px;
+//   // margin-bottom:0px;
+//   // font-weight: 500;
+// }

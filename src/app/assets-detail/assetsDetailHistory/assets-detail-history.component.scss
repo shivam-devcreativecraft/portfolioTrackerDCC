@@ -1,0 +1,636 @@
+// @import '../sharedSCSS/PortfolioMain/porfolioMainSheets.scss';
+
+@import '../../sharedSCSS/portfolioSheets/sheetsOuterMostContainerStyle.scss';
+@import '../../sharedSCSS/portfolioSheets/sheetsInnerContainerStyle.scss';
+
+// Exchange-specific theme colors
+$exchange-colors: (
+  binance: (bg: #F3BA2F, accent: #F0B90B),
+  bybit: (bg: #1F2937, accent: #00B7C2),
+  mexc: (bg: #1E4DD8, accent: #3366FF),
+  kucoin: (bg: #24AE8F, accent: #0ABB88),
+  gate: (bg: #2354E6, accent: #34A5FF)
+);
+
+:host {
+  display: block;
+  padding: 20px;
+}
+
+.top-controls {
+  display: flex;
+  gap: 20px;
+  
+  align-items: flex-start;
+
+  .search-field {
+    width: 300px;
+  }
+
+  .exchange-select {
+    width: 300px;
+  }
+}
+
+.exchange-container {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+
+  @each $exchange, $colors in $exchange-colors {
+    &.#{$exchange} {
+      .exchange-title {
+        color: map-get($colors, bg);
+      }
+    }
+  }
+
+  .exchange-header {
+    margin-bottom: 24px;
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .exchange-title {
+      font-size: 24px;
+      font-weight: 500;
+      margin: 0;
+    }
+  }
+
+  .filter-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    .filter-label {
+      font-weight: 900;
+      color: #666;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 80px;
+
+  
+    }
+  }
+}
+
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0;
+  gap: 16px;
+
+  .loading-text {
+    color: #666;
+  }
+}
+
+.coins-viewport {
+  height: 600px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.coins-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  // padding: 16px;
+
+  .coin-card {
+    .modern-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+
+      // Generate exchange-specific styles
+      @each $exchange, $colors in $exchange-colors {
+        &.#{$exchange} {
+          .card-background {
+            background: linear-gradient(135deg, rgba(map-get($colors, bg), 0.05) 0%, rgba(map-get($colors, accent), 0.02) 100%);
+          }
+
+          &:hover {
+            border-color: rgba(map-get($colors, bg), 0.3);
+            
+            .card-background {
+              opacity: 1;
+              transform: scale(1.02);
+            }
+          }
+
+          .coin-badge {
+            background: linear-gradient(135deg, map-get($colors, bg), map-get($colors, accent));
+          }
+
+          .exchange-tag {
+            color: map-get($colors, bg);
+            background: rgba(map-get($colors, bg), 0.08);
+            border: 1px solid rgba(map-get($colors, bg), 0.2);
+
+            .exchange-icon {
+              color: map-get($colors, bg);
+            }
+          }
+
+          .card-actions {
+            button {
+              color: map-get($colors, bg);
+            }
+          }
+        }
+      }
+
+      .card-header {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+        z-index: 1;
+
+        .coin-info {
+          .coin-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+
+            .coin-name {
+              font-size: 20px;
+              font-weight: 700;
+              color: #2c3e50;
+              cursor: pointer;
+              
+              &:hover {
+                color: #1976d2;
+              }
+            }
+
+            .coin-badge {
+              width: 28px;
+              height: 28px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              .coin-icon {
+                color: white;
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+              }
+            }
+          }
+
+          .exchange-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+
+            .exchange-icon {
+              font-size: 14px;
+              width: 14px;
+              height: 14px;
+            }
+          }
+        }
+      }
+
+      .card-content {
+        position: relative;
+        z-index: 1;
+
+        .stat-container {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+
+          .stat-divider {
+            height: 1px;
+            background: rgba(0, 0, 0, 0.06);
+            margin: 2px 0;
+          }
+
+          .stat-item {
+            .stat-label {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              color: #64748b;
+              margin-bottom: 8px;
+
+              .stat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+              }
+
+              span {
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              }
+            }
+
+            .stat-value {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+
+              .value-container {
+                display: flex;
+                align-items: baseline;
+                gap: 4px;
+
+                .value-number {
+                  font-family: 'Roboto Mono', monospace;
+                  font-size: 16px;
+                  font-weight: 700;
+                  color: #1e293b;
+                }
+
+                .currency {
+                  font-size: 12px;
+                  font-weight: 600;
+                  color: #64748b;
+                }
+              }
+
+              .trend-icon {
+                font-size: 16px;
+              }
+
+              &.positive {
+                .trend-icon {
+                  color: #10b981;
+                }
+                .value-number {
+                  color: #10b981;
+                }
+              }
+
+              &.negative {
+                .trend-icon {
+                  color: #ef4444;
+                }
+                .value-number {
+                  color: #ef4444;
+                }
+              }
+            }
+
+            &.value-stat {
+              .value-container {
+                .value-number {
+                  font-size: 15px;
+                }
+              }
+            }
+          }
+
+          .trade-counts {
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            
+            .trade-count {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              
+              i {
+                font-size: 16px;
+              }
+              
+              span {
+                font-size: 13px;
+                font-weight: 600;
+              }
+            }
+          }
+        }
+      }
+
+      .card-footer {
+        position: relative;
+        margin-top: 16px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        z-index: 1;
+
+        .footer-buttons {
+          display: flex;
+          gap: 8px;
+          justify-content: space-between;
+
+          button {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 12px;
+            min-height: 32px;
+            
+            mat-icon {
+              font-size: 16px;
+              width: 16px;
+              height: 16px;
+              transition: transform 0.3s ease;
+            }
+
+            &:hover {
+              mat-icon {
+                transform: translateX(4px);
+              }
+            }
+
+            &.show-details {
+              background: rgba(0, 0, 0, 0.04);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.trade-info {
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  margin-top: 15px;
+
+  .trade-counts {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+    
+    .trade-count {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      
+      &.buy {
+        i {
+          font-size: 20px;
+          color: #10b981;
+        }
+        span {
+          color: #10b981;
+          font-weight: 600;
+        }
+      }
+      
+      &.sell {
+        i {
+          font-size: 20px;
+          color: #ef4444;
+        }
+        span {
+          color: #ef4444;
+          font-weight: 600;
+        }
+      }
+
+      i {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  .last-trade,
+  .influencer,
+  .trade-period,
+  .trade-notes {
+    margin-top: 10px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
+    
+    .trade-label,
+    .influencer-label,
+    .period-label,
+    .notes-label {
+      font-size: 0.85rem;
+      color: rgba(0, 0, 0, 0.6);
+      margin-bottom: 4px;
+    }
+    
+    .trade-value,
+    .influencer-value,
+    .period-value,
+    .notes-value {
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+}
+
+.stat-divider {
+  width: 1px;
+  background: rgba(0, 0, 0, 0.12);
+  margin: 0 15px;
+}
+
+.global-filter-container {
+  display: none;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  .sort-container,
+  .filter-container {
+    display: flex;
+    // align-items: center;
+  flex-direction: column;
+    gap: 16px;
+
+    .section-label {
+      font-weight: 500;
+      color: #666;
+      min-width: 80px;
+    }
+
+    .sort-buttons,
+    .filter-buttons {
+      display: flex;
+      gap: 12px;
+      // flex-wrap: wrap;
+
+      .btn {
+        padding: 6px 16px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        background: transparent;
+        transition: all 0.2s ease;
+        font-size: 13px;
+        
+        &:hover {
+          background: #f5f5f5;
+        }
+      }
+    }
+  }
+}
+
+.status-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.holdings {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    &.sold {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+  }
+}
+
+// Update filter logic in component
+.filter-buttons {
+  .btn {
+    min-width: 100px;  // Ensure consistent button width
+  }
+}
+
+.reset-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 8px;
+
+  .btn-danger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #c82333;
+    }
+
+    i {
+      font-size: 16px;
+    }
+  }
+}
+
+// Update styles for coin options in autocomplete
+::ng-deep .mat-autocomplete-panel {
+  .coin-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 16px;
+
+    .coin-name {
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.87);
+    }
+
+    .exchange-tag {
+      font-size: 12px;
+      color: #666;
+      background: rgba(0, 0, 0, 0.05);
+      padding: 4px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+  }
+
+  .mat-option {
+    height: auto;
+    line-height: normal;
+    
+    &:hover {
+      .exchange-tag {
+        background: rgba(0, 0, 0, 0.08);
+      }
+    }
+  }
+}
+
+.sort-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+
+  .btn {
+    padding: 4px 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    min-width: 110px;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+}

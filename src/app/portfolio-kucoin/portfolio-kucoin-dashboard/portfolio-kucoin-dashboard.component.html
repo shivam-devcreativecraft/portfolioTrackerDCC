@@ -1,0 +1,145 @@
+<h1 class="text-center">Dashboard</h1>
+ <hr>
+
+ <div class="box-shadow text-center d-flex align-items-center justify-content-center" style="height: 75vh; ">
+<app-portfolio-dashboard-shared [exchangeName]="exchangeName"></app-portfolio-dashboard-shared>
+    
+
+</div>
+
+
+
+
+
+<!-- <div class="spacer-20"></div> -->
+
+<!-- <div id="Kucoin" class="coins-outer-div p-3" >
+    <h1 class="box-title">
+        Kucoin
+    </h1> -->
+    <!-- <p>IsGoogleSheetDataLoaded : {{IsGoogleSheetDataLoaded}}</p>
+<p>IsAssetPriceLoaded : {{IsAssetPriceLoaded}}</p>
+<p>isColumnTotalsCalculated : {{isColumnTotalsCalculated}}</p> 
+
+<div class="loader-div d-flex justify-content-center align-items-center flex-column"
+*ngIf="!IsGoogleSheetDataLoaded || !IsAssetPriceLoaded || !isColumnTotalsCalculated ">
+<div class="spinner-border" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
+</div>
+
+
+
+
+
+ 
+
+    <div class="row coins-div box-shadow-sub-total-stats  px-2  rounded-3  "
+        style="margin-top: -20px; padding-top:30pxx !important;"
+        *ngIf="IsGoogleSheetDataLoaded && IsAssetPriceLoaded && isColumnTotalsCalculated "
+        >
+
+        <div class="col-lg-6 pt-3 col-12 pb-lg-0 pb-3 d-flex justify-content-between align-items-start flex-column"
+            *ngFor="let data of exchangeData">
+
+            <div class="card card-trading_Pairs p-0" style="width: 100%">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 d-flex align-items-center justify-content-between">
+
+                            <h2 class="card-title badge badge-heading pill ">
+                                {{ data.currency }}
+                            </h2>
+                        </div>
+
+                        <div class="row" style="margin-top: -25px; margin-bottom: 10px">
+                            <div class="col-12 d-flex align-items-center justify-content-between">
+                                <p class="px-3 text-muted" style="font-weight: 600;">
+                                    QUANTITY
+                                </p>
+                                <p class="card-text text-muted" style="font-weight: 600; font-size: 16px">
+                                    {{ stringToFloat(data.balance) | number:'1.0-8'}}
+                                </p>
+                            </div>
+                            <div class="col-12 d-flex align-items-center justify-content-between">
+                                <p class="px-3 text-danger" style="font-weight: 600;">
+                                    Locked
+                                </p>
+                                <p class="card-text text-muted" style="font-weight: 600; font-size: 16px">
+                                    {{stringToFloat(data.holds) | number:'1.0-8'}}
+                                </p>
+                            </div>
+
+
+
+                            <div class="col-12 d-flex align-items-center justify-content-between">
+                                <p class="px-3 text-muted" style="font-weight: 600;">
+                                    Free
+                                </p>
+                                <p class="card-text text-success" style="font-weight: 600; font-size: 16px">
+                                    {{(stringToFloat(data.available))>0.1 ? stringToFloat(data.available) : 0 | number:'1.0-8'}}
+                                </p>
+                            </div>
+
+                            <div class="col-12 d-flex align-items-center justify-content-between">
+                                <p class="px-3 text-muted" style="font-weight: 600;">
+                                    Holding
+                                </p>
+                                <p class="card-text text-warning" style="font-weight: 600; font-size: 16px">
+                                    {{stringToFloat(data.balance) | number:'1.0-8'}}
+                                </p>
+                            </div>
+
+
+                            <div class="col-12 d-flex align-items-center justify-content-between">
+                                <p class="px-3 text-muted" style="font-weight: 600;">
+                                    Current Price
+                                </p>
+                                <p class="card-text text-muted" style="font-weight: 600; font-size: 16px"
+                                    *ngIf="data.currency != 'USDT'">
+                                    {{ data.CurrentStaticPrice }}
+                                </p>
+                                <p class="card-text text-muted" style="font-weight: 600; font-size: 16px"
+                                    *ngIf="data.currency == 'USDT'">
+                                    -
+                                </p>
+                            </div>
+
+
+                            <div class="col-12 d-flex align-items-center justify-content-between">
+                                <p class="px-3 text-muted" style="font-weight: 600;">
+                                    Total USDT
+                                </p>
+                                <p class="card-text text-muted" style="font-weight: 600; font-size: 16px"
+                                    *ngIf="data.currency != 'USDT'">
+                                    {{
+                                    stringToFloat(data.CurrentStaticPrice) * (stringToFloat(data.balance)) |
+                                    number:'1.0-3'}}
+                                </p>
+                                <p class="card-text text-muted" style="font-weight: 600; font-size: 16px"
+                                    *ngIf="data.currency == 'USDT'">
+                                    -
+                                </p>
+                            </div>
+
+
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+
+
+    </div>
+
+
+</div> -->

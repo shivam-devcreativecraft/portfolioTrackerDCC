@@ -1,0 +1,14 @@
+// @import '../../../sharedSCSS/scssVariable/colorVariable.scss';
+// @import '../sharedSCSS/PortfolioMain/porfolioMainSheets.scss';
+
+@import '../../../sharedSCSS/portfolioSheets/sheetsOuterMostContainerStyle.scss';
+@import '../../../sharedSCSS/portfolioSheets/sheetsInnerContainerStyle.scss';
+
+@import '../../../sharedSCSS/dialogsStyle/dialogsStyle.scss';
+
+.outer-div{
+    display: flex;
+    justify-content: space-between;
+  }
+  
+
