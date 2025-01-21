@@ -1,0 +1,86 @@
+.profile-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  
+  &.editing {
+    opacity: 0.8;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    
+    &:hover {
+      opacity: 0.6;
+    }
+  }
+}
+
+.card {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-header {
+  background: linear-gradient(45deg, #1976d2, #2196f3);
+}
+
+.user-details {
+  mat-list-item {
+    margin-bottom: 10px;
+  }
+}
+
+.edit-form {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+// Upload button styles
+.upload-buttons {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  
+  button {
+    mat-icon {
+      margin-right: 4px;
+    }
+  }
+}
+
+// Preview image container
+.image-preview {
+  position: relative;
+  display: inline-block;
+  
+  .preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    &:hover {
+      opacity: 1;
+    }
+    
+    mat-icon {
+      color: white;
+      font-size: 24px;
+    }
+  }
+} 

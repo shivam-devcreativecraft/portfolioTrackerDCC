@@ -1,0 +1,87 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">Profile Settings</h4>
+          <button mat-icon-button color="white" (click)="toggleEdit()" [matTooltip]="isEditing ? 'Cancel' : 'Edit Profile'">
+            <mat-icon>{{isEditing ? 'close' : 'edit'}}</mat-icon>
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="text-center mb-4">
+            <img [src]="user?.photoURL || 'assets/default-avatar.png'" 
+                 alt="Profile Picture" 
+                 class="rounded-circle profile-image"
+                 [class.editing]="isEditing">
+            <div *ngIf="isEditing" class="mt-2">
+              <input type="file" #fileInput hidden (change)="onFileSelected($event)" accept="image/*">
+              <button mat-stroked-button color="primary" (click)="fileInput.click()">
+                <mat-icon>upload</mat-icon> Upload Photo
+              </button>
+              <button mat-stroked-button color="accent" class="ms-2" (click)="generateNewAvatar()" matTooltip="Generate Random Avatar">
+                <mat-icon>refresh</mat-icon> Random Avatar
+              </button>
+            </div>
+            <h3 class="mt-3">{{user?.displayName || 'No Name Set'}}</h3>
+            <p class="text-muted">{{user?.email}}</p>
+          </div>
+
+          <!-- Edit Form -->
+          <div *ngIf="isEditing" class="edit-form">
+            <mat-form-field appearance="outline" class="w-100 mb-3">
+              <mat-label>Display Name</mat-label>
+              <input matInput [(ngModel)]="editForm.displayName" placeholder="Enter your name">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-100 mb-3">
+              <mat-label>Photo URL</mat-label>
+              <input matInput [(ngModel)]="editForm.photoURL" placeholder="Enter photo URL">
+              <mat-hint>Or use the upload button above</mat-hint>
+            </mat-form-field>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button mat-button color="warn" (click)="toggleEdit()">
+                Cancel
+              </button>
+              <button mat-raised-button color="primary" (click)="updateProfile()">
+                Save Changes
+              </button>
+            </div>
+          </div>
+
+          <!-- User Details -->
+          <div *ngIf="!isEditing" class="user-details">
+            <mat-list>
+              <mat-list-item>
+                <mat-icon matListItemIcon>email</mat-icon>
+                <div matListItemTitle>Email</div>
+                <div matListItemLine>{{user?.email}}</div>
+              </mat-list-item>
+
+              <mat-list-item>
+                <mat-icon matListItemIcon [color]="user?.emailVerified ? 'primary' : 'warn'">
+                  {{user?.emailVerified ? 'verified' : 'warning'}}
+                </mat-icon>
+                <div matListItemTitle>Email Verification</div>
+                <div matListItemLine>{{user?.emailVerified ? 'Verified' : 'Not Verified'}}</div>
+              </mat-list-item>
+
+              <mat-list-item>
+                <mat-icon matListItemIcon>event</mat-icon>
+                <div matListItemTitle>Account Created</div>
+                <div matListItemLine>{{user?.creationTime | date:'medium'}}</div>
+              </mat-list-item>
+
+              <mat-list-item>
+                <mat-icon matListItemIcon>login</mat-icon>
+                <div matListItemTitle>Last Sign In</div>
+                <div matListItemLine>{{user?.lastSignInTime | date:'medium'}}</div>
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

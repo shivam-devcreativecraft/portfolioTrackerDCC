@@ -27,11 +27,22 @@ import { TradingviewComponent } from './tradingview/tradingview.component';
 import { SharedModule } from './SharedComponents/shared.module';
 import { MatChipsModule } from '@angular/material/chips';
 import { LoaderComponent } from './loader/loader.component';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { RegisterComponent } from './register/register.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ProfileComponent } from './profile/profile.component';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 // ENDS material imports
 
-
-
+// Add Firebase imports
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 
 @NgModule({
   declarations: [
@@ -42,6 +53,9 @@ import { LoaderComponent } from './loader/loader.component';
     LoginComponent,
     TradingviewComponent,
     LoaderComponent,
+    RegisterComponent,
+    ForgotPasswordComponent,
+    ProfileComponent,
     // DisableNumberInputScrollDirective,
     
     // PortfolioNotesAddComponent
@@ -64,9 +78,17 @@ import { LoaderComponent } from './loader/loader.component';
      FormsModule,
      ReactiveFormsModule,
      GoogleSigninButtonModule,
-     MatChipsModule
-
-
+     MatChipsModule,
+     MatListModule,
+     MatTooltipModule,
+     // Firebase setup
+     AngularFireModule.initializeApp(environment.firebaseConfig),
+     AngularFirestoreModule,
+     AngularFireAuthModule,
+     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+     provideAuth(() => getAuth()),
+     provideStorage(() => getStorage()),
+     provideFirestore(() => getFirestore()),
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
