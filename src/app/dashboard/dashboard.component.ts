@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseDataService } from '../services/firebase-data.service';
 import { DatePipe } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent, ConfirmDialogModel } from '../SharedComponents/confirm-dialog/confirm-dialog.component';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,7 +19,9 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private firebaseService: FirebaseDataService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private dialog: MatDialog,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -60,18 +66,47 @@ export class DashboardComponent implements OnInit {
   }
 
   // Helper function to format date
-  formatDate(date: any): string {
+  formatDate(date: string): string {
     if (!date) return '';
-    return this.datePipe.transform(date, 'MMM dd, yyyy') || '';
+    return this.datePipe.transform(date, 'yyyy-MM-dd') || '';
   }
 
   // Helper function to format numbers
-  formatNumber(num: number): string {
-    return num?.toFixed(2) || '0.00';
+  formatNumber(value: number, decimals: number = 8): string {
+    if (value === null || value === undefined) return '';
+    return Number(value).toFixed(decimals);
   }
 
   // Helper to get PNL class
-  getPnlClass(pnl: number): string {
-    return pnl > 0 ? 'text-success' : pnl < 0 ? 'text-danger' : '';
+  getPnlClass(value: number): string {
+    if (!value) return '';
+    return value > 0 ? 'text-success' : value < 0 ? 'text-danger' : '';
+  }
+
+  async deleteTrade(tradeId: string) {
+    // Show confirm dialog
+    const dialogData = new ConfirmDialogModel(
+      "Confirm Delete",
+      "Are you sure you want to delete this trade?"
+    );
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: dialogData
+    });
+
+    // Handle the dialog result
+    dialogRef.afterClosed().subscribe(async (dialogResult) => {
+      if (dialogResult) {
+        try {
+          const collectionName = this.activeTab === 'futures' ? 'Futures_Trades' : 'Spot_Trades';
+          await this.firebaseService.deleteTrade(collectionName, tradeId);
+          this.notificationService.success('Trade deleted successfully');
+        } catch (error) {
+          console.error('Error deleting trade:', error);
+          this.notificationService.error('Error deleting trade');
+        }
+      }
+    });
   }
 }

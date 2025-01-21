@@ -33,7 +33,11 @@ export class SidenavComponent implements OnInit {
   allNewOrdersUploadedFlag: boolean = false;
   IsMasterControlEnabled: boolean = false;
   isAuthenticated$: Observable<boolean>;
-  userDetails: any = null;
+  userDetails: any = {
+    displayName: 'User',
+    email: '',
+    photoURL: 'assets/default-avatar.png'
+  };
 
   constructor(
     private breakpointObserver: BreakpointObserver,
@@ -54,27 +58,20 @@ export class SidenavComponent implements OnInit {
       this.googleSheetApiServiceRef.checkMasterControl(true);
     }
 
-    // Get user details
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
-      this.userDetails = {
-        displayName: currentUser.displayName || currentUser.email?.split('@')[0] || 'User',
-        email: currentUser.email,
-        photoURL: currentUser.photoURL || 'assets/default-avatar.png'
-      };
-    }
+    // Initialize user details
+    this.updateUserDetails(this.authService.getCurrentUser());
 
-    // Subscribe to auth state changes to update user details
+    // Subscribe to auth state changes
     this.authService.getAuthState().subscribe(isAuthenticated => {
       if (isAuthenticated) {
-        const user = this.authService.getCurrentUser();
-        if (user) {
-          this.userDetails = {
-            displayName: user.displayName || user.email?.split('@')[0] || 'User',
-            email: user.email,
-            photoURL: user.photoURL || 'assets/default-avatar.png'
-          };
-        }
+        this.updateUserDetails(this.authService.getCurrentUser());
+      } else {
+        // Reset user details when logged out
+        this.userDetails = {
+          displayName: 'User',
+          email: '',
+          photoURL: 'assets/default-avatar.png'
+        };
       }
     });
 
@@ -89,6 +86,23 @@ export class SidenavComponent implements OnInit {
     this.dataServiceRef.getAllNewOrdersUploadedObservable().subscribe((flag: boolean) => {
       this.allNewOrdersUploadedFlag = flag;
     });
+  }
+
+  private updateUserDetails(user: any): void {
+    if (user) {
+      // Get display name from: 1. displayName 2. email username 3. 'User'
+      const displayName = user.displayName || 
+                         (user.email ? user.email.split('@')[0] : 'User');
+      
+      // Get photo URL, fallback to default avatar
+      const photoURL = user.photoURL || 'assets/default-avatar.png';
+
+      this.userDetails = {
+        displayName: displayName,
+        email: user.email || '',
+        photoURL: photoURL
+      };
+    }
   }
 
   add_Selected_link(link: string) {

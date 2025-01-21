@@ -7,7 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { GoogleSheetApiService } from 'src/app/services/google-sheet-api.service';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from 'src/app/services/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FunctionsService } from 'src/app/SharedFunctions/functions.service';
 import { TradeDetailsModalComponent } from './trade-details-modal/trade-details-modal.component';
@@ -97,6 +97,58 @@ export class DeltaExchangeComponent implements OnDestroy, OnInit {
   Highcharts: typeof Highcharts = Highcharts;
   chartCallback: Highcharts.ChartCallbackFunction = function (chart) { }; // Optional callback
   updateFlag = false;
+
+
+  constructor(
+    private googleSheetAPIServiceRef: GoogleSheetApiService,
+    private notificationService: NotificationService,
+    private _dialog: MatDialog,
+    private functionsServiceRef: FunctionsService
+  ) {
+    this.googleSheetAPIServiceRef.checkMasterControlSubject$.subscribe(
+      (IsEnabled: boolean) => {
+        this.IsMasterControlEnabled = IsEnabled;
+      }
+    );
+  }
+
+  ngOnInit(): void {
+    this.functionsServiceRef
+      .loadSheetData(
+        this.exchangeName,
+        this.sheetName,
+        500,
+        1,
+        this,
+        this.componentDestroyed$
+      )
+      .then((sheetData) => {
+        if (sheetData) {
+          this.sheetDataGrouped = this.groupDataByDate(sheetData);
+          this.calculateTotalStats();
+          this.initializeAvailableDates();
+          this.setInitialVisibleDates();
+          this.toggleDatesView(true);
+          
+          // Initialize charts after data is loaded
+          this.initializeCharts();
+          
+          // Update charts with initial data
+          this.updateCharts();
+          
+          this.onDateCategoryChanged({ value: 'daily' });
+          this.notificationService.success('Sheet Data Loaded Successfully');
+          this.currentPage = 1;
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+  
+
 
   profitLossChartOptions: Highcharts.Options = {
     credits: { enabled: false },
@@ -634,54 +686,7 @@ export class DeltaExchangeComponent implements OnDestroy, OnInit {
     }]
   };
 
-  constructor(
-    private googleSheetAPIServiceRef: GoogleSheetApiService,
-    private toastr: ToastrService,
-    private _dialog: MatDialog,
-    private functionsServiceRef: FunctionsService
-  ) {
-    this.googleSheetAPIServiceRef.checkMasterControlSubject$.subscribe(
-      (IsEnabled: boolean) => {
-        this.IsMasterControlEnabled = IsEnabled;
-      }
-    );
-  }
 
-  ngOnInit(): void {
-    this.functionsServiceRef
-      .loadSheetData(
-        this.exchangeName,
-        this.sheetName,
-        500,
-        1,
-        this,
-        this.componentDestroyed$
-      )
-      .then((sheetData) => {
-        if (sheetData) {
-          this.sheetDataGrouped = this.groupDataByDate(sheetData);
-          this.calculateTotalStats();
-          this.initializeAvailableDates();
-          this.setInitialVisibleDates();
-          this.toggleDatesView(true);
-          
-          // Initialize charts after data is loaded
-          this.initializeCharts();
-          
-          // Update charts with initial data
-          this.updateCharts();
-          
-          this.onDateCategoryChanged({ value: 'daily' });
-          this.toastr.success('Sheet Data Loaded Successfully', 'Success');
-          this.currentPage = 1;
-        }
-      });
-  }
-
-  ngOnDestroy(): void {
-    this.componentDestroyed$.next();
-    this.componentDestroyed$.complete();
-  }
 
   private calculateTotalStats(): void {
     this.totalStats = {
@@ -987,7 +992,10 @@ export class DeltaExchangeComponent implements OnDestroy, OnInit {
 
   openTradeDetails(trade: any): void {
     this._dialog.open(TradeDetailsModalComponent, {
-      data: trade,
+      data: {
+        trade: trade,
+        sheetName: this.sheetName
+      },
       width: '500px',
       panelClass: 'trade-details-modal'
     });

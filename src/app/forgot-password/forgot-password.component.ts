@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../services/notification.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class ForgotPasswordComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private toastr: ToastrService,
+    private notificationService: NotificationService,
     private authService: AuthService
   ) { }
 
@@ -25,30 +25,30 @@ export class ForgotPasswordComponent implements OnInit {
         email: currentUser.email,
         uid: currentUser.uid
       });
-      this.toastr.info('You are already logged in!');
+      this.notificationService.info('You are already logged in!');
       this.router.navigate(['/']);
     }
   }
 
   async resetPassword() {
     if (!this.email) {
-      this.toastr.error('Please enter your email address');
+      this.notificationService.error('Please enter your email address');
       return;
     }
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(this.email)) {
-      this.toastr.error('Please enter a valid email address');
+      this.notificationService.error('Please enter a valid email address');
       return;
     }
 
     try {
       await this.authService.forgotPassword(this.email);
-      this.toastr.success('Password reset email sent. Please check your inbox.');
+      this.notificationService.success('Password reset email sent. Please check your inbox.');
       this.router.navigate(['/login']);
     } catch (error: any) {
-      this.toastr.error(error.message);
+      this.notificationService.error(error.message);
     }
   }
 

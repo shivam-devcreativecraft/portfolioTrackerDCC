@@ -20,7 +20,7 @@ export class FirebaseDataService {
       throw new Error('User not authenticated');
     }
 
-    const sheetName = tradeData.SheetName;
+    const sheetName = tradeData.Sheet_Name;
     
     // Add timestamp
     tradeData.timestamp = new Date();
@@ -74,5 +74,25 @@ export class FirebaseDataService {
            .orderBy('timestamp', 'desc')
       )
       .valueChanges();
+  }
+
+  // Add this new method
+  async deleteTrade(sheetName: string, tradeId: string): Promise<void> {
+    const userId = this.authService.getCurrentUser()?.uid;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+
+    try {
+      await this.firestore
+        .collection('users')
+        .doc(userId)
+        .collection(sheetName)
+        .doc(tradeId)
+        .delete();
+    } catch (error) {
+      console.error('Error deleting trade:', error);
+      throw error;
+    }
   }
 } 

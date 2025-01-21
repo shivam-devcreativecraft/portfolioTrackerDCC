@@ -36,6 +36,9 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { ProfileComponent } from './profile/profile.component';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from './SharedComponents/confirm-dialog/confirm-dialog.component';
 
 // ENDS material imports
 
@@ -59,9 +62,7 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
     // DisableNumberInputScrollDirective,
     
     // PortfolioNotesAddComponent
-    
-    
-
+    ConfirmDialogComponent
   ],
   // providers : [DatePipe],
 
@@ -74,7 +75,6 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
     //STARTS material imports
     SharedMaterialImportsModule,
     SharedModule,
-     ToastrModule.forRoot(),
      FormsModule,
      ReactiveFormsModule,
      GoogleSigninButtonModule,
@@ -89,6 +89,9 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
      provideAuth(() => getAuth()),
      provideStorage(() => getStorage()),
      provideFirestore(() => getFirestore()),
+     MatSnackBarModule,
+     MatDialogModule,
+     ToastrModule.forRoot()
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

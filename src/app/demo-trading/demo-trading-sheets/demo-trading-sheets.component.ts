@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { GoogleSheetApiService } from 'src/app/services/google-sheet-api.service';
 import { MasterControlComponent } from 'src/app/SharedComponents/master-control/master-control.component';
 import { AddDemoTradingDeltaFuturesComponent } from '../add-demo-trading-delta-futures/add-demo-trading-delta-futures.component';
+import { NotificationService } from 'src/app/services/notification.service';
 
 
 
@@ -28,7 +29,7 @@ export class DemoTradingSheetsComponent implements OnInit {
     private router: Router,
     private googleSheetAPIServiceRef: GoogleSheetApiService,
     private _dialog: MatDialog,
-
+    private notificationService: NotificationService
   ) {
 
 

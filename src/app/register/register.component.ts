@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnDestroy, OnInit } from '@angular/core';
 
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../services/notification.service';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../services/auth.service';
 @Component({
@@ -15,7 +15,7 @@ export class RegisterComponent implements OnInit {
   password: string = '';
 
 
-  constructor(private router: Router, private toastr: ToastrService, 
+  constructor(private router: Router, private notificationService: NotificationService, 
      private authService: AuthService
     ) { }
   // onSubmit() {
@@ -49,7 +49,7 @@ export class RegisterComponent implements OnInit {
         creationTime: currentUser.metadata.creationTime,
         lastSignInTime: currentUser.metadata.lastSignInTime
       });
-      this.toastr.info('You are already logged in!');
+      this.notificationService.info('You are already logged in!');
       this.router.navigate(['/']);
     }
   }
@@ -72,17 +72,17 @@ export class RegisterComponent implements OnInit {
 async loginFromFirebase() {
   try {
     await this.authService.login(this.email, this.password);
-    this.toastr.success("Successfully logged in!");
+    this.notificationService.success("Successfully logged in!");
     this.router.navigate(['/']);
   } catch (err: any) {
-    this.toastr.error(err.message);
+    this.notificationService.error(err.message);
     this.router.navigate(['/login']);
   }
 }
 
 async registerFromFirebase() {
   if (!this.email || !this.password) {
-    this.toastr.error('Please enter both email and password');
+    this.notificationService.error('Please enter both email and password');
     return;
   }
 
@@ -98,10 +98,10 @@ async registerFromFirebase() {
       creationTime: result.user.metadata.creationTime,
       lastSignInTime: result.user.metadata.lastSignInTime
     });
-    this.toastr.success("Successfully registered!");
+    this.notificationService.success("Successfully registered!");
     this.router.navigate(['/']);
   } catch (err: any) {
-    this.toastr.error(err.message);
+    this.notificationService.error(err.message);
   }
 }
 }

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { Auth, onAuthStateChanged } from '@angular/fire/auth';
-import { Observable } from 'rxjs';
+import { NotificationService } from './services/notification.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +9,7 @@ import { Observable } from 'rxjs';
 export class AuthGuard implements CanActivate {
   constructor(
     private router: Router, 
-    private tostr: ToastrService,
+    private notificationService: NotificationService,
     private auth: Auth
   ) {}
 
@@ -20,7 +19,7 @@ export class AuthGuard implements CanActivate {
         if (user) {
           resolve(true);
         } else {
-          this.tostr.info("Please login to continue!");
+          this.notificationService.info("Please login to continue!");
           this.router.navigate(['/login']);
           resolve(false);
         }

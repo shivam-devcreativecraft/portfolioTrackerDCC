@@ -3,11 +3,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NavigationEnd, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, filter, map, startWith } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { GoogleSheetApiService } from 'src/app/services/google-sheet-api.service';
 import { FirebaseDataService } from 'src/app/services/firebase-data.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-add-demo-trading-delta-futures',
@@ -65,7 +65,7 @@ Notes:any;
     private googleSheetAPIRef: GoogleSheetApiService,
     private firebaseDataService: FirebaseDataService,
     private datePipe: DatePipe,
-    private toastr: ToastrService,
+    private notificationService: NotificationService,
     private dataService: DataService,
     public dialogRef: MatDialogRef<AddDemoTradingDeltaFuturesComponent>,
     private router: Router,
@@ -164,20 +164,16 @@ Notes:any;
 
   async onSubmit() {
     this.Coin = this.Coin.toUpperCase();
-    if (this.Coin === 'BTC' || this.Coin === 'ETH' || this.Coin === 'LTC' || this.Coin === 'BNB' || this.Coin === 'SOL' || this.Coin === 'XRP' || this.Coin === 'LINK' || this.Coin === 'DOGE') {
-      // console.log('submitted')
+    if (this.Coin === 'BTC' || this.Coin === 'ETH' || this.Coin === 'LTC' || this.Coin === 'BNB' || 
+        this.Coin === 'SOL' || this.Coin === 'XRP' || this.Coin === 'LINK' || this.Coin === 'DOGE') {
       await this.getLotValue();
-      // console.log(this.Lot_Value)
     } else {
-      this.toastr.error("Invalid Coin !", "Error");
+      this.notificationService.error("Invalid Coin !");
       return;
     }
     await this.calculateMargin();
     await this.formateDate();
-
-
     this.uploadTradeData();
-
   }
 
 
@@ -304,8 +300,8 @@ Notes:any;
     // Create trade data object
     let tradeData: any = {
       ID: uniqueId,
-      SheetName: this.SheetName,
-      ExchangeName: this.ExchangeName
+      Sheet_Name: this.SheetName,
+      Exchange_Name: this.ExchangeName
     };
 
     if(this.SheetName === 'Futures_Trades'){
@@ -316,12 +312,12 @@ Notes:any;
         Coin: this.Coin,
         Type: this.Type,
         Leverage: Number(this.Leverage),
-        Open_Price: Number(this.Open_Price),
-        Open_Margin: Number(this.Open_Margin),
-        Close_Price: Number(this.Close_Price),
-        Close_Margin: Number(this.Close_Margin),
-        Pnl: Number(this.Pnl),
-        Pnl_Percentage: Number(this.Pnl_Percentage),
+        Open_Price: Number(Number(this.Open_Price).toString().match(/^-?\d*\.?\d{0,8}/)?.[0] || this.Open_Price),
+        Open_Margin: Number(Number(this.Open_Margin).toFixed(3)),
+        Close_Price: Number(Number(this.Close_Price).toString().match(/^-?\d*\.?\d{0,8}/)?.[0] || this.Close_Price),
+        Close_Margin: Number(Number(this.Close_Margin).toFixed(3)),
+        Pnl: Number(Number(this.Pnl).toFixed(3)),
+        Pnl_Percentage: Number(Number(this.Pnl_Percentage).toFixed(3)),
         Influencer: this.Influencer.toUpperCase(),
         Lot_Value: Number(this.Lot_Value)
       };
@@ -352,10 +348,10 @@ console.log(tradeData)
     try {
 
       await this.firebaseDataService.uploadTradeData(tradeData);
-      this.toastr.success("Trade data uploaded successfully!", "Success!");
+      this.notificationService.success("Trade data uploaded successfully!");
       this.onClose();
     } catch (error) {
-      this.toastr.error("Failed to upload trade data", "Error");
+      this.notificationService.error("Failed to upload trade data");
       console.error("Error uploading data:", error);
     } finally {
       this.isNewEntrySubmitted = false;

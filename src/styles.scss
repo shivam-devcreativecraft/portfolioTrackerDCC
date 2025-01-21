@@ -14,7 +14,7 @@ $DrkDr-theme: mat.define-light-theme((color: (primary: $DrkDr-primary,
 
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
-@import 'ngx-toastr/toastr';
+// @import 'ngx-toastr/toastr';
 @import '../src/app/sharedSCSS/scssVariable/colorVariable.scss';
 
 // @import '/src/app/sharedSCSS/animationStyle.scss';
@@ -130,4 +130,41 @@ html{
 .spacer-20{
   padding-top: 20px;
   padding-bottom: 20px;
+}
+
+// Snackbar styles
+.success-snackbar {
+  background: #4caf50;
+  color: white;
+  
+  .mat-simple-snackbar-action {
+    color: white;
+  }
+}
+
+.error-snackbar {
+  background: #f44336;
+  color: white;
+  
+  .mat-simple-snackbar-action {
+    color: white;
+  }
+}
+
+.warning-snackbar {
+  background: #ff9800;
+  color: white;
+  
+  .mat-simple-snackbar-action {
+    color: white;
+  }
+}
+
+.info-snackbar {
+  background: #2196f3;
+  color: white;
+  
+  .mat-simple-snackbar-action {
+    color: white;
+  }
 }

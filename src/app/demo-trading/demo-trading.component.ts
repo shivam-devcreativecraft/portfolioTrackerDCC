@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NotificationService } from 'src/app/services/notification.service';
 
 
 @Component({
@@ -6,4 +7,8 @@ import { Component } from '@angular/core';
   templateUrl: './demo-trading.component.html',
   styleUrls: ['./demo-trading.component.scss'],
 })
-export class DemoTradingComponent {}
+export class DemoTradingComponent {
+  constructor(
+    private notificationService: NotificationService
+  ) {}
+}

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../services/auth.service';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -12,10 +12,12 @@ export class LoginComponent implements OnInit {
   hide = true;
   email: string = '';
   password: string = '';
+  showResendButton: boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     private router: Router, 
-    private toastr: ToastrService,
+    private notificationService: NotificationService,
     private authService: AuthService
   ) { }
 
@@ -32,16 +34,19 @@ export class LoginComponent implements OnInit {
         creationTime: currentUser.metadata.creationTime,
         lastSignInTime: currentUser.metadata.lastSignInTime
       });
-      this.toastr.info('You are already logged in!');
+      this.notificationService.info('You are already logged in!');
       this.router.navigate(['/']);
     }
   }
 
   async loginFromFirebase() {
     if (!this.email || !this.password) {
-      this.toastr.error('Please enter both email and password');
+      this.notificationService.error('Please enter both email and password');
       return;
     }
+
+    this.isLoading = true;
+    this.showResendButton = false;
 
     try {
       const result = await this.authService.login(this.email, this.password);
@@ -56,15 +61,48 @@ export class LoginComponent implements OnInit {
         lastSignInTime: result.user.metadata.lastSignInTime
       });
     } catch (err: any) {
-      this.toastr.error(err.message);
+      if (err.message === "Email not verified") {
+        this.showResendButton = true;
+      } else {
+        this.notificationService.error(err.message);
+      }
+    } finally {
+      this.isLoading = false;
     }
   }
 
-async forgotPassword() {
-  await this.authService.forgotPassword(this.email);
-}
+  async resendVerificationEmail() {
+    if (!this.email) {
+      this.notificationService.error('Please enter your email address');
+      return;
+    }
 
- async signOut() {
-    await this.authService.signOut( ); 
+    this.isLoading = true;
+    try {
+      await this.authService.resendVerificationEmail();
+      this.showResendButton = false;
+    } catch (error) {
+      // Error is already handled in the service
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async forgotPassword() {
+    if (!this.email) {
+      this.notificationService.error('Please enter your email address');
+      return;
+    }
+    
+    this.isLoading = true;
+    try {
+      await this.authService.forgotPassword(this.email);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async signOut() {
+    await this.authService.signOut();
   }
 }
