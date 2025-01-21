@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ToastrService } from 'ngx-toastr';
+// import { ToastrService } from 'ngx-toastr';
 import { MasterControlComponent } from 'src/app/SharedComponents/master-control/master-control.component';
 import { GoogleSheetApiService } from 'src/app/services/google-sheet-api.service';
 import { FunctionsService } from 'src/app/SharedFunctions/functions.service';
@@ -82,7 +82,7 @@ export class DemoTradingDashboardComponent {
 
   constructor(
     private googleSheetAPIServiceRef: GoogleSheetApiService,
-    private toastr: ToastrService,
+    // private toastr: ToastrService,
     private _dialog: MatDialog,
     private functionsServiceRef: FunctionsService,
 

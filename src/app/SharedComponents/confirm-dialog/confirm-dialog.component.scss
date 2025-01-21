@@ -5,3 +5,20 @@
 h1 {
     color :$base-color_primary!important
 }
+
+.confirm-dialog {
+  padding: 20px;
+  
+  .mat-dialog-title {
+    margin: 0 0 20px;
+  }
+
+  .mat-dialog-content {
+    margin: 0 0 20px;
+  }
+
+  .dialog-actions {
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}

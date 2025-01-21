@@ -68,22 +68,37 @@
                   </div>
 
                   <div class="pt-1 mb-4">
-                    <button class="btn btn-success btn-lg btn-block" type="button" (click)="onSubmit()"
-                      [disabled]="email === '' || password === '' " data-toggle="tooltip" data-placement="bottom"
-                      title="All Fields Required">Login</button>
+                    <button class="btn btn-success btn-lg btn-block" type="button" 
+                      (click)="loginFromFirebase()"
+                      [disabled]="email === '' || password === '' || isLoading">
+                      <span *ngIf="!isLoading">Login</span>
+                      <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span *ngIf="isLoading">&nbsp;Checking...</span>
+                    </button>
+                    
+                    <!-- Add resend verification button -->
+                    <button *ngIf="showResendButton" 
+                      class="btn btn-primary btn-lg btn-block mt-2" 
+                      type="button"
+                      [disabled]="isLoading"
+                      (click)="resendVerificationEmail()">
+                      <span *ngIf="!isLoading">Resend Verification Email</span>
+                      <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span *ngIf="isLoading">&nbsp;Sending...</span>
+                    </button>
                   </div>
-                  <!-- <p class="">Social Login</p>
+                  <p class="">Social Login</p>
                   <div class="googleSignIn">
                   <asl-google-signin-button type='icon' size='medium' ></asl-google-signin-button>
 
-                  </div> -->
+                  </div>
 
-                  <!-- <a class="small text-muted" href="#!">Forgot password?</a>
-                  <p class="mb-5 pb-lg-2" style="color: #393f81;">Don't have an account? <a href="#!"
-                      style="color: #393f81;">Register here</a></p>
+                  <a class="small text-muted" [routerLink]="['/forgot-password']" style="cursor: pointer;">Forgot password?</a>
+                  <p class="mb-5 pb-lg-2" style="color: #393f81;">Don't have an account? <button btn-primary
+                      style="color: #393f81;" [routerLink]="['/register']">Register here</button></p>
                   <a href="#!" class="small text-muted">Terms of use.</a>
-                  <a href="#!" class="small text-muted">Privacy policy</a> -->
-                </form>
+                  <a href="#!" class="small text-muted">Privacy policy</a>
+                </form> 
 
               </div>
             </div>

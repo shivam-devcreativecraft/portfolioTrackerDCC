@@ -3,10 +3,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NavigationEnd, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, filter, map, startWith } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { GoogleSheetApiService } from 'src/app/services/google-sheet-api.service';
+import { FirebaseDataService } from 'src/app/services/firebase-data.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-add-demo-trading-delta-futures',
@@ -44,7 +45,14 @@ export class AddDemoTradingDeltaFuturesComponent implements OnInit {
   Lot_Value: any = null;
 
 
-
+Market:any;
+Direction:any;
+Price:any;
+Amount:any;
+Fees:any;
+Fee_Asset:any;
+Period:any;
+Notes:any;
 
 
 
@@ -55,8 +63,9 @@ export class AddDemoTradingDeltaFuturesComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public injectedData: any,
     private googleSheetAPIRef: GoogleSheetApiService,
+    private firebaseDataService: FirebaseDataService,
     private datePipe: DatePipe,
-    private toastr: ToastrService,
+    private notificationService: NotificationService,
     private dataService: DataService,
     public dialogRef: MatDialogRef<AddDemoTradingDeltaFuturesComponent>,
     private router: Router,
@@ -113,22 +122,23 @@ export class AddDemoTradingDeltaFuturesComponent implements OnInit {
 
 
   isFormValid(): boolean {
-    if (this.SheetName === 'Delta_Futures') {
-      return (
-        // true
-        !!this.Date &&
-        !!this.Time &&
-        !!this.Coin &&
-        !!this.Contracts &&
-        !!this.Type &&
-        !!this.Leverage &&
-        !!this.Open_Price &&
-        !!this.Close_Price &&
-        !!this.Influencer 
-        // && !!this.Platform
-      );
-    }
-    return false;
+    // if (this.SheetName === 'Delta_Futures') {
+    //   return (
+    //     // true
+    //     !!this.Date &&
+    //     !!this.Time &&
+    //     !!this.Coin &&
+    //     !!this.Contracts &&
+    //     !!this.Type &&
+    //     !!this.Leverage &&
+    //     !!this.Open_Price &&
+    //     !!this.Close_Price &&
+    //     !!this.Influencer 
+    //     // && !!this.Platform
+    //   );
+    // }
+    // return false;
+    return true
   }
 
 
@@ -154,20 +164,16 @@ export class AddDemoTradingDeltaFuturesComponent implements OnInit {
 
   async onSubmit() {
     this.Coin = this.Coin.toUpperCase();
-    if (this.Coin === 'BTC' || this.Coin === 'ETH' || this.Coin === 'LTC' || this.Coin === 'BNB' || this.Coin === 'SOL' || this.Coin === 'XRP' || this.Coin === 'LINK' || this.Coin === 'DOGE') {
-      // console.log('submitted')
+    if (this.Coin === 'BTC' || this.Coin === 'ETH' || this.Coin === 'LTC' || this.Coin === 'BNB' || 
+        this.Coin === 'SOL' || this.Coin === 'XRP' || this.Coin === 'LINK' || this.Coin === 'DOGE') {
       await this.getLotValue();
-      // console.log(this.Lot_Value)
     } else {
-      this.toastr.error("Invalid Coin !", "Error");
+      this.notificationService.error("Invalid Coin !");
       return;
     }
     await this.calculateMargin();
     await this.formateDate();
-
-
-    this.uploadToGoogleSheets();
-
+    this.uploadTradeData();
   }
 
 
@@ -276,62 +282,80 @@ export class AddDemoTradingDeltaFuturesComponent implements OnInit {
     //     console.log('Date : ', this.Date);
   }
 
-  uploadToGoogleSheets() {
-
-
+  async uploadTradeData() {
     this.isNewEntrySubmitted = true;
-    const formData = new FormData();
+    
+    // Generate unique ID based on current date and time
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    const uniqueId = `${year}${month}${day}${hours}${minutes}${seconds}`;
+    console.log('Generated ID:', uniqueId);
 
-    formData.append('action', 'add');
-    formData.append('ExchangeName', this.ExchangeName);
-    formData.append('SheetName', this.SheetName);
+    // Create trade data object
+    let tradeData: any = {
+      ID: uniqueId,
+      Sheet_Name: this.SheetName,
+      Exchange_Name: this.ExchangeName
+    };
 
-    // const date = new Date(this.Date);
-    // const formattedDate = this.datePipe.transform(date, 'yyyy-MM-dd');
+    if(this.SheetName === 'Futures_Trades'){
+      tradeData = {
+        ...tradeData,
+        Date: this.Date,
+        Contracts: Number(this.Contracts),
+        Coin: this.Coin,
+        Type: this.Type,
+        Leverage: Number(this.Leverage),
+        Open_Price: Number(Number(this.Open_Price).toString().match(/^-?\d*\.?\d{0,8}/)?.[0] || this.Open_Price),
+        Open_Margin: Number(Number(this.Open_Margin).toFixed(3)),
+        Close_Price: Number(Number(this.Close_Price).toString().match(/^-?\d*\.?\d{0,8}/)?.[0] || this.Close_Price),
+        Close_Margin: Number(Number(this.Close_Margin).toFixed(3)),
+        Pnl: Number(Number(this.Pnl).toFixed(3)),
+        Pnl_Percentage: Number(Number(this.Pnl_Percentage).toFixed(3)),
+        Influencer: this.Influencer.toUpperCase(),
+        Lot_Value: Number(this.Lot_Value)
+      };
+    }
 
+    if(this.SheetName === 'Spot_Trades'){
+      const date = new Date(this.Date);
+      const formattedDate = this.datePipe.transform(date, 'yyyy-MM-dd');
+      tradeData = {
+        ...tradeData,
+        Date: (formattedDate! + " " + this.Time).toString(),
+        Market: this.Market.toLocaleUpperCase(),
+        Price: Number(this.Price),
+        Direction: this.Direction,
+        Amount: Number(this.Amount),
+        Total_USDT: Number(this.Amount * this.Price),
+        Fees: Number(this.Fees),
+        Fee_Asset: this.Fee_Asset,
+        Period: this.Period || '',
+        Notes: this.Notes || '',
+        Influencer: this.Influencer.toUpperCase()
+      };
+    }
+console.log(tradeData)
+// this.isNewEntrySubmitted = false;
 
+// return
+    try {
 
-
-
-    // formData.append('Date', this.Date.toString());
-    // console.log(typeof(this.Date))
-    formData.append('Date', this.Date);
-    formData.append('Contracts', this.Contracts);
-    formData.append('Coin', this.Coin);
-    formData.append('Type', this.Type);
-    formData.append('Leverage', this.Leverage);
-    formData.append('Open_Price', this.Open_Price);
-    formData.append('Open_Margin', this.Open_Margin);
-    formData.append('Close_Price', this.Close_Price);
-    formData.append('Close_Margin', this.Close_Margin);
-    formData.append('Pnl', this.Pnl);
-    formData.append('Pnl_Percentage', this.Pnl_Percentage);
-    formData.append('Influencer', this.Influencer);
-    formData.append('Lot_Value', this.Lot_Value);
-
-
-  
-
-    this.googleSheetAPIRef.addNewEntry_AIO(formData)
-      .then((response) => {
-        if (response.error) {
-          this.toastr.error(response.error, "Failed!");
-          localStorage.removeItem('masterControlToken');
-          this.googleSheetAPIRef.checkMasterControl(false);
-          this.onClose();
-        } else if (response.message) {
-          this.toastr.success(response.message, "Successful!");
-        }
-      })
-      .catch((error) => {
-        this.toastr.error("Something went wrong!", "Error");
-        console.error("Error uploading to Google Sheets:", error);
-      })
-      .finally(() => {
-        this.isNewEntrySubmitted = false;
-      });
-
-
+      await this.firebaseDataService.uploadTradeData(tradeData);
+      this.notificationService.success("Trade data uploaded successfully!");
+      this.onClose();
+    } catch (error) {
+      this.notificationService.error("Failed to upload trade data");
+      console.error("Error uploading data:", error);
+    } finally {
+      this.isNewEntrySubmitted = false;
+    }
   }
 
 

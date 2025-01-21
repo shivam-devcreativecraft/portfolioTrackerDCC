@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { HighchartsChartModule } from 'highcharts-angular';
-
 import { DemoTradingRoutingModule } from './demo-trading-routing.module';
 import { DemoTradingComponent } from './demo-trading.component';
 import { DemoTradingSheetsComponent } from './demo-trading-sheets/demo-trading-sheets.component';
@@ -11,7 +10,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { DisableNumberInputScrollDirective } from '../directives/disable-number-input-scroll.directive';
 import { AddDemoTradingDeltaFuturesComponent } from './add-demo-trading-delta-futures/add-demo-trading-delta-futures.component';
-
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,6 @@ import { AddDemoTradingDeltaFuturesComponent } from './add-demo-trading-delta-fu
     DemoTradingDashboardComponent,
     AddDemoTradingDeltaFuturesComponent,
     // DisableNumberInputScrollDirective
-
   ],
   imports: [
     CommonModule,
@@ -29,7 +29,9 @@ import { AddDemoTradingDeltaFuturesComponent } from './add-demo-trading-delta-fu
     FormsModule,
     ReactiveFormsModule,
     MatChipsModule,
-    HighchartsChartModule
-  ]
+    HighchartsChartModule,
+    provideFirestore(() => getFirestore())
+  ],
+  providers: [DatePipe]
 })
 export class DemoTradingModule { }

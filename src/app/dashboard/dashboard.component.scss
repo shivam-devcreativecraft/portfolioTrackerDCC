@@ -1,1 +1,116 @@
 @import '../sharedSCSS/portfolioSheets/sheetsOuterMostContainerStyle.scss';
+
+.dashboard-container {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+  }
+
+  .content {
+    .nav-tabs {
+      border-bottom: 2px solid #dee2e6;
+      
+      .nav-link {
+        border: none;
+        color: #6c757d;
+        font-weight: 500;
+        padding: 10px 20px;
+        cursor: pointer;
+        
+        &.active {
+          color: #0d6efd;
+          border-bottom: 2px solid #0d6efd;
+        }
+        
+        &:hover {
+          color: #0d6efd;
+          border-bottom: 2px solid #0d6efd;
+        }
+      }
+    }
+
+    .table-responsive {
+      margin-top: 20px;
+      overflow-x: auto;
+      
+      table {
+        width: 100%;
+        min-width: 1500px; // Ensure table is wide enough for all columns
+        border-collapse: separate;
+        border-spacing: 0;
+        
+        th {
+          background-color: $base-color_primary;
+          font-weight: 600;
+          padding: 12px;
+          border-bottom: 2px solid #dee2e6;
+          white-space: nowrap;
+          position: sticky;
+          top: 0;
+          z-index: 1;
+          
+        }
+        
+        td {
+          padding: 12px;
+          border-bottom: 1px solid #dee2e6;
+          vertical-align: middle;
+          white-space: nowrap;
+        }
+        
+        tbody tr {
+          &:hover {
+            background-color: #f8f9fa;
+          }
+        }
+
+        .text-success {
+          color: #28a745 !important;
+          font-weight: 500;
+        }
+
+        .text-danger {
+          color: #dc3545 !important;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .no-data {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 200px;
+      
+      p {
+        font-size: 1.1rem;
+        color: #6c757d;
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 10px;
+    
+    .table-responsive {
+      margin-top: 10px;
+      
+      table {
+        th, td {
+          padding: 8px;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+}

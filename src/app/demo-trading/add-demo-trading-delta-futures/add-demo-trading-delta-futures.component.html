@@ -13,22 +13,24 @@
   
         <ng-container id="SheetNameSelector">
   
-          <!-- <div class="row">
+          <div class="row">
             <mat-form-field appearance="outline" floatLabel="always">
               <mat-label>Choose SheetName</mat-label>
               <mat-select [(ngModel)]="SheetName" name="SheetName" required>
-                <mat-option value="Delta_Futures">Delta_Futures</mat-option>
+                <mat-option value="Futures_Trades">Futures_Trades</mat-option>
+                <mat-option value="Spot_Trades">Spot_Trades</mat-option>
+
 
               </mat-select>
             </mat-form-field>
-          </div> -->
+          </div>
   
         </ng-container>
         <!-- ---------------------------other Form Fields---------------STARTS -->
   
   
 
-        <ng-container *ngIf="SheetName === 'Delta_Futures'">
+        <ng-container *ngIf="SheetName === 'Futures_Trades'">
           <div class="row pt-2">
             <mat-form-field appearance="outline" floatLabel="always">
               <mat-label>Choose a date</mat-label>
@@ -205,6 +207,166 @@
 
         </ng-container>
   
+
+
+
+        <ng-container *ngIf="SheetName === 'Spot_Trades'">
+
+
+          <div class="row">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Choose a date</mat-label>
+              <input matInput [matDatepicker]="date" [max]="today" name="Date" [(ngModel)]="Date" required
+                tabIndex="-1">
+              <button class="text-danger" *ngIf="Date" matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                (click)="Date = ''" tabIndex="-1">
+                <mat-icon>close</mat-icon>
+              </button>
+
+              <mat-hint>D/M/YYYY</mat-hint>
+              <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
+              <mat-datepicker #date></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+
+          <div class="row pt-3">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Time*</mat-label>
+              <input matInput name="Time" [(ngModel)]="Time" type="time" step="1" required />
+              <mat-hint>HH:MM:SS</mat-hint>
+
+              <button class="text-danger" *ngIf="Time" matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                (click)="Time = ''" tabIndex="-1">
+
+                <mat-icon>close</mat-icon>
+              </button>
+
+            </mat-form-field>
+          </div>
+
+
+          <div class="row pt-3">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Market</mat-label>
+              <input matInput type="text" placeholder="Market" [(ngModel)]="Market" name="Market" required />
+              <mat-hint>BTC, ETH...</mat-hint>
+              <button class="text-danger" *ngIf="Market" matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                (click)="Market = ''" tabIndex="-1">
+                <mat-icon>close</mat-icon>
+
+              </button>
+            </mat-form-field>
+          </div>
+          <div class="row pb-4 px-2 pt-2">
+            <mat-label>Direction*</mat-label>
+            <mat-chip-listbox aria-label="Type selection" [(ngModel)]="Direction" name="Type" required>
+              <mat-chip-option color="accent">BUY</mat-chip-option>
+              <mat-chip-option color="warn">SELL</mat-chip-option>
+            </mat-chip-listbox>
+          </div>
+
+
+
+          <div class="row">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Price</mat-label>
+              <!-- <span matTextPrefix>₮&nbsp;</span> -->
+              <input matInput type="number" placeholder="₮ 0" [(ngModel)]="Price" name="Price" required />
+              <button class="text-danger" *ngIf="Price" matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                (click)="Price = ''" tabIndex="-1">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <div class="row">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Amount</mat-label>
+
+              <!-- <input matInput type="number" [placeholder]="Amount of coin bought" -->
+              <input matInput type="number"
+              [placeholder]="Direction === 'BUY' ? 'Amount of coin bought' : Direction === 'SELL' ? 'Amount of coin sold' : 'Amount of coin'"
+                [(ngModel)]="Amount" name="Amount" required />
+
+
+              <button class="text-danger" *ngIf="Amount" matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                (click)="Amount = ''" tabIndex="-1">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+
+          <div class="row">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Fees</mat-label>
+              <!-- <span matTextPrefix>₮&nbsp;</span> -->
+              <input matInput type="number" placeholder="₮ 0" [(ngModel)]="Fees" name="Fees" required />
+              <button class="text-danger" *ngIf="Fees" matSuffix mat-icon-button  aria-label="Clear" type="button"  (click)="Fees = 0"
+                tabIndex="-1">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <div class="row">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Fee_Asset</mat-label>
+              <!-- <span matTextPrefix>₮&nbsp;</span> -->
+              <input matInput type="text" placeholder="USDT/MX/BNB ..." [(ngModel)]="Fee_Asset" name="Fee_Asset" required />
+              <button class="text-danger" *ngIf="Fee_Asset" matSuffix mat-icon-button  aria-label="Clear" type="button"  (click)="Fee_Asset = ''"
+                tabIndex="-1">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <div class="row">
+            <mat-form-field appearance="outline" floatLabel="always" class="example-full-width">
+              <mat-label>Influencer</mat-label>
+              <input type="text" placeholder="Influencer Name" aria-label="Influencer" matInput
+                [(ngModel)]="Influencer" [formControl]="influencerControl" [matAutocomplete]="auto" name="Influencer">
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of filteredInfluencers | async" [value]="option">
+                  {{option}}
+                </mat-option>
+              </mat-autocomplete>
+              <button class="text-danger" *ngIf="Influencer" matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                (click)="clearInfluencer()" tabIndex="-1">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <div class="row">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Period</mat-label>
+
+              <input matInput type="text" placeholder="Period" [(ngModel)]="Period" name="Period" />
+
+              <button class="text-danger" *ngIf="Period" matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                (click)="Period = ''" tabIndex="-1">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+      
+
+          <div class="row">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Notes</mat-label>
+              <textarea matInput placeholder="Notes" [(ngModel)]="Notes" name="Notes"></textarea>
+              <button class="text-danger" *ngIf="Notes" matSuffix mat-icon-button  aria-label="Clear" type="button" 
+                (click)="Notes = ''" tabIndex="-1">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+        </ng-container>
+
   
         <!-- ---------------------------other Form Fields---------------ENDS -->
   
@@ -217,12 +379,10 @@
   
     <div mat-dialog-actions class="action">
       <button mat-raised-button color="" (click)="onClose()" tabindex="-1">Cancel</button>
-      <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!isFormValid() || isNewEntrySubmitted">
-  
+      <button mat-raised-button color="primary" (click)="uploadTradeData()" [disabled]="!isFormValid() || isNewEntrySubmitted">
         <span *ngIf="isNewEntrySubmitted">Adding...</span>
         <span *ngIf="!isNewEntrySubmitted">Add</span>
       </button>
-      <!-- <button class="btn btn-secondary" (click)="clearFields(form)">Clear</button> -->
     </div>
   
   </div>
