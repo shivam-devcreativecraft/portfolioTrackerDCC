@@ -1,3 +1,5 @@
+@import '../sharedSCSS/scssVariable/colorVariable.scss';
+
 mat-form-field {
   width: 100% !important;
 }
@@ -15,4 +17,6 @@ mat-form-field {
 }
 form h5{
     letter-spacing: 1px;
+    color: $base_color_primary;
+    font-weight: 600 !important;
 }

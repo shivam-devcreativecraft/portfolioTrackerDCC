@@ -30,9 +30,9 @@ export class AuthService {
         // If email is verified, proceed with authentication
         this.isAuthenticated.next(true);
         const token = await user.getIdToken();
-        console.log('Firebase Auth Token:', token);
-        console.log('User UID:', user.uid);
-        console.log('Token is stored in IndexedDB -> firebase-auth-token');
+        // console.log('Firebase Auth Token:', token);
+        // console.log('User UID:', user.uid);
+        // console.log('Token is stored in IndexedDB -> firebase-auth-token');
         
         // Only redirect if on login/register page and email is verified
         const currentUrl = this.router.url;
@@ -41,7 +41,7 @@ export class AuthService {
         }
       } else {
         this.isAuthenticated.next(false);
-        console.log('No auth token - User is logged out');
+        // console.log('No auth token - User is logged out');
         // Force navigation to login when user is not authenticated
         this.router.navigate(['/login']);
       }
@@ -83,7 +83,7 @@ export class AuthService {
 
       // If we get here, email is verified
       const token = await result.user.getIdToken();
-      console.log('New login token:', token);
+      // console.log('New login token:', token);
       this.toastr.success("Successfully logged in!");
       this.router.navigate(['/']);
       return result;
@@ -150,7 +150,7 @@ export class AuthService {
   async signOut() {
     try {
       await signOut(this.auth);
-      console.log('Token cleared from IndexedDB');
+      // console.log('Token cleared from IndexedDB');
       this.toastr.success('Logged out successfully');
       // Force clear any cached data here if needed
       this.router.navigate(['/login'], { replaceUrl: true });

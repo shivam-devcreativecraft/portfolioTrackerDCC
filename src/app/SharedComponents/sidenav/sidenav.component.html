@@ -4,7 +4,7 @@
     <div class="d-flex  text-white  bg-dark  justify-content-center align-items-center logo-div">
 
 
-      <h1 class=" text-light m-0">DrkDr</h1>
+      <h1 class=" text-light m-0">Portfio Tracker DCC</h1>
 
     </div>
     <div class="d-flex  text-dark    justify-content-center dp-div">
@@ -16,7 +16,7 @@
              onerror="this.src='assets/dashboard/userProfileEmpty.png'"/>
         <h2 class="text-muted mb-0 mt-2">{{userDetails?.displayName}}</h2>
         <p class="text-muted mb-0">{{userDetails?.email}}</p>
-        <p class="mb-0">( DrkDr )</p>
+        <!-- <p class="mb-0 text-muted">(on devcreativecraft.pages.dev )</p> -->
       </div>
 
     </div>
@@ -24,7 +24,7 @@
       <!-- -------------------------STARTS main accordion (binance , bybit,....,etc)------------------- -->
       <hr class="mt-0"> 
 
-   <p class="text-muted pb-2 mb-0 ">ACCOUNT</p>
+   <p class="text-muted pb-2 mb-0 ">OVERVIEW</p>
       <div class="title-text fw-600 d-flex flex-column top-link">
         <a mat-list-item [routerLink]="isPortfolioMainDashboardActive() ? [] :['dashboard']"
           [ngClass]="{'active-bg': isPortfolioMainDashboardActive() }" (click)="handleNavLinkClickAutoCollapse()">
@@ -34,6 +34,34 @@
 
       </div>
 
+      <div class="title-text fw-600 d-flex flex-column top-link">
+        <a mat-list-item [routerLink]="isHistoryActive() ? [] :['history']"
+          [ngClass]="{'active-bg': isHistoryActive() }" (click)="handleNavLinkClickAutoCollapse()">
+          <mat-icon>history</mat-icon>History
+        </a>
+
+
+      </div>
+<!-- 
+      <div class="title-text fw-600 d-flex flex-column top-link">
+        <a mat-list-item [routerLink]="isSpotTradesActive() ? [] :['spot-trades']"
+          [ngClass]="{'active-bg': isSpotTradesActive() }" (click)="handleNavLinkClickAutoCollapse()">
+          <mat-icon>dashboard</mat-icon>Spot Trades
+        </a>
+
+
+      </div>
+
+      <div class="title-text fw-600 d-flex flex-column top-link">
+        <a mat-list-item [routerLink]="isFuturesTradesActive() ? [] :['futures-trades']"
+          [ngClass]="{'active-bg': isFuturesTradesActive() }" (click)="handleNavLinkClickAutoCollapse()">
+          <mat-icon>dashboard</mat-icon>Futures Trades
+        </a>
+
+
+      </div> -->
+
+
       <hr />
 
    
@@ -42,14 +70,6 @@
 
       <div class="title-text fw-600 d-flex flex-column">
 
-
-
-        <a mat-list-item [routerLink]=" isDemoTradingActive() ? []:['demo-trading']"
-          [ngClass]="{'active-bg': isDemoTradingActive()}" (click)="handleNavLinkClickAutoCollapse()">
-          <i class="bi bi-bar-chart-line" style="font-size: 24px;"></i>&nbsp;&nbsp;Demo Trading
-        </a>
-
-      
 
 
         <a mat-list-item [routerLink]=" isTradingViewActive() ? []:['tradingview']"
@@ -116,7 +136,7 @@
 
 
        
-
+<!-- 
           <button mat-icon-button *ngIf="IsMasterControlEnabled" (click)="onDisableMasterControl()"
             matTooltip="Disable Master Control">
             <mat-icon class="text-success">security</mat-icon>
@@ -125,7 +145,7 @@
           <button mat-icon-button *ngIf="!IsMasterControlEnabled" (click)="openMasterControlDialog()"
             matTooltip="Enable Master Control">
             <mat-icon class="text-danger">security</mat-icon>
-          </button>
+          </button> -->
 
 
 

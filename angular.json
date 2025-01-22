@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "drkdr": {
+    "portfoliotrackerdcc": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -72,12 +72,12 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "drkdr:build:production",
+              "browserTarget": "portfoliotrackerdcc:build:production",
               "proxyConfig": "src/proxy.conf.json" 
 
             },
             "development": {
-              "browserTarget": "drkdr:build:development",
+              "browserTarget": "portfoliotrackerdcc:build:development",
               "proxyConfig": "src/proxy.conf.json" 
 
 
@@ -88,7 +88,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "drkdr:build"
+            "browserTarget": "portfoliotrackerdcc:build"
           }
         },
         "test": {

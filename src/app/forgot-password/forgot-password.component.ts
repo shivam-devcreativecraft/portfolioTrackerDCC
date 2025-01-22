@@ -21,10 +21,10 @@ export class ForgotPasswordComponent implements OnInit {
     // Check if user is already logged in
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
-      console.log('Currently logged in user:', {
-        email: currentUser.email,
-        uid: currentUser.uid
-      });
+      // console.log('Currently logged in user:', {
+      //   email: currentUser.email,
+      //   uid: currentUser.uid
+      // });
       this.notificationService.info('You are already logged in!');
       this.router.navigate(['/']);
     }

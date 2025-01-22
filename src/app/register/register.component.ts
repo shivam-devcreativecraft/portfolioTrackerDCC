@@ -40,15 +40,15 @@ export class RegisterComponent implements OnInit {
     // Check if user is already logged in
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
-      console.log('Currently logged in user:', {
-        email: currentUser.email,
-        uid: currentUser.uid,
-        emailVerified: currentUser.emailVerified,
-        displayName: currentUser.displayName,
-        photoURL: currentUser.photoURL,
-        creationTime: currentUser.metadata.creationTime,
-        lastSignInTime: currentUser.metadata.lastSignInTime
-      });
+      // console.log('Currently logged in user:', {
+      //   email: currentUser.email,
+      //   uid: currentUser.uid,
+      //   emailVerified: currentUser.emailVerified,
+      //   displayName: currentUser.displayName,
+      //   photoURL: currentUser.photoURL,
+      //   creationTime: currentUser.metadata.creationTime,
+      //   lastSignInTime: currentUser.metadata.lastSignInTime
+      // });
       this.notificationService.info('You are already logged in!');
       this.router.navigate(['/']);
     }

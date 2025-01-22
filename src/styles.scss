@@ -1,13 +1,12 @@
 @use '@angular/material' as mat;
 @include mat.core();
-$DrkDr-primary: mat.define-palette(mat.$indigo-palette);
-$DrkDr-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
-$DrkDr-warn: mat.define-palette(mat.$red-palette);
-$DrkDr-theme: mat.define-light-theme((color: (primary: $DrkDr-primary,
-        accent: $DrkDr-accent,
-        warn: $DrkDr-warn,
-      )));
-@include mat.all-component-themes($DrkDr-theme);
+$portfoliotrackerdcc-primary: mat.define-palette(mat.$indigo-palette);
+$portfoliotrackerdcc-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$portfoliotrackerdcc-warn: mat.define-palette(mat.$red-palette);
+$portfoliotrackerdcc-theme: mat.define-light-theme((color: (primary: $portfoliotrackerdcc-primary,
+        accent: $portfoliotrackerdcc-accent,
+        warn: $portfoliotrackerdcc-warn)));
+@include mat.all-component-themes($portfoliotrackerdcc-theme);
 
 
 
