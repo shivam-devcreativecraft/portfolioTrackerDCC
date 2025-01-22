@@ -84,12 +84,21 @@ export class FirebaseDataService {
     }
 
     try {
-      await this.firestore
+      // First check if the document exists in the specified collection
+      const docRef = this.firestore
         .collection('users')
         .doc(userId)
         .collection(sheetName)
-        .doc(tradeId)
-        .delete();
+        .doc(tradeId);
+
+      const doc = await docRef.get().toPromise();
+
+      if (!doc?.exists) {
+        throw new Error(`Trade with ID ${tradeId} not found in ${sheetName}`);
+      }
+
+      // If document exists, delete it
+      await docRef.delete();
     } catch (error) {
       console.error('Error deleting trade:', error);
       throw error;

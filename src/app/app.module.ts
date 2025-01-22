@@ -47,6 +47,7 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,10 +60,10 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
     RegisterComponent,
     ForgotPasswordComponent,
     ProfileComponent,
-    // DisableNumberInputScrollDirective,
-    
+    // DisableNumberInputScrollDirective,    
     // PortfolioNotesAddComponent
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+
   ],
   // providers : [DatePipe],
 
@@ -103,7 +104,7 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
         providers: [
           {
             id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider(environment.GOOGLE_CLIENT_ID)
+            provider: new GoogleLoginProvider('environment.GOOGLE_CLIENT_ID')
           }
         ]
       } as SocialAuthServiceConfig,

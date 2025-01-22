@@ -1,116 +1,777 @@
-@import '../sharedSCSS/portfolioSheets/sheetsOuterMostContainerStyle.scss';
+// @import '../sharedSCSS/portfolioSheets/sheetsOuterMostContainerStyle.scss';
+@import '../sharedSCSS/scssVariable/colorVariable.scss';
 
-.dashboard-container {
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-  .loading-spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 300px;
-  }
+// Colors
+$primary-color: #23272e;
+$secondary-color: #303f9f;
+$success-color: #00c853;
+$danger-color: #ff1744;
+$warning-color: #ffd600;
+$info-color: #00b0ff;
+$card-bg: #ffffff;
+$text-primary: #23272e;
+$text-secondary: #666666;
 
-  .content {
-    .nav-tabs {
-      border-bottom: 2px solid #dee2e6;
-      
-      .nav-link {
-        border: none;
-        color: #6c757d;
-        font-weight: 500;
-        padding: 10px 20px;
-        cursor: pointer;
-        
-        &.active {
-          color: #0d6efd;
-          border-bottom: 2px solid #0d6efd;
-        }
-        
-        &:hover {
-          color: #0d6efd;
-          border-bottom: 2px solid #0d6efd;
-        }
-      }
-    }
+// Gradients
+$primary-gradient: linear-gradient(135deg, $base-color_primary, darken($base-color_primary, 10%));
+$secondary-gradient: linear-gradient(135deg, $base-color_primary, lighten($base-color_primary, 10%));
 
-    .table-responsive {
-      margin-top: 20px;
-      overflow-x: auto;
-      
-      table {
-        width: 100%;
-        min-width: 1500px; // Ensure table is wide enough for all columns
-        border-collapse: separate;
-        border-spacing: 0;
-        
-        th {
-          background-color: $base-color_primary;
-          font-weight: 600;
-          padding: 12px;
-          border-bottom: 2px solid #dee2e6;
-          white-space: nowrap;
-          position: sticky;
-          top: 0;
-          z-index: 1;
-          
-        }
-        
-        td {
-          padding: 12px;
-          border-bottom: 1px solid #dee2e6;
-          vertical-align: middle;
-          white-space: nowrap;
-        }
-        
-        tbody tr {
-          &:hover {
-            background-color: #f8f9fa;
-          }
-        }
+// Shadows
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 
-        .text-success {
-          color: #28a745 !important;
-          font-weight: 500;
-        }
+// Border
+$border-radius: 8px;
 
-        .text-danger {
-          color: #dc3545 !important;
-          font-weight: 500;
-        }
-      }
-    }
 
-    .no-data {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 200px;
-      
-      p {
-        font-size: 1.1rem;
-        color: #6c757d;
-      }
-    }
-  }
+
+
+
+.loader-div {
+    color: $base_color_primary;
+    font-weight: 500;
+    min-height: 60vh;
 }
 
-// Responsive adjustments
-@media (max-width: 768px) {
-  .dashboard-container {
-    padding: 10px;
-    
-    .table-responsive {
-      margin-top: 10px;
-      
-      table {
-        th, td {
-          padding: 8px;
-          font-size: 0.9rem;
+
+
+
+
+.delta-exchange-container {
+    .stats-header {
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: $secondary-color;
+
         }
-      }
     }
-  }
+
+    padding: 10px;
+    background: #f5f7fa;
+    border-radius: 10px;
+    min-height: 100vh;
+
+
+
+
+    .stats-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+        margin: 0 -8px;
+        padding: 8px;
+
+        .stat-item {
+            background: $card-bg;
+            padding: 20px;
+            border-radius: $border-radius;
+            box-shadow: $shadow-md;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: $primary-gradient;
+                opacity: 0.5;
+            }
+
+            &:hover {
+                transform: translateY(-4px);
+                box-shadow: $shadow-lg;
+            }
+
+            &.profit {
+                &::before {
+                    background: $success-color;
+                }
+
+                .stat-value {
+                    color: $success-color;
+                }
+            }
+
+            &.loss {
+                &::before {
+                    background: $danger-color;
+                }
+
+                .stat-value {
+                    color: $danger-color;
+                }
+            }
+
+            .stat-label {
+                display: block;
+                font-size: 0.9em;
+                color: $text-secondary;
+                margin-bottom: 12px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-weight: 500;
+            }
+
+            .stat-value {
+                display: block;
+                font-size: 1.8em;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+        }
+    }
+
+    .trading-data-section {
+        margin: 24px 0;
+
+        .stats-card {
+            background: #fff;
+            border-radius: 12px;
+            // box-shadow: $shadow-lg;
+            // border: 1px solid rgba(#1a237e, 0.1);
+            padding: 1.5rem;
+
+            .stats-header {
+                margin-bottom: 1.5rem;
+
+                h3 {
+                    color: $secondary-color;
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                }
+            }
+
+            .date-controls-container {
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+                padding-right: 10px;
+                padding-left: 10px;
+
+                margin-bottom: 2rem;
+                border: 2px solid ($base_color_primary);
+                border-radius: 15px;
+
+                .date-controls-header {
+                    .category-and-picker {
+                        display: flex;
+                        gap: 1.5rem;
+                        align-items: center;
+                        padding-bottom: 1.25rem;
+                        flex-wrap: wrap;
+
+                        mat-button-toggle-group {
+                            background-color: #fff;
+                            border-radius: 20px;
+                            border: 1px solid rgba($secondary-color, 0.12);
+                            // overflow: ;
+
+                            .mat-button-toggle {
+                                padding: 0 1rem;
+                                transition: all 0.2s ease;
+
+                                &:not(:last-child) {
+                                    border-right: 1px solid rgba($secondary-color, 0.08);
+                                }
+
+                                &.mat-button-toggle-checked {
+                                    background-color: $secondary-color;
+                                    color: white;
+                                }
+
+                                &:not(.mat-button-toggle-checked):hover {
+                                    background-color: rgba($secondary-color, 0.04);
+                                }
+                            }
+                        }
+
+                        mat-form-field {
+                            min-width: 200px;
+                            margin-left: auto;
+
+                            ::ng-deep .mat-form-field-wrapper {
+                                margin-bottom: -1.25em;
+                            }
+                        }
+                    }
+                }
+
+                .date-pills-container {
+                    .date-pills {
+                        display: flex;
+                        gap: 0.75rem;
+                        flex-wrap: wrap;
+
+                        .date-pill {
+                            padding: 0.5rem 1.25rem;
+                            border-radius: 20px;
+                            transition: all 0.2s ease;
+                            background: white;
+                            font-size: 0.9rem;
+                            border: 1px solid rgba($secondary-color, 0.12);
+
+                            &.selected {
+                                background-color: $secondary-color;
+                                color: white;
+                                border-color: $secondary-color;
+                            }
+
+                            &:hover:not(.selected) {
+                                background-color: rgba($secondary-color, 0.04);
+                                border-color: rgba($secondary-color, 0.2);
+                            }
+                        }
+                    }
+                }
+            }
+
+            .trading-cards {
+                .trading-date-card {
+                    margin-bottom: 2rem;
+                }
+            }
+        }
+    }
+
+    .trading-date-card {
+        // background: $card-bg;
+        // border-radius: $border-radius;
+        margin-bottom: 32px;
+        // box-shadow: $shadow-lg;
+        // overflow: hidden;
+        // border: 1px solid rgba(#1a237e, 0.1);
+
+        .date-header {
+            background: $primary-gradient;
+            padding: 24px;
+            color: white;
+
+            .date-title {
+                margin-bottom: 20px;
+
+                h3 {
+                    margin: 0;
+                    font-size: 20px;
+                    font-weight: 600;
+                    letter-spacing: 0.5px;
+                }
+            }
+
+            .stats-summary {
+                background: rgba(white, 0.1);
+                border-radius: $border-radius;
+                padding: 16px;
+                margin: 0;
+
+                .stat-item {
+                    background: transparent;
+                    box-shadow: none;
+                    border: 1px solid rgba(white, 0.2);
+
+                    &::before {
+                        display: none;
+                    }
+
+                    .stat-label {
+                        color: rgba(white, 0.8);
+                    }
+
+                    .stat-value {
+                        color: white;
+                    }
+
+                    &.profit .stat-value {
+                        color: #69f0ae;
+                    }
+
+                    &.loss .stat-value {
+                        color: #ff8a80;
+                    }
+                }
+            }
+        }
+
+        .trading-tables {
+            // padding: 24px;
+
+            .trade-section {
+                background: #f5f7fa;
+                border-radius: $border-radius;
+                padding: 24px;
+                margin-bottom: 24px;
+                position: relative;
+                overflow: auto;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 4px;
+                    height: 100%;
+                }
+
+                &.profit-section::before {
+                    background: $success-color;
+                }
+
+                &.loss-section::before {
+                    background: $danger-color;
+                }
+
+                .section-header {
+                    margin-bottom: 20px;
+
+                    h4 {
+                        margin: 0;
+                        color: $text-primary;
+                        font-size: 18px;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+
+        .charts-container {
+            .chart-wrapper {
+                background: #fff;
+                border-radius: 8px;
+                padding: 1rem;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                height: 100%;
+                transition: transform 0.2s ease;
+
+                &:hover {
+                    transform: translateY(-2px);
+                }
+            }
+        }
+    }
+
+
+
+
+
+    .trade-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+
+        thead {
+            background: #1e293b;
+            position: relative;
+
+            tr {
+                background: linear-gradient(to right, #1e293b, #334155);
+            }
+        }
+
+        th {
+            padding: 1.125rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #e2e8f0;
+            white-space: nowrap;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+
+            &:last-child {
+                border-right: none;
+            }
+        }
+
+        td {
+            padding: 1rem;
+            font-size: 0.875rem;
+            color: #334155;
+            background: #ffffff;
+            font-weight: 500;
+
+            &:not(.coin-cell) {
+                font-family: 'JetBrains Mono', monospace;
+                letter-spacing: -0.3px;
+            }
+
+            &.coin-cell {
+                min-width: 140px;
+
+                .coin-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+
+                    .trade-arrow {
+                        font-size: 16px;
+                        width: 28px;
+                        height: 28px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 6px;
+                        transition: all 0.2s ease;
+                    }
+
+                    span {
+                        font-weight: 500;
+                        transition: all 0.2s ease;
+                    }
+                }
+            }
+
+            &.coin-cell.buy {
+                .trade-arrow {
+                    color: #059669;
+                    background: #ecfdf5;
+                }
+
+                span {
+                    color: #059669;
+                }
+            }
+
+            &.coin-cell.sell {
+                .trade-arrow {
+                    color: #e11d48;
+                    background: #fff1f2;
+                }
+
+                span {
+                    color: #e11d48;
+                }
+            }
+
+            &.profit {
+                color: #059669;
+                font-weight: 600;
+
+                &::before {
+                    content: '+';
+                }
+            }
+
+            &.loss {
+                color: #e11d48;
+                font-weight: 600;
+            }
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+
+            &:hover {
+                background: #f8fafc;
+                transform: translateY(-1px);
+                box-shadow:
+                    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                z-index: 1;
+                position: relative;
+
+                td {
+                    background: #f8fafc;
+                }
+
+                .trade-arrow {
+                    transform: scale(1.1) rotate(5deg);
+                }
+
+                .coin-info span {
+                    transform: translateX(3px);
+                }
+            }
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+    }
+
+    .table-container {
+        margin: 15px 0;
+        border-radius: $border-radius;
+        box-shadow: $shadow-sm;
+.table-scroll-container{
+        overflow-x: auto;
+
+        }
+        .mat-mdc-paginator {
+            background-color: $card-bg;
+            border-top: 1px solid rgba(0, 0, 0, 0.12);
+
+            .mat-mdc-paginator-container {
+                min-height: 48px;
+                padding: 0 8px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                flex-wrap: wrap-reverse;
+                width: 100%;
+            }
+
+            .mat-mdc-paginator-page-size {
+                display: flex;
+                align-items: center;
+                margin-right: 8px;
+
+                .mat-mdc-paginator-page-size-select {
+                    margin: 0 4px;
+                    width: 56px;
+                }
+            }
+
+            .mat-mdc-paginator-range-actions {
+                display: flex;
+                align-items: center;
+                min-height: 48px;
+
+                .mat-mdc-paginator-range-label {
+                    margin: 0 32px 0 24px;
+                    color: $text-secondary;
+                }
+
+                .mat-mdc-paginator-navigation {
+                    display: flex;
+                    align-items: center;
+
+                    .mat-mdc-icon-button {
+                        width: 40px;
+                        height: 40px;
+                        padding: 8px;
+                        margin: 0 4px;
+                        color: $text-secondary;
+
+                        &:disabled {
+                            color: rgba(0, 0, 0, 0.26);
+                        }
+
+                        &:hover:not(:disabled) {
+                            background-color: rgba(0, 0, 0, 0.04);
+                        }
+                    }
+                }
+            }
+        }
+
+        .no-data-message {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+
+            background-color: rgba($secondary-color, 0.03);
+            border-radius: 8px;
+            color: $text-secondary;
+            gap: 0.5rem;
+
+            mat-icon {
+                color: rgba($secondary-color, 0.7);
+            }
+
+            span {
+                font-size: 0.95rem;
+            }
+        }
+    }
+
+    .overall-stats-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+
+        .stats-header {
+            margin-bottom: 1.5rem;
+
+            h3 {
+                margin: 0;
+                color: #333;
+                font-size: 1.5rem;
+            }
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+
+            .stat-item {
+                padding: 1rem;
+                border-radius: 8px;
+                background: #f8f9fa;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+
+                &.profit {
+                    background: rgba(40, 167, 69, 0.1);
+
+                    .stat-value {
+                        color: #28a745;
+                    }
+                }
+
+                &.loss {
+                    background: rgba(220, 53, 69, 0.1);
+
+                    .stat-value {
+                        color: #dc3545;
+                    }
+                }
+
+                .stat-label {
+                    font-size: 0.9rem;
+                    color: #6c757d;
+                    margin-bottom: 0.5rem;
+                }
+
+                .stat-value {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    color: #495057;
+                }
+            }
+        }
+
+        .charts-container {
+            .chart-wrapper {
+                background: #fff;
+                border-radius: 8px;
+                padding: 1rem;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                height: 100%;
+                transition: transform 0.2s ease;
+
+                &:hover {
+                    transform: translateY(-2px);
+                }
+            }
+        }
+    }
+
+    .pagination {
+        .page-link {
+            color: var(--primary-color);
+            background-color: var(--background-color);
+            border-color: var(--border-color);
+
+            &:hover {
+                background-color: var(--hover-background);
+                border-color: var(--border-color);
+            }
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+    }
+
+    .clickable-row {
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+    }
+
+    .charts-section {
+        margin: 2rem 0;
+        // padding-top: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.5rem;
+
+            .chart-wrapper {
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                padding-top: 1.5rem;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                }
+            }
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        .charts-container {
+            grid-template-columns: 1fr !important;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .date-pill {
+        padding: 0.4rem 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        color: #64748b;
+        background: #ffffff;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        line-height: 1.5;
+        height: 32px;
+        min-width: 110px;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        &.selected {
+            background-color: $secondary-color;
+            color: #ffffff;
+            border-color: $secondary-color;
+        }
+    }
 }

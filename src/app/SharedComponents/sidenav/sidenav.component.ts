@@ -5,14 +5,13 @@ import { debounceTime, filter, map, shareReplay } from 'rxjs/operators';
 import { ActivatedRoute, Router, RouterStateSnapshot } from '@angular/router';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatDialog } from '@angular/material/dialog';
+import { Overlay } from '@angular/cdk/overlay';
 import { ConfirmDialogComponent, ConfirmDialogModel } from '../confirm-dialog/confirm-dialog.component';
 import { ToastrService } from 'ngx-toastr';
-import { SearchSpotCoinDialogComponent } from '../search-spot-coin-dialog/search-spot-coin-dialog.component';
 import { DataService } from 'src/app/services/data.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { MasterControlComponent } from '../master-control/master-control.component';
-import { GoogleSheetApiService } from 'src/app/services/google-sheet-api.service';
 import { LoaderService } from 'src/app/loader.service';
+import { AddComponent } from '../add/add.component';
 
 @Component({
   selector: 'app-sidenav',
@@ -31,7 +30,7 @@ export class SidenavComponent implements OnInit {
   NewOrdersSavingType = 'single';
   destroyedComponentFlag: boolean = false;
   allNewOrdersUploadedFlag: boolean = false;
-  IsMasterControlEnabled: boolean = false;
+  
   isAuthenticated$: Observable<boolean>;
   userDetails: any = {
     displayName: 'User',
@@ -44,19 +43,16 @@ export class SidenavComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
+    private overlay: Overlay,
     private toastr: ToastrService,
     private dataServiceRef: DataService,
     private authService: AuthService,
-    private googleSheetApiServiceRef: GoogleSheetApiService,
     private loaderServiceRef: LoaderService
   ) {
     this.isAuthenticated$ = this.authService.getAuthState();
   }
 
   ngOnInit(): void {
-    if (localStorage.getItem('masterControlToken')) {
-      this.googleSheetApiServiceRef.checkMasterControl(true);
-    }
 
     // Initialize user details
     this.updateUserDetails(this.authService.getCurrentUser());
@@ -79,9 +75,6 @@ export class SidenavComponent implements OnInit {
       this.destroyedComponentFlag = flag;
     });
 
-    this.googleSheetApiServiceRef.checkMasterControlSubject$.subscribe((IsEnabled: boolean) => {
-      this.IsMasterControlEnabled = IsEnabled;
-    });
 
     this.dataServiceRef.getAllNewOrdersUploadedObservable().subscribe((flag: boolean) => {
       this.allNewOrdersUploadedFlag = flag;
@@ -122,25 +115,7 @@ export class SidenavComponent implements OnInit {
       if (dialogResult === true) {
         try {
           // Clear master control token if exists
-          const token = localStorage.getItem('masterControlToken')
-          if (token) {
-            const formData = new FormData();
-            formData.append('action', 'clearToken');
-            formData.append('token', token);
-            try {
-              await this.googleSheetApiServiceRef.getMasterControlAccess(formData, this);
-            } catch (error) {
-              this.toastr.warning('Master Control Disabled, but failed to clear masterControl token from Sheets, Clear Manually');
-            }
-          }
-
-          // Clear all local storage items
-          localStorage.removeItem('masterControlToken');
-          localStorage.removeItem('exchangeData');
-          localStorage.removeItem('driveData');
-          this.googleSheetApiServiceRef.checkMasterControl(false);
-
-          // Sign out using auth service
+   
           await this.authService.signOut();
         } catch (error: any) {
           this.toastr.error(error.message || 'Logout failed');
@@ -154,6 +129,21 @@ export class SidenavComponent implements OnInit {
   isPortfolioMainDashboardActive(): boolean {
     const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
     const targetUrlPrefix = '/dashboard';
+    return currentUrl.startsWith(targetUrlPrefix);
+  }
+  isHistoryActive(): boolean {
+    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+    const targetUrlPrefix = '/history';
+    return currentUrl.startsWith(targetUrlPrefix);
+  } 
+  isSpotTradesActive(): boolean {
+    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+    const targetUrlPrefix = '/spot-trades';
+    return currentUrl.startsWith(targetUrlPrefix);
+  }
+  isFuturesTradesActive(): boolean {
+    const currentUrl = (this.activatedRoute.snapshot as any)['_routerState'].url;
+    const targetUrlPrefix = '/futures-trades';
     return currentUrl.startsWith(targetUrlPrefix);
   }
 
@@ -181,54 +171,27 @@ export class SidenavComponent implements OnInit {
     return this.breakpointObserver.isMatched(Breakpoints.Handset);
   }
 
-  openMasterControlDialog() {
-    const dialogRef = this.dialog.open(MasterControlComponent, {
-      data: { location: 'sidenav' },
+  openAddDialog(): void {
+    const dialogRef = this.dialog.open(AddComponent, {
+      width: '600px',
+      maxHeight: '90vh',
       disableClose: false,
-      hasBackdrop: false
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-    });
-  }
-
-  onDisableMasterControl() {
-    const message = `Are you sure you want to disable\nMaster Control ?`;
-    const dialogData = new ConfirmDialogModel('Confirm Disable', message);
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      maxWidth: '400px',
-      data: dialogData,
-    });
-    dialogRef.afterClosed().subscribe((dialogResult) => {
-      if (dialogResult === true) {
-        this.loaderServiceRef.show();
-        const token = localStorage.getItem('masterControlToken')
-        const fileList_droveStorageData = localStorage.getItem('driveData')
-
-        if (token) {
-          const formData = new FormData();
-          formData.append('action', 'clearToken');
-          formData.append('token', token);
-
-          this.googleSheetApiServiceRef.getMasterControlAccess(formData, this).then((response: any) => {
-            if (response.message) {
-              localStorage.removeItem('masterControlToken')
-              this.googleSheetApiServiceRef.checkMasterControl(false);
-              this.toastr.warning('Master Control Disabled', 'Successfull !')
-            }
-            else {
-              localStorage.removeItem('masterControlToken')
-              this.googleSheetApiServiceRef.checkMasterControl(false)
-              this.toastr.warning('Master Control Disabled, but failed to clear masterControl token from Sheets, Clear Manually', 'Successfull !')
-            }
-            this.loaderServiceRef.hide();
-          })
-        }
-
-        if (fileList_droveStorageData) {
-          localStorage.removeItem('driveData');
-        }
+      autoFocus: true,
+      restoreFocus: true,
+      hasBackdrop: false,
+      panelClass: ['custom-dialog-container', 'no-scroll-overlay'],
+      backdropClass: 'dialog-backdrop',
+      scrollStrategy: this.overlay.scrollStrategies.noop(),
+      data: {
+        ExchangeName: 'Delta_Exchange',
+        SheetName: 'Futures_Trades'
       }
-    })
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.toastr.success('Entry added successfully');
+      }
+    });
   }
 }

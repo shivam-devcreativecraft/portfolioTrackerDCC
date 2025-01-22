@@ -1,5 +1,4 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { GoogleSheetApiService } from '../services/google-sheet-api.service';
 declare const TradingView: any;
 
 @Component({

@@ -1,0 +1,146 @@
+<!-- <h1 class="text-center">Dashboard</h1>
+ <hr>
+
+ <div class="box-shadow text-center d-flex align-items-center justify-content-center" style="height: 80vh; ">
+    <h1 style="font-size:15px !important">Corrently Working !</h1>
+    
+</div> -->
+
+<!-- <app-googledrive></app-googledrive> -->
+
+<!-- <p class="">Social Login</p>
+<!-- <div class="googleSignIn">
+<asl-google-signin-button type='icon' size='medium' ></asl-google-signin-button>
+
+</div>
+ -->
+<!-- <app-googledrive></app-googledrive> -->
+
+<div class="dashboard-container">
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  
+    <!-- Main Content -->
+    <div *ngIf="!isLoading" class="content">
+      <!-- Navigation Tabs -->
+      <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="activeTab === 'futures'" (click)="switchTab('futures')">
+            Futures Trades
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="activeTab === 'spot'" (click)="switchTab('spot')">
+            Spot Trades
+          </a>
+        </li>
+      </ul>
+  
+      <!-- Futures Trades Table -->
+      <div *ngIf="activeTab === 'futures'" class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Coin</th>
+              <th>Type</th>
+              <th>Quantity</th>
+              <th>Open Price</th>
+              <th>Open Margin</th>
+              <th>Close Price</th>
+              <th>Close Margin</th>
+              <th>PNL</th>
+              <th>PNL %</th>
+              <th>Influencer</th>
+              <th>Sheet Name</th>
+              <th>Exchange Name</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let trade of tradeData">
+              <td>{{ trade.ID }}</td>
+              <td>{{ formatDate(trade.Date) }}</td>
+              <td>{{ trade.Coin }}</td>
+              <td [class]="trade.Type === 'BUY' ? 'text-success' : 'text-danger'">{{ trade.Type }}</td>
+              <td>{{ trade.Quantity }}</td>
+              <td>{{ trade.Open_Price }}</td>
+              <td>{{ formatNumber(trade.Open_Margin, 3) }}</td>
+              <td>{{ trade.Close_Price }}</td>
+              <td>{{ formatNumber(trade.Close_Margin, 3) }}</td>
+              <td [class]="getPnlClass(trade.Pnl)">{{ formatNumber(trade.Pnl, 3) }}</td>
+              <td [class]="getPnlClass(trade.Pnl_Percentage)">{{ formatNumber(trade.Pnl_Percentage, 3) }}%</td>
+              <td>{{ trade.Influencer }}</td>
+              <td>{{ trade.Sheet_Name }}</td>
+              <td>{{ trade.Exchange_Name }}</td>
+              <td>
+                <button class="btn btn-danger btn-sm" (click)="deleteTrade(trade.ID)">
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Spot Trades Table -->
+      <div *ngIf="activeTab === 'spot'" class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Market</th>
+              <th>Direction</th>
+              <th>Price</th>
+              <th>Amount</th>
+              <th>Total USDT</th>
+              <th>Fees</th>
+              <th>Fee Asset</th>
+              <th>Period</th>
+              <th>Notes</th>
+              <th>Influencer</th>
+              <th>Sheet Name</th>
+              <th>Exchange Name</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let trade of tradeData">
+              <td>{{ trade.ID }}</td>
+              <td>{{ formatDate(trade.Date) }}</td>
+              <td>{{ trade.Time }}</td>
+              <td>{{ trade.Market }}</td>
+              <td [class]="trade.Direction === 'BUY' ? 'text-success' : 'text-danger'">{{ trade.Direction }}</td>
+              <td>{{ formatNumber(trade.Price) }}</td>
+              <td>{{ formatNumber(trade.Amount) }}</td>
+              <td>{{ formatNumber(trade.Total_USDT) }}</td>
+              <td>{{ formatNumber(trade.Fees) }}</td>
+              <td>{{ trade.Fee_Asset }}</td>
+              <td>{{ trade.Period }}</td>
+              <td>{{ trade.Notes }}</td>
+              <td>{{ trade.Influencer }}</td>
+              <td>{{ trade.SheetName }}</td>
+              <td>{{ trade.ExchangeName }}</td>
+              <td>
+                <button class="btn btn-danger btn-sm" (click)="deleteTrade(trade.ID)">
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- No Data Message -->
+      <div *ngIf="tradeData.length === 0" class="no-data">
+        <p class="text-muted">No trades found.</p>
+      </div>
+    </div>
+  </div>
