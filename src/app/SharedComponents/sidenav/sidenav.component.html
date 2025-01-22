@@ -147,7 +147,9 @@
             <mat-icon class="text-danger">security</mat-icon>
           </button> -->
 
-
+          <button mat-icon-button (click)="openAddDialog()" matTooltip="Add New Entry">
+            <mat-icon class="text-success bg-white p-0 rounded-5 add-mat-icon">add_circle</mat-icon>
+          </button>
 
           <button mat-icon-button [matMenuTriggerFor]="accountsMenu" #Accounts_menuTrigger="matMenuTrigger"
             matTooltip="Account" (click)="Accounts_menuTrigger.openMenu()">
@@ -161,13 +163,13 @@
 
           <mat-menu #accountsMenu="matMenu" [overlapTrigger]="false">
 
+            <button mat-menu-item [routerLink]="['/profile']">
+              <mat-icon>settings</mat-icon>
+              <span>Profile</span>
+            </button>
             <button mat-menu-item (click)="onLogout()">
               <mat-icon>logout</mat-icon>
               <span>Logout</span>
-            </button>
-            <button mat-menu-item [routerLink]="['/profile']">
-              <mat-icon>settings</mat-icon>
-              <span>Settings</span>
             </button>
       
           </mat-menu>

@@ -5,12 +5,13 @@ import { debounceTime, filter, map, shareReplay } from 'rxjs/operators';
 import { ActivatedRoute, Router, RouterStateSnapshot } from '@angular/router';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatDialog } from '@angular/material/dialog';
+import { Overlay } from '@angular/cdk/overlay';
 import { ConfirmDialogComponent, ConfirmDialogModel } from '../confirm-dialog/confirm-dialog.component';
 import { ToastrService } from 'ngx-toastr';
 import { DataService } from 'src/app/services/data.service';
 import { AuthService } from 'src/app/services/auth.service';
-
 import { LoaderService } from 'src/app/loader.service';
+import { AddComponent } from '../add/add.component';
 
 @Component({
   selector: 'app-sidenav',
@@ -42,6 +43,7 @@ export class SidenavComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
+    private overlay: Overlay,
     private toastr: ToastrService,
     private dataServiceRef: DataService,
     private authService: AuthService,
@@ -169,7 +171,27 @@ export class SidenavComponent implements OnInit {
     return this.breakpointObserver.isMatched(Breakpoints.Handset);
   }
 
+  openAddDialog(): void {
+    const dialogRef = this.dialog.open(AddComponent, {
+      width: '600px',
+      maxHeight: '90vh',
+      disableClose: false,
+      autoFocus: true,
+      restoreFocus: true,
+      hasBackdrop: false,
+      panelClass: ['custom-dialog-container', 'no-scroll-overlay'],
+      backdropClass: 'dialog-backdrop',
+      scrollStrategy: this.overlay.scrollStrategies.noop(),
+      data: {
+        ExchangeName: 'Delta_Exchange',
+        SheetName: 'Futures_Trades'
+      }
+    });
 
-
-  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.toastr.success('Entry added successfully');
+      }
+    });
+  }
 }
