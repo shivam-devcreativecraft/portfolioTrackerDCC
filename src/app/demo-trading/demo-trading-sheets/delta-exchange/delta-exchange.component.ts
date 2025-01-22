@@ -11,6 +11,7 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FunctionsService } from 'src/app/SharedFunctions/functions.service';
 import { TradeDetailsModalComponent } from './trade-details-modal/trade-details-modal.component';
+import { FirebaseDataService } from 'src/app/services/firebase-data.service';
 
 interface GroupedData {
   profitableTrades: any[];
@@ -36,8 +37,8 @@ interface DateRange {
 export class DeltaExchangeComponent implements OnDestroy, OnInit {
   IsMasterControlEnabled: boolean = false;
 
-  exchangeName: string = 'Demo_Trading';
-  sheetName: string = 'Delta_Futures';
+  exchangeName: string = 'Delta_Exchange';
+  sheetName: string = 'Futures_Trades';
 
   //#region Material Table
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -103,7 +104,8 @@ export class DeltaExchangeComponent implements OnDestroy, OnInit {
     private googleSheetAPIServiceRef: GoogleSheetApiService,
     private notificationService: NotificationService,
     private _dialog: MatDialog,
-    private functionsServiceRef: FunctionsService
+    private functionsServiceRef: FunctionsService,
+    private firebaseService: FirebaseDataService
   ) {
     this.googleSheetAPIServiceRef.checkMasterControlSubject$.subscribe(
       (IsEnabled: boolean) => {
@@ -113,17 +115,12 @@ export class DeltaExchangeComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    this.functionsServiceRef
-      .loadSheetData(
-        this.exchangeName,
-        this.sheetName,
-        500,
-        1,
-        this,
-        this.componentDestroyed$
-      )
-      .then((sheetData) => {
+    // Get data from Firebase
+    console.log(this.sheetName);
+    this.firebaseService.getTradeData(this.sheetName).subscribe({
+      next: (sheetData) => {
         if (sheetData) {
+          console.log(sheetData);
           this.sheetDataGrouped = this.groupDataByDate(sheetData);
           this.calculateTotalStats();
           this.initializeAvailableDates();
@@ -139,8 +136,14 @@ export class DeltaExchangeComponent implements OnDestroy, OnInit {
           this.onDateCategoryChanged({ value: 'daily' });
           this.notificationService.success('Sheet Data Loaded Successfully');
           this.currentPage = 1;
+          this.IsSelectedSheetDataLoaded=true
         }
-      });
+      },
+      error: (error) => {
+        console.error('Error fetching trade data:', error);
+        this.notificationService.error('Failed to load trade data');
+      }
+    });
   }
 
   ngOnDestroy(): void {

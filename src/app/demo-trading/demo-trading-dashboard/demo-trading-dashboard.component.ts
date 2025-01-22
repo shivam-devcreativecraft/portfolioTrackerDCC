@@ -18,8 +18,8 @@ import { AddDemoTradingDeltaFuturesComponent } from '../add-demo-trading-delta-f
 export class DemoTradingDashboardComponent {
  
   IsMasterControlEnabled: boolean = false;
-  exchangeName: string = 'Demo_Trading';
-  sheetName: string = 'Delta_Futures'
+  exchangeName: string = 'Delta_Exchange';
+  sheetName: string = 'Futures_Trades'
 
 
   sheetData_FilteredBy_Influencers: any[] = [];

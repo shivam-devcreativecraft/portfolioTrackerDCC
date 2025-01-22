@@ -12,8 +12,7 @@ import { NotificationService } from '../services/notification.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  futuresTradeData: any[] = [];
-  spotTradeData: any[] = [];
+  tradeData: any[] = [];  // Single array to hold current tab's data
   isLoading: boolean = true;
   activeTab: 'futures' | 'spot' = 'futures';
 
@@ -30,39 +29,25 @@ export class DashboardComponent implements OnInit {
 
   loadTradeData() {
     this.isLoading = true;
+    const sheetName = this.activeTab === 'futures' ? 'Futures_Trades' : 'Spot_Trades';
     
-    // Load Futures Trades
-    this.firebaseService.getTradeData('Futures_Trades').subscribe({
+    this.firebaseService.getTradeData(sheetName).subscribe({
       next: (data) => {
-        this.futuresTradeData = data;
-        console.log(this.futuresTradeData);
+        this.tradeData = data;
+        console.log(`${sheetName} data:`, this.tradeData);
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error fetching futures trades:', error);
+        console.error(`Error fetching ${sheetName}:`, error);
+        this.notificationService.error(`Failed to load ${sheetName} data`);
         this.isLoading = false;
       }
     });
-
-    // Load Spot Trades
-    this.firebaseService.getTradeData('Spot_Trades').subscribe({
-      next: (data) => {
-        this.spotTradeData = data;
-        console.log(this.spotTradeData);
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error fetching spot trades:', error);
-        this.isLoading = false;
-      }
-    });
-
-
-    
   }
 
   switchTab(tab: 'futures' | 'spot') {
     this.activeTab = tab;
+    this.loadTradeData(); // Reload data when tab changes
   }
 
   // Helper function to format date
@@ -101,10 +86,10 @@ export class DashboardComponent implements OnInit {
         try {
           const collectionName = this.activeTab === 'futures' ? 'Futures_Trades' : 'Spot_Trades';
           await this.firebaseService.deleteTrade(collectionName, tradeId);
-          this.notificationService.success('Trade deleted successfully');
-        } catch (error) {
+          this.notificationService.success(`Trade deleted successfully from ${collectionName}`);
+        } catch (error: any) {
           console.error('Error deleting trade:', error);
-          this.notificationService.error('Error deleting trade');
+          this.notificationService.error(error.message || 'Error deleting trade');
         }
       }
     });

@@ -2,7 +2,7 @@
 
     <div mat-dialog-title cdkDragHandle>
       <h1>New Entry (NEW DIALOG) <br>
-        <p class="mb-0" style='font-size: 10px; margin-top:-6px'>{{ExchangeName}} : {{SheetName}}</p>
+        <p class="mb-0" style='font-size: 10px; margin-top:-6px'>{{Exchange_Name}} : {{SheetName}}</p>
   
       </h1>
     </div>
@@ -17,11 +17,31 @@
             <mat-form-field appearance="outline" floatLabel="always">
               <mat-label>Choose SheetName</mat-label>
               <mat-select [(ngModel)]="SheetName" name="SheetName" required>
-                <mat-option value="Futures_Trades">Futures_Trades</mat-option>
+                <mat-option value="Futures_Trades" selected>Futures_Trades</mat-option>
                 <mat-option value="Spot_Trades">Spot_Trades</mat-option>
 
 
               </mat-select>
+            </mat-form-field>
+          </div>
+  
+          <div class="row">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Exchange Name</mat-label>
+              <input matInput 
+                     [(ngModel)]="Exchange_Name" 
+                     name="Exchange_Name"
+                     [formControl]="exchangeControl" 
+                     [matAutocomplete]="exchangeAuto"
+                     placeholder="Enter Exchange Name">
+              <mat-autocomplete #exchangeAuto="matAutocomplete">
+                <mat-option *ngFor="let exchange of filteredExchanges | async" [value]="exchange">
+                  {{exchange}}
+                </mat-option>
+                <mat-option *ngIf="exchangeControl.value && (filteredExchanges | async)?.length === 0" [value]="exchangeControl.value">
+                  Use '{{exchangeControl.value}}'
+                </mat-option>
+              </mat-autocomplete>
             </mat-form-field>
           </div>
   
@@ -31,168 +51,201 @@
   
 
         <ng-container *ngIf="SheetName === 'Futures_Trades'">
-          <div class="row pt-2">
-            <mat-form-field appearance="outline" floatLabel="always">
-              <mat-label>Choose a date</mat-label>
-              <input matInput [matDatepicker]="date" [max]="today" name="Date" [(ngModel)]="Date"
-                required tabindex="-1">
-              <button class="text-danger" *ngIf="Date" matSuffix mat-icon-button aria-label="Clear" type="button" 
-                (click)="Date = ''">
-                <mat-icon>close</mat-icon>
-              </button>
-  
-              <mat-hint>MM/DD/YYYY</mat-hint>
-              <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
-              <mat-datepicker #date></mat-datepicker>
-            </mat-form-field>
+          <!-- Input Mode Selection -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <mat-radio-group [(ngModel)]="isQuantityMode" name="quantityMode" (change)="onQuantityModeChange($event.value); calculateMargin()">
+                <mat-radio-button [value]="false">Use Contracts & Lot Value</mat-radio-button>
+                <mat-radio-button [value]="true" class="ms-3">Use Quantity</mat-radio-button>
+              </mat-radio-group>
+            </div>
           </div>
 
-          <!-- <div class="row pt-3">
-            <mat-form-field appearance="outline" floatLabel="always">
-              <mat-label>Time</mat-label>
-              <input matInput name="Time" [(ngModel)]="Time" type="time" step="1" required />
-              <mat-hint>HH:MM:SS</mat-hint>
-  
-              <button class="text-danger" *ngIf="Time" matSuffix mat-icon-button aria-label="Clear" type="button"  (click)="Time = ''"
-                tabIndex="-1">
-  
-                <mat-icon>close</mat-icon>
-              </button>
-  
-            </mat-form-field>
-          </div> -->
-
-          <div class="row pt-3">
-            <mat-form-field appearance="outline" floatLabel="always" class="example-full-width">
-              <mat-label>Coin</mat-label>
-              <input type="text" placeholder="BTC, ETH ..." aria-label="Coin" matInput [(ngModel)]="Coin" name="coin">
-              <button class="text-danger" *ngIf="Coin" matSuffix mat-icon-button aria-label="Clear" type="button" (click)="Coin=''" tabIndex="-1">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
+          <!-- Quantity Mode Fields -->
+          <div class="row" *ngIf="isQuantityMode">
+            <div class="col-md-12 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Quantity</mat-label>
+                <input matInput type="number" [(ngModel)]="Quantity" name="Quantity" 
+                       (ngModelChange)="Quantity = $event || 0; calculateMargin()" placeholder="Enter Quantity">
+              </mat-form-field>
+            </div>
           </div>
 
-          <div class="row pt-2">
-            <mat-form-field appearance="outline" floatLabel="always" class="example-full-width">
-              <mat-label>Contracts</mat-label>
-              <input type="number" placeholder="100, 200 ..." aria-label="Contracts" matInput [(ngModel)]="Contracts" name="Contracts">
-              <button class="text-danger" *ngIf="Contracts" matSuffix mat-icon-button aria-label="Clear" type="button" (click)="Contracts=''" tabIndex="-1">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
+          <!-- Contracts & Lot Value Mode Fields -->
+          <div class="row" *ngIf="!isQuantityMode">
+            <div class="col-md-6 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Contracts</mat-label>
+                <input matInput type="number" [(ngModel)]="Contracts" name="Contracts" 
+                       (ngModelChange)="Contracts = $event || 0; onContractsChange(); calculateMargin()" placeholder="Enter Contracts">
+              </mat-form-field>
+            </div>
+            <div class="col-md-6 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Lot Value</mat-label>
+                <input matInput 
+                       type="number" 
+                       [(ngModel)]="Lot_Value" 
+                       name="Lot_Value" 
+                       (ngModelChange)="Lot_Value = $event || 0; calculateMargin()" 
+                       placeholder="Enter Lot Value">
+                <mat-hint *ngIf="Exchange_Name && Coin && lotValues && lotValues[Exchange_Name] && lotValues[Exchange_Name][Coin.toUpperCase() || '']">
+                  Default value for {{Coin}}: {{lotValues[Exchange_Name][Coin.toUpperCase() || '']}}
+                </mat-hint>
+              </mat-form-field>
+            </div>
           </div>
 
-
-          <div class="row pb-4">
-            <mat-label>Type*</mat-label>
-            <mat-chip-listbox aria-label="Type selection" [(ngModel)]="Type" name="Type" required>
-              <mat-chip-option color="accent">BUY</mat-chip-option>
-              <mat-chip-option color="warn">SELL</mat-chip-option>
-            </mat-chip-listbox>
+          <!-- Date Field -->
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Choose a date</mat-label>
+                <input matInput 
+                       [matDatepicker]="datePicker" 
+                       [max]="today" 
+                       name="Date" 
+                       [(ngModel)]="Date" 
+                       required>
+                <button class="text-danger" 
+                        *ngIf="Date" 
+                        matSuffix 
+                        mat-icon-button 
+                        aria-label="Clear" 
+                        type="button" 
+                        (click)="Date = ''" 
+                        tabIndex="-1">
+                  <mat-icon>close</mat-icon>
+                </button>
+                <mat-hint>D/M/YYYY</mat-hint>
+                <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                <mat-datepicker #datePicker></mat-datepicker>
+              </mat-form-field>
+            </div>
           </div>
 
-       
+          <!-- Common Fields -->
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Coin</mat-label>
+                <input matInput 
+                       [(ngModel)]="Coin" 
+                       name="Coin"
+                       [formControl]="coinControl" 
+                       [matAutocomplete]="coinAuto"
+                       placeholder="Enter Coin">
+                <mat-autocomplete #coinAuto="matAutocomplete">
+                  <mat-option *ngFor="let coin of filteredCoins | async" [value]="coin">
+                    {{coin}}
+                  </mat-option>
+                  <mat-option *ngIf="coinControl.value && (filteredCoins | async)?.length === 0" [value]="coinControl.value">
+                    use ' {{coinControl.value}} '
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Type</mat-label>
+                <mat-select [(ngModel)]="Type" name="Type" (ngModelChange)="calculateMargin()">
+                  <mat-option value="BUY">BUY</mat-option>
+                  <mat-option value="SELL">SELL</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
 
           <div class="row">
-            <mat-form-field appearance="outline" floatLabel="always" class="example-full-width">
-              <mat-label>Open Price</mat-label>
-              <input type="number" placeholder="₮ 0" aria-label="Open Price" matInput [(ngModel)]="Open_Price" name="Open_Price">
-              <button class="text-danger" *ngIf="Open_Price" matSuffix mat-icon-button aria-label="Clear" type="button" (click)="Open_Price=''" tabIndex="-1">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
-          </div>
-          
-          <!-- <div class="row pt-3">
-            <mat-form-field appearance="outline" floatLabel="always" class="example-full-width">
-              <mat-label>Open Margin</mat-label>
-              <input type="number" placeholder="Open Margin" aria-label="Open Margin" matInput [(ngModel)]="Open_Margin" name="Open_Margin">
-              <button class="text-danger" *ngIf="Open_Margin" matSuffix mat-icon-button aria-label="Clear" type="button" (click)="Open_Margin=''" tabIndex="-1">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
-          </div> -->
+            <div class="col-md-4 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Leverage</mat-label>
+                <input matInput type="number" [(ngModel)]="Leverage" name="Leverage" 
+                       (ngModelChange)="Leverage = $event || 0; calculateMargin()" placeholder="Enter Leverage">
+              </mat-form-field>
+            </div>
 
+            <div class="col-md-4 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Open Price</mat-label>
+                <input matInput type="number" [(ngModel)]="Open_Price" name="Open_Price" 
+                       (ngModelChange)="Open_Price = $event || 0; calculateMargin()" placeholder="Enter Open Price">
+              </mat-form-field>
+            </div>
 
-          <div class="row pt-2">
-            <mat-form-field appearance="outline" floatLabel="always" class="example-full-width">
-              <mat-label>Close Price</mat-label>
-              <input type="number" placeholder="₮ 0" aria-label="Sell Price" matInput [(ngModel)]="Close_Price" name="Close_Price">
-              <button class="text-danger" *ngIf="Close_Price" matSuffix mat-icon-button aria-label="Clear" type="button" (click)="Close_Price=''" tabIndex="-1">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
+            <div class="col-md-4 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Close Price</mat-label>
+                <input matInput type="number" [(ngModel)]="Close_Price" name="Close_Price" 
+                       (ngModelChange)="Close_Price = $event || 0; calculateMargin()" placeholder="Enter Close Price">
+              </mat-form-field>
+            </div>
           </div>
 
+          <!-- Calculated Fields (Read-only) -->
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Open Margin</mat-label>
+                <input matInput type="number" [ngModel]="Open_Margin" name="Open_Margin" readonly
+                       #openMarginInput="ngModel" (focus)="openMarginInput.control.markAsTouched()">
+                <mat-hint *ngIf="Open_Margin || openMarginInput.touched">* Read Only !</mat-hint>
+              </mat-form-field>
+            </div>
 
-             
-          <div class="row pt-2">
-            <mat-form-field appearance="outline" floatLabel="always">
-              <mat-label>Leverage</mat-label>
-              <!-- <span matTextPrefix>₮&nbsp;</span> -->
-              <input matInput type="number" placeholder="0 X" [(ngModel)]="Leverage" name="Leverage" required />
-              <button class="text-danger" *ngIf="Leverage" matSuffix mat-icon-button  aria-label="Clear" type="button" 
-                (click)="Leverage = ''" tabIndex="-1">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
+            <div class="col-md-3 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Close Margin</mat-label>
+                <input matInput type="number" [ngModel]="Close_Margin" name="Close_Margin" readonly
+                       #closeMarginInput="ngModel" (focus)="closeMarginInput.control.markAsTouched()">
+                <mat-hint *ngIf="Close_Margin || closeMarginInput.touched">* Read Only !</mat-hint>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-3 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>PNL</mat-label>
+                <input matInput type="number" [ngModel]="Pnl" name="Pnl" readonly
+                       #pnlInput="ngModel" (focus)="pnlInput.control.markAsTouched()">
+                <mat-hint *ngIf="Pnl || pnlInput.touched">* Read Only !</mat-hint>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-3 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>PNL %</mat-label>
+                <input matInput type="number" [ngModel]="Pnl_Percentage" name="Pnl_Percentage" readonly
+                       #pnlPercentageInput="ngModel" (focus)="pnlPercentageInput.control.markAsTouched()">
+                <mat-hint *ngIf="Pnl_Percentage || pnlPercentageInput.touched">* Read Only !</mat-hint>
+              </mat-form-field>
+            </div>
           </div>
 
-          <!-- <div class="row pt-3">
-            <mat-form-field appearance="outline" floatLabel="always" class="example-full-width">
-              <mat-label>Close Margin</mat-label>
-              <input type="number" placeholder="Close Margin" aria-label="Close Margin" matInput [(ngModel)]="Close_Margin" name="Close_Margin">
-              <button class="text-danger" *ngIf="Close_Margin" matSuffix mat-icon-button aria-label="Clear" type="button" (click)="Close_Margin=''" tabIndex="-1">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
-          </div> -->
-
-          <!-- <div class="row pt-3">
-            <mat-form-field appearance="outline" floatLabel="always" class="example-full-width">
-              <mat-label>PNL</mat-label>
-              <input type="number" placeholder="PNL" aria-label="PNL" matInput [(ngModel)]="Pnl" name="Pnl">
-              <button class="text-danger" *ngIf="Pnl" matSuffix mat-icon-button aria-label="Clear" type="button" (click)="Pnl=''" tabIndex="-1">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
-          </div> -->
-
-          <!-- <div class="row pt-3">
-            <mat-form-field appearance="outline" floatLabel="always" class="example-full-width">
-              <mat-label>PNL Percentage</mat-label>
-              <input type="number" placeholder="PNL Percentage" aria-label="PNL Percentage" matInput [(ngModel)]="Pnl_Percentage" name="Pnl_Percentage">
-              <button class="text-danger" *ngIf="Pnl_Percentage" matSuffix mat-icon-button aria-label="Clear" type="button" (click)="Pnl_Percentage=''" tabIndex="-1">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
-          </div> -->
-
-          <!-- <div class="row pt-3">
-            <mat-form-field appearance="outline" floatLabel="always" class="example-full-width">
-              <mat-label>Lot Value</mat-label>
-              <input type="number" placeholder="Lot_Value" aria-label="Lot_Value" matInput [(ngModel)]="Lot_Value" name="Lot_Value" disabled="true">
-              <button class="text-danger" *ngIf="Lot_Value" matSuffix mat-icon-button aria-label="Clear" type="button" (click)="Lot_Value=''" tabIndex="-1">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
-          </div> -->
-
-          <div class="row pt-2">
-            <mat-form-field appearance="outline" floatLabel="always" class="example-full-width">
-              <mat-label>Influencer</mat-label>
-              <input type="text" placeholder="Influencer Name" aria-label="Influencer" matInput [(ngModel)]="Influencer"
-                [formControl]="influencerControl" [matAutocomplete]="auto" name="Influencer">
-              <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let option of filteredInfluencers | async" [value]="option">
-                  {{option}}
-                </mat-option>
-              </mat-autocomplete>
-              <button class="text-danger" *ngIf="Influencer" matSuffix mat-icon-button  aria-label="Clear" type="button" 
-                (click)="clearInfluencer()" tabIndex="-1">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-form-field>
+          <!-- Influencer Field -->
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Influencer</mat-label>
+                <input matInput 
+                       [(ngModel)]="Influencer"
+                       name="Influencer"
+                       [formControl]="influencerControl" 
+                       [matAutocomplete]="autoInfluencer">
+                <button *ngIf="Influencer" 
+                        matSuffix 
+                        mat-icon-button 
+                        (click)="clearInfluencer()">
+                  <mat-icon>close</mat-icon>
+                </button>
+                <mat-autocomplete #autoInfluencer="matAutocomplete">
+                  <mat-option *ngFor="let option of filteredInfluencers | async" [value]="option">
+                    {{option}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
           </div>
   
           <!-- <div class="row pb-2">

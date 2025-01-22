@@ -70,7 +70,7 @@ ngOnInit(): void {
 
 
             const dialogRef = this._dialog.open(AddDemoTradingDeltaFuturesComponent, {
-              data: { ExchangeName: 'Demo_Trading', SheetName: 'Delta_Futures' },
+              data: { ExchangeName: 'Delta_Exchange', SheetName: 'Futures_Trades' },
               disableClose: false, // Prevent the dialog from closing on click outside
               hasBackdrop: false, // Allow interaction with the underlying page
             });
@@ -90,7 +90,8 @@ ngOnInit(): void {
     else {
 
       const dialogRef = this._dialog.open(AddDemoTradingDeltaFuturesComponent, {
-        data: { ExchangeName: 'Demo_Trading', SheetName: 'Delta_Futures' },
+        data: { ExchangeName: 'Delta_Exchange', SheetName: 'Futures_Trades' },
+
         disableClose: false, // Prevent the dialog from closing on click outside
         hasBackdrop: false, // Allow interaction with the underlying page
       });

@@ -16,49 +16,97 @@ import { NotificationService } from 'src/app/services/notification.service';
 })
 export class AddDemoTradingDeltaFuturesComponent implements OnInit {
 
-  public ExchangeName: string = '';
-  public SheetName: string = '';
+  public ExchangeName: string = 'Delta_Exchange';
+  public SheetName: string = 'Futures_Trades';
   public Location: string = '';
   isNewEntrySubmitted: boolean = false;
   IsMasterControlEnabled: boolean = false;
 
-
   public Date: string = '';
-  public Time: string = ''
-  today: Date = new Date();
-  public influencerControl = new FormControl();
-  public filteredInfluencers!: Observable<string[]>;
+  public Time: string = '';
+  public Coin: string = '';
+  public Contracts: any = null;
+  public Type: string = '';
+  public Leverage: any = 25;
+  public Open_Price: any = null;
+  public Close_Price: any = null;
+  public Lot_Value: any = null;
+  public Open_Margin: number = 0;
+  public Close_Margin: number = 0;
+  public Pnl: number = 0;
+  public Pnl_Percentage: number = 0;
   public Influencer: string = 'Trade_With_Ash';
 
   public Platform: string = 'Delta';
 
-  Coin: any = '';
-  Contracts: any = null;
-  Type: string = '';
-  Leverage: any = 25;
-  Open_Price: any = null;
-  Open_Margin: any = null;
-  Close_Price: any = null;
-  Close_Margin: any = null;
-  Pnl: any = null;
-  Pnl_Percentage: any = null;
-  Lot_Value: any = null;
+  Market: any;
+  Direction: any;
+  Price: any;
+  Amount: any;
+  Fees: any;
+  Fee_Asset: any;
+  Period: any;
+  Notes: any;
+  
 
+  today: Date = new Date();
+  public influencerControl = new FormControl();
+  public filteredInfluencers!: Observable<string[]>;
 
-Market:any;
-Direction:any;
-Price:any;
-Amount:any;
-Fees:any;
-Fee_Asset:any;
-Period:any;
-Notes:any;
+  public Quantity: any = null;
+  public isQuantityMode: boolean = false;  // To track which input mode user is using
 
+  // Update class properties
+  public Exchange_Name: string = 'Delta_Exchange';  // Default value
+  public exchangesList: string[] = [
+    'Delta_Exchange',
+    'BingX',
+    'Binance',
+    'Bybit',
+    'OKX',
+    'Mexc'
+  ];
 
+  // Update lotValues to be exchange-specific
+  public lotValues: { [exchange: string]: { [coin: string]: number } } = {
+    'Delta_Exchange': {
+      BTC: 0.001,
+      ETH: 0.01,
+      LTC: 0.1,
+      BNB: 0.1,
+      SOL: 1,
+      XRP: 1,
+      LINK: 1,
+      DOGE: 100
+    },
+    'BingX': {
+      BTC: 0.001,
+      ETH: 0.01,
+      LTC: 0.1,
+      BNB: 0.1,
+      SOL: 1,
+      XRP: 1,
+      LINK: 1,
+      DOGE: 100
+    },
+    'Binance': {
+      BTC: 100,
+      ETH: 0.01,
+      LTC: 0.1,
+      BNB: 0.1,
+      SOL: 1,
+      XRP: 1,
+      LINK: 1,
+      DOGE: 100
+    }
+  };
 
-
-
-
+  // Add new FormControls
+  public exchangeControl = new FormControl();
+  public coinControl = new FormControl();
+  public filteredExchanges!: Observable<string[]>;
+  public filteredCoins!: Observable<string[]>;
+  public coinsList: string[] = ['BTC', 'ETH', 'LTC', 'BNB', 'SOL', 'XRP', 'LINK', 'DOGE'];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public injectedData: any,
@@ -69,7 +117,6 @@ Notes:any;
     private dataService: DataService,
     public dialogRef: MatDialogRef<AddDemoTradingDeltaFuturesComponent>,
     private router: Router,
-
   ) {
     console.log(injectedData)
 
@@ -78,77 +125,96 @@ Notes:any;
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
       // Close dialog on route change
-
       this.dialogRef.close();
     });
-
   }
   ngOnInit(): void {
-
-
     const indianTimeZone = 'Asia/Kolkata';
     const today = new Date().toLocaleString('en-US', { timeZone: indianTimeZone });
-
-    // Convert the date string to a Date object
     const todayDate = new Date(today);
-
-    // Format the date using DatePipe to 'yyyy-MM-dd' format
-    this.Date = this.datePipe.transform(todayDate, 'yyyy-MM-dd')!;
-
-    // Set the current time in HH:MM:SS format
+    this.Date = todayDate.toISOString().split('T')[0];
     const currentTime = new Date();
-    this.Time = currentTime.toTimeString().slice(0, 8);  // HH:MM:SS format
-
-
-
-
+    this.Time = currentTime.toTimeString().slice(0, 8);
 
     this.ExchangeName = this.injectedData.ExchangeName;
     this.SheetName = this.injectedData.SheetName;
     this.injectedData.Location ? this.Location = this.injectedData.Location : '';
+
+    // Setup filtering for influencer
     this.filteredInfluencers = this.influencerControl.valueChanges.pipe(
       startWith(''),
-      map(value => this._filter(value))
+      map(value => this._filterInfluencers(value))
     );
 
-    // Sync ngModel with FormControl
+    // Setup filtering for exchange
+    this.filteredExchanges = this.exchangeControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterExchanges(value || ''))
+    );
+
+    // Setup filtering for coin
+    this.filteredCoins = this.coinControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterCoins(value || ''))
+    );
+
+    // Sync FormControls with ngModel
     this.influencerControl.valueChanges.subscribe(value => {
       this.Influencer = value;
     });
+
+    this.exchangeControl.valueChanges.subscribe(value => {
+      this.Exchange_Name = value;
+      this.getLotValue();
+    });
+
+    this.coinControl.valueChanges.subscribe(value => {
+      this.Coin = value;
+      this.getLotValue();
+    });
   }
-
-
-
-
 
   isFormValid(): boolean {
-    // if (this.SheetName === 'Delta_Futures') {
-    //   return (
-    //     // true
-    //     !!this.Date &&
-    //     !!this.Time &&
-    //     !!this.Coin &&
-    //     !!this.Contracts &&
-    //     !!this.Type &&
-    //     !!this.Leverage &&
-    //     !!this.Open_Price &&
-    //     !!this.Close_Price &&
-    //     !!this.Influencer 
-    //     // && !!this.Platform
-    //   );
-    // }
-    // return false;
-    return true
+    if (this.SheetName === 'Futures_Trades') {
+      const commonValidation = 
+        !!this.Date &&
+        !!this.Exchange_Name &&
+        !!this.Coin &&
+        !!this.Type &&
+        !!this.Leverage &&
+        !!this.Open_Price &&
+        !!this.Close_Price;
+
+      // Additional validation based on quantity mode
+      if (this.isQuantityMode) {
+        return commonValidation && !!this.Quantity;
+      } else {
+        return commonValidation && !!this.Contracts && !!this.Lot_Value;
+      }
+    }
+    // ... rest of the existing validation code ...
+    return false;
   }
 
+  private _filterInfluencers(value: string): string[] {
+    const filterValue = value?.toLowerCase() || '';
+    return this.dataService.influencersList.filter(option => 
+      option.toLowerCase().includes(filterValue)
+    );
+  }
 
-
-
-
-
-  private _filter(value: string): string[] {
+  private _filterExchanges(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.dataService.influencersList.filter(option => option.toLowerCase().includes(filterValue));
+    return this.exchangesList.filter(exchange => 
+      exchange.toLowerCase().includes(filterValue)
+    );
+  }
+
+  private _filterCoins(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.coinsList.filter(coin => 
+      coin.toLowerCase().includes(filterValue)
+    );
   }
 
   clearInfluencer() {
@@ -160,196 +226,191 @@ Notes:any;
     this.dialogRef.close();
   }
 
-
-
   async onSubmit() {
-    this.Coin = this.Coin.toUpperCase();
-    if (this.Coin === 'BTC' || this.Coin === 'ETH' || this.Coin === 'LTC' || this.Coin === 'BNB' || 
-        this.Coin === 'SOL' || this.Coin === 'XRP' || this.Coin === 'LINK' || this.Coin === 'DOGE') {
-      await this.getLotValue();
-    } else {
-      this.notificationService.error("Invalid Coin !");
+    if (!this.validateForm()) {
       return;
     }
+
+    this.Coin = this.Coin.toUpperCase();
+    await this.getLotValue();
     await this.calculateMargin();
-    await this.formateDate();
     this.uploadTradeData();
   }
 
-
-
-  async getLotValue() {
-
-
-
-
-    if (this.Platform === 'Delta') {
-
-
-      if (this.Coin === 'BTC') {
-        this.Lot_Value = 0.001;
-      }
-      else if (this.Coin === 'ETH') {
-        this.Lot_Value = 0.01;
-      }
-      if (this.Coin === 'LTC' || this.Coin === 'BNB') {
-        this.Lot_Value = 0.1;
-      }
-
-      else if (this.Coin === 'SOL' || this.Coin === 'XRP' || this.Coin === 'LINK') {
-        this.Lot_Value = 1;
-      }
-
-      else if (this.Coin === 'DOGE') {
-        this.Lot_Value = 100;
-      }
-
-
-
+  validateForm(): boolean {
+    if (!this.Coin || !this.Type || !this.Open_Price || !this.Close_Price) {
+      // this.notificationService.error('Please fill all required fields');
+      return false;
     }
 
-
-    if (this.Platform === 'Mexc') {
-
-      if (this.Coin === 'BTC') {
-        this.Lot_Value = 0.0001;
+    // Validate Quantity XOR (Contracts AND Lot_Value)
+    if (this.isQuantityMode) {
+      if (!this.Quantity) {
+        // this.notificationService.error('Please enter Quantity');
+        return false;
       }
-      else if (this.Coin === 'ETH') {
-        this.Lot_Value = 0.01;
+      if (this.Contracts || this.Lot_Value) {
+        // this.notificationService.error('Cannot use Contracts/Lot_Value with Quantity');
+        return false;
       }
-      if (this.Coin === 'LTC' || this.Coin === 'BNB') {
-        this.Lot_Value = 0.01;
+    } else {
+      if (!this.Contracts) {
+        // this.notificationService.error('Please enter Contracts');
+        return false;
       }
-      else if (this.Coin === 'SOL' || this.Coin === 'LINK') {
-        this.Lot_Value = 0.1;
+      if (!this.Lot_Value) {
+        // this.notificationService.error('Please enter Lot Value');
+        return false;
       }
-      if (this.Coin === 'XRP') {
-        this.Lot_Value = 1;
+      if (this.Quantity) {
+        // this.notificationService.error('Cannot use Quantity with Contracts/Lot_Value');
+        return false;
       }
-      else if (this.Coin === 'DOGE') {
-        this.Lot_Value = 100;
-      }
+    }
 
+    // const validCoins = ['BTC', 'ETH', 'LTC', 'BNB', 'SOL', 'XRP', 'LINK', 'DOGE'];
+    // if (!validCoins.includes(this.Coin.toUpperCase())) {
+    //   // this.notificationService.error('Invalid Coin!');
+    //   return false;
+    // }
 
+    return true;
+  }
 
+  onQuantityModeChange(isQuantityMode: boolean) {
+    this.isQuantityMode = isQuantityMode;
+    if (isQuantityMode) {
+      this.Contracts = null;
+      this.Lot_Value = null;
+    } else {
+      this.Quantity = null;
+      if (this.Coin) {
+        this.getLotValue();
+      }
+    }
+    this.calculateMargin(); // Recalculate after mode change
+  }
 
+  onContractsChange() {
+    if (!this.isQuantityMode && this.Coin && !this.Lot_Value) {
+      this.getLotValue();
+    }
+    this.calculateMargin(); // Recalculate after contracts change
+  }
+
+  async getLotValue() {
+    if (!this.isQuantityMode && this.Coin && this.Exchange_Name) {
+      const defaultLotValue = this.lotValues[this.Exchange_Name]?.[this.Coin.toUpperCase()];
+      if (defaultLotValue) {
+        this.Lot_Value = defaultLotValue;
+        this.calculateMargin();
+      } else {
+        this.Lot_Value = null;
+      }
     }
   }
 
   async calculateMargin() {
+    if (!this.Open_Price || !this.Close_Price || !this.Leverage) {
+      // Reset calculated values if required fields are missing
+      this.Open_Margin = 0;
+      this.Close_Margin = 0;
+      this.Pnl = 0;
+      this.Pnl_Percentage = 0;
+      return;
+    }
 
+    // Check if we have valid quantity data
+    if (this.isQuantityMode && !this.Quantity) {
+      return;
+    }
+    if (!this.isQuantityMode && (!this.Contracts || !this.Lot_Value)) {
+      return;
+    }
+
+    // Calculate quantity based on mode
+    const quantity = this.isQuantityMode ? 
+      Number(this.Quantity) : 
+      (Number(this.Contracts) * Number(this.Lot_Value));
+
+    // Calculate margins using quantity
+    this.Open_Margin = (quantity * this.Open_Price) / this.Leverage;
+    this.Close_Margin = (quantity * this.Close_Price) / this.Leverage;
+
+    // Calculate PNL based on trade type
     if (this.Type === 'BUY') {
-      this.Open_Margin = this.Open_Price * this.Contracts * this.Lot_Value / this.Leverage;
-      this.Close_Margin = this.Close_Price * this.Contracts * this.Lot_Value / this.Leverage;
-    }
-    else if (this.Type === 'SELL') {
-      this.Open_Margin = this.Open_Price * this.Contracts * this.Lot_Value / this.Leverage;
-      this.Close_Margin = this.Close_Price * this.Contracts * this.Lot_Value / this.Leverage;
-    }
-
-    if (this.Type === 'BUY') {
-      this.Pnl = (this.Close_Price - this.Open_Price) * this.Contracts * this.Lot_Value;
-      this.Pnl_Percentage = ((this.Close_Price - this.Open_Price) / this.Open_Price) * 100 *25;
-    }
-    if (this.Type === 'SELL') {
-      this.Pnl = (this.Open_Price - this.Close_Price) * this.Contracts * this.Lot_Value;
-      this.Pnl_Percentage = ((this.Open_Price - this.Close_Price) / this.Close_Price) * 100 *25;
+      // For BUY: Profit when Close_Price > Open_Price
+      this.Pnl = (this.Close_Price - this.Open_Price) * quantity;
+    } else if (this.Type === 'SELL') {
+      // For SELL: Profit when Open_Price > Close_Price (reverse of BUY)
+      this.Pnl = (this.Open_Price - this.Close_Price) * quantity;
     }
 
+    // Calculate PNL Percentage using Open_Margin
+    // The sign (positive/negative) comes from the PNL calculation above
+    this.Pnl_Percentage = (this.Pnl / this.Open_Margin) * 100;
 
-    this.Open_Margin = this.Open_Margin.toFixed(3);
-    this.Close_Margin = this.Close_Margin.toFixed(3);
-    this.Pnl = this.Pnl.toFixed(3);
-    this.Pnl_Percentage = this.Pnl_Percentage.toFixed(3);
+    // Format numbers to 3 decimal places
+    this.Open_Margin = Number(this.Open_Margin.toFixed(3));
+    this.Close_Margin = Number(this.Close_Margin.toFixed(3));
+    this.Pnl = Number(this.Pnl.toFixed(3));
+    this.Pnl_Percentage = Number(this.Pnl_Percentage.toFixed(3));
 
-
-    // console.log('Open_Margin : ', this.Open_Margin);
-    // console.log('Close_Margin : ', this.Close_Margin);
-    // console.log('Pnl : ', this.Pnl);
-    // console.log('Pnl_Percentage : ', this.Pnl_Percentage);
-
-
-
-  }
-
-  async formateDate() {
-    const date = new Date(this.Date);
-    const formattedDate = this.datePipe.transform(date, 'yyyy-MM-dd');
-    // this.Date = (formattedDate! + " " + this.Time).toString();
-    this.Date = (formattedDate!).toString();
-
-    //     console.log('formattedDate : ', this.formateDate);
-    //     console.log('Date : ', this.Date);
+    // Log for debugging
+    console.log('Calculated values:', {
+      Type: this.Type,
+      quantity,
+      Open_Price: this.Open_Price,
+      Close_Price: this.Close_Price,
+      Leverage: this.Leverage,
+      Open_Margin: this.Open_Margin,
+      Close_Margin: this.Close_Margin,
+      Pnl: this.Pnl,
+      Pnl_Percentage: this.Pnl_Percentage
+    });
   }
 
   async uploadTradeData() {
     this.isNewEntrySubmitted = true;
-    
-    // Generate unique ID based on current date and time
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    
-    const uniqueId = `${year}${month}${day}${hours}${minutes}${seconds}`;
-    console.log('Generated ID:', uniqueId);
 
-    // Create trade data object
-    let tradeData: any = {
+    // Generate unique ID
+    const now = new Date();
+    const uniqueId = now.getFullYear().toString() +
+      (now.getMonth() + 1).toString().padStart(2, '0') +
+      now.getDate().toString().padStart(2, '0') +
+      now.getHours().toString().padStart(2, '0') +
+      now.getMinutes().toString().padStart(2, '0') +
+      now.getSeconds().toString().padStart(2, '0');
+
+    // Format the selected date to YYYY-MM-DD string
+    const formattedDate = this.datePipe.transform(new Date(this.Date), 'yyyy-MM-dd');
+
+    // Get final quantity value
+    const quantity = this.isQuantityMode ? 
+      Number(this.Quantity) : 
+      (Number(this.Contracts) * Number(this.Lot_Value));
+
+    const tradeData = {
       ID: uniqueId,
-      Sheet_Name: this.SheetName,
-      Exchange_Name: this.ExchangeName
+      Sheet_Name: 'Futures_Trades',
+      Date: formattedDate || '',  // Will be in YYYY-MM-DD format
+      Coin: this.Coin.toUpperCase(),
+      Type: this.Type.toUpperCase(),
+      Quantity: quantity,
+      Open_Price: Number(Number(this.Open_Price).toString().match(/^-?\d*\.?\d{0,8}/)?.[0] || this.Open_Price),
+      Open_Margin: this.Open_Margin,
+      Close_Price: Number(Number(this.Close_Price).toString().match(/^-?\d*\.?\d{0,8}/)?.[0] || this.Close_Price),
+      Close_Margin: this.Close_Margin,
+      Pnl: this.Pnl,
+      Pnl_Percentage: this.Pnl_Percentage,
+      Influencer: this.Influencer.toUpperCase(),
+      Exchange_Name: this.Exchange_Name.toUpperCase(),
+      Leverage: Number(this.Leverage)
     };
 
-    if(this.SheetName === 'Futures_Trades'){
-      tradeData = {
-        ...tradeData,
-        Date: this.Date,
-        Contracts: Number(this.Contracts),
-        Coin: this.Coin,
-        Type: this.Type,
-        Leverage: Number(this.Leverage),
-        Open_Price: Number(Number(this.Open_Price).toString().match(/^-?\d*\.?\d{0,8}/)?.[0] || this.Open_Price),
-        Open_Margin: Number(Number(this.Open_Margin).toFixed(3)),
-        Close_Price: Number(Number(this.Close_Price).toString().match(/^-?\d*\.?\d{0,8}/)?.[0] || this.Close_Price),
-        Close_Margin: Number(Number(this.Close_Margin).toFixed(3)),
-        Pnl: Number(Number(this.Pnl).toFixed(3)),
-        Pnl_Percentage: Number(Number(this.Pnl_Percentage).toFixed(3)),
-        Influencer: this.Influencer.toUpperCase(),
-        Lot_Value: Number(this.Lot_Value)
-      };
-    }
-
-    if(this.SheetName === 'Spot_Trades'){
-      const date = new Date(this.Date);
-      const formattedDate = this.datePipe.transform(date, 'yyyy-MM-dd');
-      tradeData = {
-        ...tradeData,
-        Date: (formattedDate! + " " + this.Time).toString(),
-        Market: this.Market.toLocaleUpperCase(),
-        Price: Number(this.Price),
-        Direction: this.Direction,
-        Amount: Number(this.Amount),
-        Total_USDT: Number(this.Amount * this.Price),
-        Fees: Number(this.Fees),
-        Fee_Asset: this.Fee_Asset,
-        Period: this.Period || '',
-        Notes: this.Notes || '',
-        Influencer: this.Influencer.toUpperCase()
-      };
-    }
-console.log(tradeData)
-// this.isNewEntrySubmitted = false;
-
-// return
     try {
-
       await this.firebaseDataService.uploadTradeData(tradeData);
       this.notificationService.success("Trade data uploaded successfully!");
-      this.onClose();
     } catch (error) {
       this.notificationService.error("Failed to upload trade data");
       console.error("Error uploading data:", error);
@@ -357,7 +418,4 @@ console.log(tradeData)
       this.isNewEntrySubmitted = false;
     }
   }
-
-
-
 }
