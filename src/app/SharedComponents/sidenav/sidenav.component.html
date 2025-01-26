@@ -136,19 +136,22 @@
 
 
        
-<!-- 
-          <button mat-icon-button *ngIf="IsMasterControlEnabled" (click)="onDisableMasterControl()"
-            matTooltip="Disable Master Control">
-            <mat-icon class="text-success">security</mat-icon>
-          </button>
 
-          <button mat-icon-button *ngIf="!IsMasterControlEnabled" (click)="openMasterControlDialog()"
-            matTooltip="Enable Master Control">
-            <mat-icon class="text-danger">security</mat-icon>
-          </button> -->
+          <!-- Master Control Buttons -->
+          <ng-container *ngIf="!isActionsAllowed">
+            <button mat-icon-button *ngIf="IsMasterControlEnabled" (click)="onDisableMasterControl()"
+              matTooltip="Disable Master Control">
+              <mat-icon class="text-success">security</mat-icon>
+            </button>
 
-          <button mat-icon-button (click)="openAddDialog()" [disabled]="isAddDialogOpen" 
-            [matTooltip]="isAddDialogOpen ? 'Dialog already open' : 'Add New Entry'">
+            <button mat-icon-button *ngIf="!IsMasterControlEnabled" (click)="openMasterControlDialog()"
+              matTooltip="Enable Master Control">
+              <mat-icon class="text-danger">security</mat-icon>
+            </button>
+          </ng-container>
+
+          <!-- Add Button -->
+          <button mat-icon-button (click)="openAddDialog()" [matTooltip]="isAddDialogOpen ? 'Dialog already open' : 'Add New Entry'">
             <mat-icon class="text-success bg-white p-0 rounded-5 add-mat-icon" 
               [class.opacity-50]="isAddDialogOpen">add_circle</mat-icon>
           </button>

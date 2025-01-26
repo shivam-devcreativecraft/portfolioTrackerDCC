@@ -1,0 +1,84 @@
+@import '../../sharedSCSS/dialogsStyle/dialogsStyle.scss';
+
+.masterControl_Dialog {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow: hidden;
+
+  [mat-dialog-title] {
+    margin: 0;
+    padding: 20px;
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+  }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    margin: 0;
+
+    .row {
+      margin: 0;
+      
+      mat-form-field {
+        width: 100%;
+      }
+    }
+
+    p {
+      &.text-danger {
+        margin-top: 0;
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  .action {
+    padding: 16px 24px;
+    background: #fff;
+    border-top: 1px solid #e0e0e0;
+    position: sticky;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+
+    button {
+      min-width: 80px;
+    }
+  }
+}
+
+::ng-deep .mat-mdc-dialog-container {
+  padding: 0 !important;
+  overflow: hidden;
+
+  .mdc-dialog__content {
+    padding: 0 !important;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mdc-dialog__title {
+    padding: 0 !important;
+  }
+
+  .mdc-dialog__actions {
+    padding: 0 !important;
+  }
+}

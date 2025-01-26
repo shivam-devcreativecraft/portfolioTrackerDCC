@@ -12,6 +12,8 @@ import { DataService } from 'src/app/services/data.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { LoaderService } from 'src/app/loader.service';
 import { AddComponent } from '../add/add.component';
+import { MasterControlService } from 'src/app/services/master-control.service';
+import { MasterControlComponent } from '../master-control/master-control.component';
 
 @Component({
   selector: 'app-sidenav',
@@ -38,6 +40,8 @@ export class SidenavComponent implements OnInit {
     email: '',
     photoURL: 'assets/default-avatar.png'
   };
+  isActionsAllowed: boolean = true;
+  IsMasterControlEnabled: boolean = false;
 
   constructor(
     private breakpointObserver: BreakpointObserver,
@@ -48,41 +52,37 @@ export class SidenavComponent implements OnInit {
     private toastr: ToastrService,
     private dataServiceRef: DataService,
     private authService: AuthService,
-    private loaderServiceRef: LoaderService
+    private loaderServiceRef: LoaderService,
+    private masterControlService: MasterControlService
   ) {
     this.isAuthenticated$ = this.authService.getAuthState();
   }
 
   ngOnInit(): void {
+    this.updateUserDetails();
+    
+    // Subscribe to guest user state
+    this.masterControlService.getGuestUserState().subscribe(isGuest => {
+      this.isActionsAllowed = !isGuest;
+    });
 
-    // Initialize user details
-    this.updateUserDetails(this.authService.getCurrentUser());
-
-    // Subscribe to auth state changes
-    this.authService.getAuthState().subscribe(isAuthenticated => {
-      if (isAuthenticated) {
-        this.updateUserDetails(this.authService.getCurrentUser());
-      } else {
-        // Reset user details when logged out
-        this.userDetails = {
-          displayName: 'User',
-          email: '',
-          photoURL: 'assets/default-avatar.png'
-        };
-      }
+    // Subscribe to master control state
+    this.masterControlService.getMasterControlState().subscribe(state => {
+      console.log('Master Control State:', state); // Debug log
+      this.IsMasterControlEnabled = state;
     });
 
     this.dataServiceRef.getDestroyObservable().subscribe((flag: boolean) => {
       this.destroyedComponentFlag = flag;
     });
 
-
     this.dataServiceRef.getAllNewOrdersUploadedObservable().subscribe((flag: boolean) => {
       this.allNewOrdersUploadedFlag = flag;
     });
   }
 
-  private updateUserDetails(user: any): void {
+  private updateUserDetails(): void {
+    const user = this.authService.getCurrentUser();
     if (user) {
       // Get display name from: 1. displayName 2. email username 3. 'User'
       const displayName = user.displayName || 
@@ -172,33 +172,57 @@ export class SidenavComponent implements OnInit {
     return this.breakpointObserver.isMatched(Breakpoints.Handset);
   }
 
-  openAddDialog(): void {
+  async openAddDialog(): Promise<void> {
+    if (!this.isActionsAllowed && !this.IsMasterControlEnabled) {
+      // Open master control dialog only if not enabled
+      const dialogRef = this.dialog.open(MasterControlComponent, {
+        width: '400px',
+        data: { location: 'sidenav' }
+      });
+
+      const result = await dialogRef.afterClosed().toPromise();
+      if (!result) {
+        return;
+      }
+    }
+    
     if (this.isAddDialogOpen) {
+      this.toastr.warning('Add dialog is already open');
       return;
     }
 
-    this.isAddDialogOpen = true;
     const dialogRef = this.dialog.open(AddComponent, {
-      width: '600px',
-      maxHeight: '90vh',
-      disableClose: false,
-      autoFocus: true,
-      restoreFocus: true,
-      hasBackdrop: false,
-      panelClass: ['custom-dialog-container', 'no-scroll-overlay'],
-      backdropClass: 'dialog-backdrop',
-      scrollStrategy: this.overlay.scrollStrategies.noop(),
-      data: {
-        ExchangeName: 'Delta_Exchange',
-        SheetName: 'Futures_Trades'
-      }
+      width: '100%',
+      maxWidth: '800px',
+      disableClose: true,
+      scrollStrategy: this.overlay.scrollStrategies.noop()
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    this.isAddDialogOpen = true;
+
+    dialogRef.afterClosed().subscribe(() => {
       this.isAddDialogOpen = false;
-      if (result) {
-        this.toastr.success('Entry added successfully');
-      }
     });
+  }
+
+  onDisableMasterControl(): void {
+    this.masterControlService.clearMasterControl();
+    this.toastr.success('Master Control Disabled');
+  }
+
+  openMasterControlDialog(): void {
+    // Only open if not already enabled
+    if (!this.IsMasterControlEnabled) {
+      const dialogRef = this.dialog.open(MasterControlComponent, {
+        width: '400px',
+        data: { location: 'sidenav' }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.toastr.success('Master Control Enabled');
+        }
+      });
+    }
   }
 }

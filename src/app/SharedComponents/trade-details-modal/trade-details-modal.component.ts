@@ -4,10 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FirebaseDataService } from 'src/app/services/firebase-data.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ConfirmDialogComponent, ConfirmDialogModel } from '../confirm-dialog/confirm-dialog.component';
+import { MasterControlService } from 'src/app/services/master-control.service';
+import { MasterControlComponent } from '../master-control/master-control.component';
 
 @Component({
   selector: 'app-trade-confirmation-dialog',
@@ -66,17 +69,28 @@ export class TradeConfirmationDialogComponent {
   templateUrl: './trade-details-modal.component.html',
   styleUrls: ['./trade-details-modal.component.scss'],
   standalone: true,
-  imports: [FormsModule, CommonModule, MatIconModule, MatButtonModule, MatDialogModule, DragDropModule]
+  imports: [
+    FormsModule, 
+    CommonModule, 
+    MatIconModule, 
+    MatButtonModule, 
+    MatDialogModule, 
+    DragDropModule,
+    MatTooltipModule
+  ]
 })
 export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
   @ViewChild('dialogContent') dialogContent?: ElementRef;
+  isActionsAllowed: boolean = true;
+  IsMasterControlEnabled: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<TradeDetailsModalComponent>,
     private firebaseService: FirebaseDataService,
     private notificationService: NotificationService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private masterControlService: MasterControlService
   ) {
     this.data = this.data || {};
     console.log(this.data)
@@ -93,14 +107,43 @@ export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    // Initialize component
+    // Subscribe to guest user state
+    this.masterControlService.getGuestUserState().subscribe(isGuest => {
+      this.isActionsAllowed = !isGuest;
+    });
+
+    // Subscribe to master control state
+    this.masterControlService.getMasterControlState().subscribe(state => {
+      this.IsMasterControlEnabled = state;
+    });
   }
 
   onClose(): void {
     this.dialogRef.close();
   }
 
+  private openMasterControlDialog(): Promise<boolean> {
+    return new Promise((resolve) => {
+      const dialogRef = this.dialog.open(MasterControlComponent, {
+        width: '400px',
+        data: { location: 'trade-details' }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        resolve(result === true);
+      });
+    });
+  }
+
   async deleteTrade(tradeId: string) {
+    if (!this.isActionsAllowed && !this.IsMasterControlEnabled) {
+      // Open master control dialog only if not enabled
+      const isVerified = await this.openMasterControlDialog();
+      if (!isVerified) {
+        return;
+      }
+    }
+
     // Show confirm dialog
     const dialogData = new ConfirmDialogModel(
       "Confirm Delete",
@@ -125,6 +168,17 @@ export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
         }
       }
     });
+  }
+
+  async updateTrade() {
+    if (!this.isActionsAllowed && !this.IsMasterControlEnabled) {
+      // Open master control dialog only if not enabled
+      const isVerified = await this.openMasterControlDialog();
+      if (!isVerified) {
+        return;
+      }
+    }
+    // Implement update logic here
   }
 
   ngAfterViewInit() {

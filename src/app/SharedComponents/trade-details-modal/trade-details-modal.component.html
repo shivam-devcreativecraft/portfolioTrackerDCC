@@ -105,11 +105,11 @@
 
     <div mat-dialog-actions class="action d-flex justify-content-between">
         <div class="d-flex gap-2">
-        <button class="btn btn-warning btn-sm">Update</button>
-        <button class="btn btn-danger btn-sm" (click)="deleteTrade(data.trade.ID)">Delete</button>
-</div>
-<div>
-        <button mat-raised-button color="" (click)="onClose()" tabindex="-1">Close</button>
+            <button class="btn btn-warning btn-sm" (click)="updateTrade()">Update</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteTrade(data.trade.ID)">Delete</button>
+        </div>
+        <div>
+            <button mat-raised-button color="" (click)="onClose()" tabindex="-1">Close</button>
         </div>
         <!-- <button mat-raised-button color="primary" (click)="uploadTradeData()"
             [disabled]="!isFormValid() || isNewEntrySubmitted">
