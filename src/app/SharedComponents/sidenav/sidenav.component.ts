@@ -30,6 +30,7 @@ export class SidenavComponent implements OnInit {
   NewOrdersSavingType = 'single';
   destroyedComponentFlag: boolean = false;
   allNewOrdersUploadedFlag: boolean = false;
+  isAddDialogOpen: boolean = false;
   
   isAuthenticated$: Observable<boolean>;
   userDetails: any = {
@@ -172,6 +173,11 @@ export class SidenavComponent implements OnInit {
   }
 
   openAddDialog(): void {
+    if (this.isAddDialogOpen) {
+      return;
+    }
+
+    this.isAddDialogOpen = true;
     const dialogRef = this.dialog.open(AddComponent, {
       width: '600px',
       maxHeight: '90vh',
@@ -189,6 +195,7 @@ export class SidenavComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      this.isAddDialogOpen = false;
       if (result) {
         this.toastr.success('Entry added successfully');
       }

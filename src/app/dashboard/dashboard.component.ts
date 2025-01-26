@@ -12,6 +12,7 @@ import { FunctionsService } from 'src/app/SharedFunctions/functions.service';
 import { FirebaseDataService } from 'src/app/services/firebase-data.service';
 import { TradeDetailsModalComponent } from '../SharedComponents/trade-details-modal/trade-details-modal.component';
 import { AddComponent } from '../SharedComponents/add/add.component';
+import { Overlay } from '@angular/cdk/overlay';
 
 interface GroupedData {
   profitableTrades: any[];
@@ -103,6 +104,8 @@ export class DashboardComponent implements OnDestroy, OnInit {
   constructor(
     private notificationService: NotificationService,
     private _dialog: MatDialog,
+    private overlay: Overlay,
+
     private functionsServiceRef: FunctionsService,
     private firebaseService: FirebaseDataService
   ) {
@@ -994,10 +997,16 @@ export class DashboardComponent implements OnDestroy, OnInit {
         trade: trade,
         sheetName: this.sheetName
       },
-      width: '500px',
-      disableClose: false, // Prevent the dialog from closing on click outside
-      hasBackdrop: true, // Allow interaction with the underlying page
-      panelClass: 'trade-details-modal'
+      width: '600px',
+      // maxWidth: '98vw',
+      maxHeight: '90vh',
+      disableClose: false,
+      autoFocus: true,
+      restoreFocus: true,
+      hasBackdrop: false,
+      panelClass: ['custom-dialog-container', 'no-scroll-overlay'],
+      backdropClass: 'dialog-backdrop',
+      scrollStrategy: this.overlay.scrollStrategies.noop(),
     });
   }
 
