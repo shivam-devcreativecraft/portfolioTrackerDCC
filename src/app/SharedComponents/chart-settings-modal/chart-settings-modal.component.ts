@@ -15,8 +15,14 @@ export class ChartSettingsModalComponent {
   isLoading = false;
   watchlist: string[] = [];
   symbolOverviewList: string[] = [];
-  newWatchlistSymbol = new FormControl('', [Validators.required, Validators.pattern('^[A-Z]+:[A-Z]+USDT$')]);
-  newOverviewSymbol = new FormControl('', [Validators.required, Validators.pattern('^[A-Z]+:[A-Z]+USDT$')]);
+  newWatchlistSymbol = new FormControl('', [
+    Validators.required, 
+    Validators.pattern('^[A-Za-z]+:[A-Za-z]+usdt(?:\.p)?$|^[A-Za-z]+:[A-Za-z]+USDT(?:\.P)?$')
+  ]);
+  newOverviewSymbol = new FormControl('', [
+    Validators.required, 
+    Validators.pattern('^[A-Za-z]+:[A-Za-z]+usdt(?:\.p)?$|^[A-Za-z]+:[A-Za-z]+USDT(?:\.P)?$')
+  ]);
 
   exchanges = [
     { value: 'BINANCE', name: 'Binance' },
@@ -37,7 +43,10 @@ export class ChartSettingsModalComponent {
 
     this.settingsForm = this.fb.group({
       exchange: [data.chart_analysis.exchange, Validators.required],
-      symbol: [data.chart_analysis.symbol, [Validators.required, Validators.minLength(1)]],
+      symbol: [data.chart_analysis.symbol, [
+        Validators.required,
+        Validators.pattern('^[A-Za-z]+(?:\.p)?$|^[A-Za-z]+(?:\.P)?$')
+      ]],
       enabled_charts: this.fb.group({
         trading_view: [data.enabled_charts.trading_view],
         technical_analysis: [data.enabled_charts.technical_analysis],
@@ -53,10 +62,13 @@ export class ChartSettingsModalComponent {
 
   addToWatchlist(): void {
     if (this.newWatchlistSymbol.valid && this.newWatchlistSymbol.value) {
-      const symbol = this.newWatchlistSymbol.value;
+      const symbol = this.newWatchlistSymbol.value.toUpperCase();
       if (!this.watchlist.includes(symbol)) {
         this.watchlist.push(symbol);
         this.newWatchlistSymbol.reset();
+        this.notificationService.success('Symbol added to watchlist');
+      } else {
+        this.notificationService.warning('Symbol already exists in watchlist');
       }
     }
   }
@@ -65,15 +77,19 @@ export class ChartSettingsModalComponent {
     const index = this.watchlist.indexOf(symbol);
     if (index >= 0) {
       this.watchlist.splice(index, 1);
+      this.notificationService.success('Symbol removed from watchlist');
     }
   }
 
   addToOverviewList(): void {
     if (this.newOverviewSymbol.valid && this.newOverviewSymbol.value) {
-      const symbol = this.newOverviewSymbol.value;
+      const symbol = this.newOverviewSymbol.value.toUpperCase();
       if (!this.symbolOverviewList.includes(symbol)) {
         this.symbolOverviewList.push(symbol);
         this.newOverviewSymbol.reset();
+        this.notificationService.success('Symbol added to overview list');
+      } else {
+        this.notificationService.warning('Symbol already exists in overview list');
       }
     }
   }
@@ -82,6 +98,7 @@ export class ChartSettingsModalComponent {
     const index = this.symbolOverviewList.indexOf(symbol);
     if (index >= 0) {
       this.symbolOverviewList.splice(index, 1);
+      this.notificationService.success('Symbol removed from overview list');
     }
   }
 
@@ -93,7 +110,7 @@ export class ChartSettingsModalComponent {
       const settings: AnalysisSettings = {
         chart_analysis: {
           exchange: formValue.exchange,
-          symbol: formValue.symbol,
+          symbol: formValue.symbol.toUpperCase(),
           watchlist: this.watchlist
         },
         symbol_overview_symbols: this.symbolOverviewList,

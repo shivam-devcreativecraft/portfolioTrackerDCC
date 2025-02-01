@@ -16,12 +16,13 @@
 
         <mat-form-field appearance="fill" class="w-100">
           <mat-label>Symbol</mat-label>
-          <input matInput formControlName="symbol" placeholder="e.g. BTC">
+          <input matInput formControlName="symbol" placeholder="e.g. BTC or BTC.P">
+          <mat-hint>Format: BTC (spot) or BTC.P (perpetual)</mat-hint>
           <mat-error *ngIf="settingsForm.get('symbol')?.hasError('required')">
             Symbol is required
           </mat-error>
-          <mat-error *ngIf="settingsForm.get('symbol')?.hasError('minlength')">
-            Symbol must not be empty
+          <mat-error *ngIf="settingsForm.get('symbol')?.hasError('pattern')">
+            Invalid format. Use BTC or BTC.P
           </mat-error>
         </mat-form-field>
       </div>
@@ -84,7 +85,8 @@
         <div class="add-to-watchlist">
           <mat-form-field appearance="fill" class="w-100">
             <mat-label>Add to Watchlist</mat-label>
-            <input matInput [formControl]="newWatchlistSymbol" placeholder="EXCHANGE:SYMBOLUSDT">
+            <input matInput [formControl]="newWatchlistSymbol" placeholder="e.g. BINANCE:BTCUSDT or BINANCE:BTCUSDT.P">
+            <mat-hint>Format: EXCHANGE:SYMBOLUSDT or EXCHANGE:SYMBOLUSDT.P</mat-hint>
           </mat-form-field>
           <button mat-mini-fab color="primary" (click)="addToWatchlist()" [disabled]="!newWatchlistSymbol.valid">
             <mat-icon>add</mat-icon>
@@ -113,7 +115,8 @@
         <div class="add-to-watchlist">
           <mat-form-field appearance="fill" class="w-100">
             <mat-label>Add to Overview List</mat-label>
-            <input matInput [formControl]="newOverviewSymbol" placeholder="EXCHANGE:SYMBOLUSDT">
+            <input matInput [formControl]="newOverviewSymbol" placeholder="e.g. BINANCE:BTCUSDT or BINANCE:BTCUSDT.P">
+            <mat-hint>Format: EXCHANGE:SYMBOLUSDT or EXCHANGE:SYMBOLUSDT.P</mat-hint>
           </mat-form-field>
           <button mat-mini-fab color="primary" (click)="addToOverviewList()" [disabled]="!newOverviewSymbol.valid">
             <mat-icon>add</mat-icon>

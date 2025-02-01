@@ -20,7 +20,19 @@ export interface AnalysisSettings {
 
 // Helper function to format symbol pairs
 export function formatSymbolPair(exchange: string, symbol: string): string {
-  return `${exchange.toUpperCase()}:${symbol.toUpperCase()}USDT`;
+  // Check if symbol already includes USDT and/or .P
+  if (symbol.includes(':')) {
+    return symbol; // Return as is if it's already in EXCHANGE:SYMBOLUSDT format
+  }
+  
+  // Check if it's a perpetual symbol (ends with .P)
+  const isPerpetual = symbol.toUpperCase().endsWith('.P');
+  
+  // Remove .P if it exists to clean the base symbol
+  let cleanSymbol = symbol.replace(/\.P$/i, '').toUpperCase();
+  
+  // Format the symbol
+  return `${exchange.toUpperCase()}:${cleanSymbol}USDT${isPerpetual ? '.P' : ''}`;
 }
 
 // Default settings
