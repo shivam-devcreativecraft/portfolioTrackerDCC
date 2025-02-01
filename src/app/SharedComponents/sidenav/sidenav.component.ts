@@ -14,6 +14,7 @@ import { LoaderService } from 'src/app/loader.service';
 import { AddComponent } from '../add/add.component';
 import { MasterControlService } from 'src/app/services/master-control.service';
 import { MasterControlComponent } from '../master-control/master-control.component';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -50,6 +51,7 @@ export class SidenavComponent implements OnInit {
     private dialog: MatDialog,
     private overlay: Overlay,
     private toastr: ToastrService,
+    private notificationService: NotificationService,
     private dataServiceRef: DataService,
     private authService: AuthService,
     private loaderServiceRef: LoaderService,
@@ -109,14 +111,17 @@ export class SidenavComponent implements OnInit {
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
-      data: dialogData
+      width: '100%',
+      data: dialogData,
+      panelClass: 'custom-dialog-container',
+      scrollStrategy: this.overlay.scrollStrategies.noop(),
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(async dialogResult => {
       if (dialogResult === true) {
         try {
           // Clear master control token if exists
-   
           await this.authService.signOut();
         } catch (error: any) {
           this.toastr.error(error.message || 'Logout failed');
@@ -205,9 +210,27 @@ export class SidenavComponent implements OnInit {
     });
   }
 
-  onDisableMasterControl(): void {
-    this.masterControlService.clearMasterControl();
-    this.toastr.success('Master Control Disabled');
+  async onDisableMasterControl(): Promise<void> {
+    const dialogData = new ConfirmDialogModel(
+      "Disable Master Control",
+      "Are you sure you want to disable master control?"
+    );
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      width: '100%',
+      data: dialogData,
+      panelClass: 'custom-dialog-container',
+      scrollStrategy: this.overlay.scrollStrategies.noop(),
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.masterControlService.clearMasterControl();
+        this.notificationService.success('Master Control Disabled');
+      }
+    });
   }
 
   openMasterControlDialog(): void {
@@ -215,7 +238,10 @@ export class SidenavComponent implements OnInit {
     if (!this.IsMasterControlEnabled) {
       const dialogRef = this.dialog.open(MasterControlComponent, {
         width: '400px',
-        data: { location: 'sidenav' }
+        maxWidth: '90%',
+        panelClass: 'custom-dialog-container',
+        scrollStrategy: this.overlay.scrollStrategies.noop(),
+        disableClose: true
       });
 
       dialogRef.afterClosed().subscribe(result => {
