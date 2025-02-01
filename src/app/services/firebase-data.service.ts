@@ -57,6 +57,21 @@ export class FirebaseDataService {
     );
   }
 
+  deleteAnalysisSettings(): Observable<void> {
+    return this.getCurrentUserId().pipe(
+      switchMap(userId => 
+        from(
+          this.firestore
+            .collection('users')
+            .doc(userId)
+            .collection('settings')
+            .doc('analysis')
+            .delete()
+        )
+      )
+    );
+  }
+
   // Upload trade data to Firebase
   async uploadTradeData(tradeData: any): Promise<void> {
     const userId = this.authService.getCurrentUser()?.uid;

@@ -5,6 +5,7 @@ import { NotificationService } from '../services/notification.service';
 import { AnalysisSettings, DEFAULT_ANALYSIS_SETTINGS, formatSymbolPair } from '../models/analysis-settings.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ChartSettingsModalComponent } from '../SharedComponents/chart-settings-modal/chart-settings-modal.component';
+import { ConfirmDialogComponent, ConfirmDialogModel } from '../SharedComponents/confirm-dialog/confirm-dialog.component';
 declare const TradingView: any;
 
 @Component({
@@ -579,4 +580,40 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     this.createWidget('economicCalender', script);
   }
   //#endregion
+
+  deleteSettings(): void {
+    const dialogData = new ConfirmDialogModel(
+      "Delete Settings",
+      "Are you sure you want to delete all chart settings? This action cannot be undone."
+    );
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.isLoading = true;
+        this.firebaseService.deleteAnalysisSettings().subscribe({
+          next: () => {
+            this.notificationService.success('Settings deleted successfully');
+            this.currentSettings = DEFAULT_ANALYSIS_SETTINGS;
+            this.analysisForm.patchValue({
+              exchange: DEFAULT_ANALYSIS_SETTINGS.chart_analysis.exchange,
+              symbol: DEFAULT_ANALYSIS_SETTINGS.chart_analysis.symbol
+            });
+            this.updateCharts();
+          },
+          error: (error: Error) => {
+            console.error('Error deleting settings:', error);
+            this.notificationService.error('Failed to delete settings');
+          },
+          complete: () => {
+            this.isLoading = false;
+          }
+        });
+      }
+    });
+  }
 }
