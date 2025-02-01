@@ -1,0 +1,111 @@
+.settings-modal {
+  min-width: 400px;
+  padding: 20px;
+
+  h2 {
+    margin: 0 0 20px;
+    color: #333;
+  }
+
+  .section {
+    margin-bottom: 24px;
+
+    h3 {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+  }
+
+  .settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+
+  .chart-toggles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .watchlist-chips {
+    margin: 8px 0;
+    min-height: 40px;
+    
+    .mdc-evolution-chip-set {
+      .mdc-evolution-chip-set__chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+    }
+
+    mat-chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    mat-chip-row {
+      margin: 4px;
+    }
+  }
+
+  .add-to-watchlist {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+
+    mat-form-field {
+      flex: 1;
+    }
+
+    button {
+      margin-top: 4px;
+    }
+  }
+
+  .input-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+
+    mat-form-field {
+      &:first-child {
+        width: 120px;
+      }
+      &:nth-child(2) {
+        flex: 1;
+      }
+    }
+
+    button {
+      margin-top: 4px;
+    }
+  }
+
+  mat-dialog-actions {
+    margin: 20px -20px -20px;
+    padding: 16px 20px;
+    background: #f5f5f5;
+
+    button {
+      min-width: 100px;
+
+      &:not(:last-child) {
+        margin-right: 8px;
+      }
+
+      mat-spinner {
+        display: inline-block;
+        margin: 0 8px;
+      }
+    }
+  }
+} 

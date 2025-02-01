@@ -1,26 +1,44 @@
 @import '../../sharedSCSS/scssVariable/colorVariable.scss';
 @import '../../sharedSCSS/dialogsStyle/dialogsStyle.scss';
 
-
 h1 {
     color :$base-color_primary!important;
     margin-bottom: 0px;
 }
 
 .confirm-dialog {
-  // padding: 20px;
-  
-  .mat-dialog-title {
-    margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 260px;
+  min-height: 200px;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 24px;
+    flex: 1;
+
+    p {
+      font-size: 1rem;
+      color: rgba(0, 0, 0, 0.87);
+      margin: 0;
+    }
   }
 
-  .mat-dialog-content {
-    margin: 0 0 20px;
-  }
-
-  .dialog-actions {
+  .action {
+    display: flex;
     justify-content: flex-end;
     gap: 8px;
-    padding : 0px 1rem;
+    padding: 16px 24px;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+
+    button {
+      min-width: 80px;
+    }
   }
 }

@@ -39,6 +39,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from './SharedComponents/confirm-dialog/confirm-dialog.component';
+import { ChartSettingsModalModule } from './SharedComponents/chart-settings-modal/chart-settings-modal.module';
 
 // ENDS material imports
 
@@ -47,6 +48,12 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 
+// Material Modules
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -92,7 +99,14 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
      provideFirestore(() => getFirestore()),
      MatSnackBarModule,
      MatDialogModule,
-     ToastrModule.forRoot()
+     ToastrModule.forRoot(),
+     ChartSettingsModalModule,
+     // Material Modules
+     MatFormFieldModule,
+     MatInputModule,
+     MatSelectModule,
+     MatButtonModule,
+     MatProgressSpinnerModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

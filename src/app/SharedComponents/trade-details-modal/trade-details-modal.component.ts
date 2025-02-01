@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -13,6 +13,9 @@ import { MasterControlService } from 'src/app/services/master-control.service';
 import { MasterControlComponent } from '../master-control/master-control.component';
 import { ToastrService } from 'ngx-toastr';
 import { Overlay } from '@angular/cdk/overlay';
+import { Router, NavigationStart } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-trade-confirmation-dialog',
@@ -81,10 +84,11 @@ export class TradeConfirmationDialogComponent {
     MatTooltipModule
   ]
 })
-export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
+export class TradeDetailsModalComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('dialogContent') dialogContent?: ElementRef;
   isActionsAllowed: boolean = true;
   IsMasterControlEnabled: boolean = false;
+  private routerSubscription: Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -93,10 +97,18 @@ export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
     private toastr: ToastrService,
     private dialog: MatDialog,
     private masterControlService: MasterControlService,
-    private overlay: Overlay
+    private overlay: Overlay,
+    private router: Router
   ) {
     this.data = this.data || {};
-    console.log(this.data)
+    console.log(this.data);
+
+    // Subscribe to router events to close dialog on navigation
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationStart)
+    ).subscribe(() => {
+      this.dialogRef.close();
+    });
 
     // Ensure dialog opens at top
     this.dialogRef.afterOpened().subscribe(() => {
@@ -128,8 +140,8 @@ export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
   private openMasterControlDialog(): Promise<boolean> {
     return new Promise((resolve) => {
       const dialogRef = this.dialog.open(MasterControlComponent, {
-        width: '400px',
-        maxWidth: '90%',
+        maxWidth: '400px',
+        width: '100%',
         panelClass: 'custom-dialog-container',
         scrollStrategy: this.overlay.scrollStrategies.noop(),
         disableClose: true,
@@ -199,5 +211,11 @@ export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
         dialogContainer.scrollTop = 0;
       }
     });
+  }
+
+  ngOnDestroy() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
   }
 }

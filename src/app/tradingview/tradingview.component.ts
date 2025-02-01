@@ -1,4 +1,11 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FirebaseDataService } from '../services/firebase-data.service';
+import { NotificationService } from '../services/notification.service';
+import { AnalysisSettings, DEFAULT_ANALYSIS_SETTINGS, formatSymbolPair } from '../models/analysis-settings.model';
+import { MatDialog } from '@angular/material/dialog';
+import { ChartSettingsModalComponent } from '../SharedComponents/chart-settings-modal/chart-settings-modal.component';
+import { ConfirmDialogComponent, ConfirmDialogModel } from '../SharedComponents/confirm-dialog/confirm-dialog.component';
 declare const TradingView: any;
 
 @Component({
@@ -6,27 +13,202 @@ declare const TradingView: any;
   templateUrl: './tradingview.component.html',
   styleUrls: ['./tradingview.component.scss']
 })
-export class TradingviewComponent implements AfterViewInit {
-  constructor() {
+export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
+  analysisForm: FormGroup;
+  currentSettings: AnalysisSettings = DEFAULT_ANALYSIS_SETTINGS;
+  isLoading = false;
+  private widgets: { [key: string]: any } = {};
 
+  // Available exchanges
+  exchanges = [
+    { value: 'BINANCE', name: 'BINANCE' },
+    { value: 'MEXC', name: 'MEXC' },
+    { value: 'KUCOIN', name: 'KUCOIN' },
+    { value: 'BYBIT', name: 'BYBIT' },
+    { value: 'GATEIO', name: 'GATEIO' },
+    { value: 'BITGET', name: 'BITGET' },
+    { value: 'OKX', name: 'OKX' },
+    { value: 'BITFINEX', name: 'BITFINEX' },
+    { value: 'BITMEX', name: 'BITMEX' },
+    { value: 'BITSTAMP', name: 'BITSTAMP' },
+    { value: 'COINBASE', name: 'COINBASE' },
+    { value: 'HUOBI', name: 'HUOBI' },
+    { value: 'OKX', name: 'OKX' },
+  ];
+
+  constructor(
+    private fb: FormBuilder,
+    private firebaseService: FirebaseDataService,
+    private notificationService: NotificationService,
+    private dialog: MatDialog
+  ) {
+    this.analysisForm = this.fb.group({
+      exchange: [DEFAULT_ANALYSIS_SETTINGS.chart_analysis.exchange, Validators.required],
+      symbol: [DEFAULT_ANALYSIS_SETTINGS.chart_analysis.symbol, [
+        Validators.required,
+        Validators.pattern('^[A-Za-z]+(?:\.p)?$|^[A-Za-z]+(?:\.P)?$')
+      ]]
+    });
   }
-  ngAfterViewInit(): void {
-    this.showTickerTapeWidget()
 
-    this.showChart()
-    this.renderTechnicalAnalysis()
-    this.renderMarketOverview()
-    // Call this function when you want to show the symbol overview widget
+  ngOnInit() {
+    this.loadAnalysisSettings();
+  }
+
+  ngAfterViewInit(): void {
+    this.initializeCharts();
+  }
+
+  ngOnDestroy(): void {
+    // Clean up widgets
+    Object.values(this.widgets).forEach(widget => {
+      if (widget && typeof widget.remove === 'function') {
+        widget.remove();
+      }
+    });
+    this.widgets = {};
+  }
+
+  // Load saved analysis settings from Firebase
+  private loadAnalysisSettings() {
+    this.firebaseService.getAnalysisSettings().subscribe({
+      next: (settings: AnalysisSettings | null) => {
+        if (settings) {
+          this.currentSettings = settings;
+          this.analysisForm.patchValue({
+            exchange: settings.chart_analysis.exchange,
+            symbol: settings.chart_analysis.symbol
+          }, { emitEvent: false });
+          
+          // Render charts immediately after loading settings
+          this.renderCharts();
+        }
+      },
+      error: (error: Error) => {
+        console.error('Error loading analysis settings:', error);
+        this.notificationService.error('Failed to load analysis settings');
+      }
+    });
+  }
+
+  // Open settings modal
+  openSettings(): void {
+    const dialogRef = this.dialog.open(ChartSettingsModalComponent, {
+      data: this.currentSettings,
+      disableClose: true,
+      maxWidth: '800px',
+      width: '100%',
+    });
+
+    dialogRef.afterClosed().subscribe((result: AnalysisSettings) => {
+      if (result) {
+        this.currentSettings = result;
+        this.analysisForm.patchValue({
+          exchange: result.chart_analysis.exchange,
+          symbol: result.chart_analysis.symbol
+        });
+        this.renderCharts();
+      }
+    });
+  }
+
+  // Render charts with current settings
+  renderCharts(): void {
+    if (this.analysisForm.valid) {
+      this.isLoading = true;
+      const values = this.analysisForm.value;
+      
+      // Update current settings
+      this.currentSettings.chart_analysis.exchange = values.exchange;
+      this.currentSettings.chart_analysis.symbol = values.symbol;
+      
+      // Small delay to ensure loading state is shown
+      setTimeout(() => {
+        this.updateCharts();
+        this.isLoading = false;
+      }, 100);
+    }
+  }
+
+  // Save current settings to Firebase
+  saveAnalysisSettings() {
+    if (this.analysisForm.valid) {
+      this.firebaseService.saveAnalysisSettings(this.currentSettings).subscribe({
+        next: () => {
+          this.notificationService.success('Analysis settings saved successfully');
+        },
+        error: (error: Error) => {
+          console.error('Error saving analysis settings:', error);
+          this.notificationService.error('Failed to save analysis settings');
+        }
+      });
+    }
+  }
+
+  // Initialize all charts
+  private initializeCharts() {
+    this.showTickerTapeWidget();
+    this.showChart();
+    this.renderTechnicalAnalysis();
     this.showSymbolOverview();
-    this.showScreenerWidget();
     this.showHeatmapWidget();
     this.showMiniChartWidget();
     this.showTopStoriesWidget();
     this.showFundamentalDataWidget();
     this.renderEconomicCalender();
-
-
   }
+
+  // Update all charts with new symbol
+  private updateCharts() {
+    // Remove existing widgets
+    Object.values(this.widgets).forEach(widget => {
+      if (widget && typeof widget.remove === 'function') {
+        widget.remove();
+      }
+    });
+    this.widgets = {};
+
+    // Clear containers
+    const containers = [
+      'tv_chart_container_FUN',
+      'technicalAnalysis',
+      'tv_symbol_overview',
+      'fundamentalData',
+      'marketOverview',
+      'tv_screener_widget',
+      'tv_heatmap_widget',
+      'tv_minichart_widget',
+      'topStories',
+      'economicCalender'
+    ];
+    
+    containers.forEach(id => {
+      const container = document.getElementById(id);
+      if (container) {
+        container.innerHTML = '';
+      }
+    });
+
+    // Reinitialize charts with new symbol
+    this.initializeCharts();
+  }
+
+  private createWidget(containerId: string, script: HTMLScriptElement) {
+    const container = document.getElementById(containerId);
+    if (container) {
+      container.innerHTML = '';
+      container.appendChild(script);
+      this.widgets[containerId] = script;
+    }
+  }
+
+  private getCurrentSymbol(): string {
+    return formatSymbolPair(
+      this.currentSettings.chart_analysis.exchange,
+      this.currentSettings.chart_analysis.symbol
+    );
+  }
+
   //#region Trading view chart
   renderTechnicalAnalysis() {
     const script = document.createElement('script');
@@ -35,30 +217,24 @@ export class TradingviewComponent implements AfterViewInit {
     script.innerHTML = JSON.stringify({
       interval: "1D",
       width: "100%",
-
       isTransparent: false,
       height: "500",
-
-      symbol: "BINANCE:FUNUSDT",
+      symbol: this.getCurrentSymbol(),
       showIntervalTabs: true,
       locale: "in",
       colorTheme: "light"
     });
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
-
-    const div = document.getElementById('technicalAnalysis');
-    if (div) {
-      // div.innerHTML = '';
-      div.appendChild(script);
-
-    }
+    this.createWidget('technicalAnalysis', script);
   }
-  widgetFUN: any;
 
   showChart(): void {
-
-    this.widgetFUN = new TradingView.widget({
-      symbol: `BINANCE:FUNUSDT`,
+    if (this.widgets['mainChart']) {
+      this.widgets['mainChart'].remove();
+    }
+    
+    this.widgets['mainChart'] = new TradingView.widget({
+      symbol: this.getCurrentSymbol(),
       interval: 'D',
       timezone: 'Asia/Kolkata',
       theme: 'light',
@@ -69,89 +245,19 @@ export class TradingviewComponent implements AfterViewInit {
       hide_side_toolbar: false,
       withdateranges: true,
       allow_symbol_change: true,
-      watchlist: [
-        "BINANCE:BTCUSDT"
-      ],
-      hidevolume: true, // Hide the volume
-      calendar: false,
       container_id: 'tv_chart_container_FUN',
       width: 'inherit',
-
-      study: true,
-      details: true,
-      hotlist: true,
-      show_popup_button: true,
-      popup_width: "500",
-      popup_height: "500",
-      support_host: "https://www.tradingview.com"
-
+      height: 500,
+      watchlist: this.currentSettings.chart_analysis.watchlist
     });
-
   }
-
-
-  // symbolOverview: any;
 
   showSymbolOverview(): void {
     const script = document.createElement('script');
     script.type = 'text/javascript';
     script.async = true;
     script.innerHTML = JSON.stringify({
-
-      symbols: [
-        [
-          "MEXC:LINKUSDT|ALL"
-        ],
-        [
-          "MEXC:SOLUSDT|ALL"
-        ],
-        [
-          "MEXC:AVAXUSDT|ALL"
-        ],
-
-        [
-          "MEXC:ETHUSDT|ALL"
-        ],
-        [
-          "MEXC:DOGEUSDT|ALL"
-        ],
-        [
-          "MEXC:FUNUSDT|ALL"
-        ],
-        [
-          "MEXC:DOTUSDT|ALL"
-        ],
-        [
-          "MEXC:THETAUSDT|ALL"
-        ],
-        [
-          "MEXC:OCEANUSDT|ALL"
-        ],
-        [
-          "MEXC:CHRUSDT|ALL"
-        ],
-        [
-          "MEXC:BNBUSDT|ALL"
-        ],
-        [
-          "MEXC:SHIBUSDT|ALL"
-        ],
-
-        [
-          "MEXC:RVNUSDT|ALL"
-        ],
-
-        [
-          "MEXC:MANAUSDT|ALL"
-        ],
-
-        [
-          "MEXC:MATICUSDT|ALL"
-        ],
-        [
-          "MEXC:GALAUSDT|ALL"
-        ],
-      ],
+      symbols: this.currentSettings.symbol_overview_symbols.map(symbol => [symbol + '|ALL']),
       chartOnly: false,
       width: "100%",
       height: 500,
@@ -186,43 +292,9 @@ export class TradingviewComponent implements AfterViewInit {
       ]
     });
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js';
-
-    const div = document.getElementById('tv_symbol_overview');
-    if (div) {
-      // div.innerHTML = '';
-      div.appendChild(script);
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    this.createWidget('tv_symbol_overview', script);
   }
+
   showScreenerWidget(): void {
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -238,14 +310,9 @@ export class TradingviewComponent implements AfterViewInit {
       locale: "in"
     });
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-screener.js';
-
-    const div = document.getElementById('tv_screener_widget');
-    if (div) {
-      // div.innerHTML = '';
-      div.appendChild(script);
-
-    }
+    this.createWidget('tv_screener_widget', script);
   }
+
   showHeatmapWidget(): void {
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -265,14 +332,9 @@ export class TradingviewComponent implements AfterViewInit {
       height: "500"
     });
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-crypto-coins-heatmap.js';
-
-    const div = document.getElementById('tv_heatmap_widget');
-    if (div) {
-      // div.innerHTML = '';
-      div.appendChild(script);
-
-    }
+    this.createWidget('tv_heatmap_widget', script);
   }
+
   showTickerTapeWidget(): void {
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -280,8 +342,6 @@ export class TradingviewComponent implements AfterViewInit {
     script.innerHTML = JSON.stringify({
       symbols: [
         {
-          // "proName": "FOREXCOM:SPXUSD",
-          // "title": "S&P 500",
           "description": "FUN/BTC",
           "proName": "BITFINEX:FUNBTC"
         },
@@ -309,15 +369,8 @@ export class TradingviewComponent implements AfterViewInit {
       locale: "in"
     });
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
-
-    const div = document.getElementById('tv_tickerTape_widget');
-    if (div) {
-      // div.innerHTML = '';
-      div.appendChild(script);
-
-    }
+    this.createWidget('tv_tickerTape_widget', script);
   }
-
 
   renderMarketOverview() {
     const script = document.createElement('script');
@@ -461,16 +514,9 @@ export class TradingviewComponent implements AfterViewInit {
           "originalTitle": "Forex"
         }
       ]
-
     });
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
-
-    const div = document.getElementById('marketOverview');
-    if (div) {
-      // div.innerHTML = '';
-      div.appendChild(script);
-
-    }
+    this.createWidget('marketOverview', script);
   }
 
   showMiniChartWidget(): void {
@@ -478,7 +524,7 @@ export class TradingviewComponent implements AfterViewInit {
     script.type = 'text/javascript';
     script.async = true;
     script.innerHTML = JSON.stringify({
-      symbol: "MEXC:BTCUSDT",
+      symbol: this.getCurrentSymbol(),
       width: "100%",
       height: "500",
       locale: "in",
@@ -487,16 +533,9 @@ export class TradingviewComponent implements AfterViewInit {
       isTransparent: false,
       autosize: true,
       largeChartUrl: ""
-
     });
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
-
-    const div = document.getElementById('tv_minichart_widget');
-    if (div) {
-      // div.innerHTML = '';
-      div.appendChild(script);
-
-    }
+    this.createWidget('tv_minichart_widget', script);
   }
 
   showTopStoriesWidget(): void {
@@ -511,16 +550,9 @@ export class TradingviewComponent implements AfterViewInit {
       height: "500",
       colorTheme: "light",
       locale: "in"
-
     });
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-timeline.js';
-
-    const div = document.getElementById('topStories');
-    if (div) {
-      // div.innerHTML = '';
-      div.appendChild(script);
-
-    }
+    this.createWidget('topStories', script);
   }
 
   showFundamentalDataWidget(): void {
@@ -528,25 +560,19 @@ export class TradingviewComponent implements AfterViewInit {
     script.type = 'text/javascript';
     script.async = true;
     script.innerHTML = JSON.stringify({
+      symbol: this.getCurrentSymbol(),
+      colorTheme: "light",
       isTransparent: false,
       largeChartUrl: "",
       displayMode: "regular",
       width: "100%",
       height: "500",
-      colorTheme: "light",
-      symbol: "MEXC:BTCUSDT",
       locale: "in"
-
     });
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-financials.js';
-
-    const div = document.getElementById('fundamentalData');
-    if (div) {
-      // div.innerHTML = '';
-      div.appendChild(script);
-
-    }
+    this.createWidget('fundamentalData', script);
   }
+
   renderEconomicCalender(): void {
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -559,43 +585,51 @@ export class TradingviewComponent implements AfterViewInit {
       locale: "in",
       importanceFilter: "-1,0,1",
       countryFilter: "us,eu,it,nz,ch,au,fr,jp,za,tr,ca,de,mx,es,gb,in"
-
     });
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-events.js';
-
-    const div = document.getElementById('economicCalender');
-    if (div) {
-      // div.innerHTML = '';
-      div.appendChild(script);
-
-    }
+    this.createWidget('economicCalender', script);
   }
   //#endregion
 
+  deleteSettings(): void {
+    const dialogData = new ConfirmDialogModel(
+      "Delete Settings",
+      "Are you sure you want to delete all chart settings? This action cannot be undone."
+    );
 
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      width: "95%",
+      maxHeight: "95vh",
+      data: dialogData,
+      disableClose: true,
+      panelClass: ['no-shadow-dialog', 'mat-typography'],
+      hasBackdrop: true,
+      backdropClass: 'dialog-backdrop'
+    });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.isLoading = true;
+        this.firebaseService.deleteAnalysisSettings().subscribe({
+          next: () => {
+            this.notificationService.success('Settings deleted successfully');
+            this.currentSettings = DEFAULT_ANALYSIS_SETTINGS;
+            this.analysisForm.patchValue({
+              exchange: DEFAULT_ANALYSIS_SETTINGS.chart_analysis.exchange,
+              symbol: DEFAULT_ANALYSIS_SETTINGS.chart_analysis.symbol
+            });
+            this.updateCharts();
+          },
+          error: (error: Error) => {
+            console.error('Error deleting settings:', error);
+            this.notificationService.error('Failed to delete settings');
+          },
+          complete: () => {
+            this.isLoading = false;
+          }
+        });
+      }
+    });
+  }
 }

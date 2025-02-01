@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is accessing their own data
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Basic validation for required fields (only for create/update)
+    function hasRequiredFields(data) {
+      return data.keys().hasAll(['ID', 'Sheet_Name'])
+        && data.ID is string
+        && data.Sheet_Name is string;
+    }
+
+    // Validation for analysis document fields
+    function hasValidAnalysisFields(data) {
+      return data.keys().hasAll(['chart_analysis', 'symbol_overview_symbols', 'enabled_charts', 'is_configured'])
+        && data.chart_analysis.keys().hasAll(['exchange', 'symbol', 'watchlist'])
+        && data.chart_analysis.exchange is string
+        && data.chart_analysis.symbol is string
+        && data.chart_analysis.watchlist is list
+        && data.symbol_overview_symbols is list
+        && data.enabled_charts.keys().hasAll([
+          'trading_view', 'technical_analysis', 'symbol_overview',
+          'heatmap', 'top_stories', 'fundamental_data',
+          'economic_calendar', 'ticker_tape'
+        ])
+        && data.enabled_charts.trading_view is bool
+        && data.enabled_charts.technical_analysis is bool
+        && data.enabled_charts.symbol_overview is bool
+        && data.enabled_charts.heatmap is bool
+        && data.enabled_charts.top_stories is bool
+        && data.enabled_charts.fundamental_data is bool
+        && data.enabled_charts.economic_calendar is bool
+        && data.enabled_charts.ticker_tape is bool
+        && data.is_configured is bool;
+    }
+
+    // Match user document and all subcollections
+    match /users/{userId}/{document=**} {
+      // Allow read if user is authenticated and owns the data
+      allow read: if isOwner(userId);
+    }
+
+    // Specific rule for trade data
+    match /users/{userId}/{sheetName}/{tradeId} {
+      allow create, update: if isOwner(userId)
+        && hasRequiredFields(request.resource.data)
+        && request.resource.data.ID == request.resource.id;
+      allow delete: if isOwner(userId);
+    }
+
+    // Specific rule for settings/analysis
+    match /users/{userId}/settings/analysis {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && hasValidAnalysisFields(request.resource.data);
+      allow delete: if isOwner(userId);
+    }
+  }
+} 

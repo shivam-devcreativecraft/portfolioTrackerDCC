@@ -4,7 +4,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { Subject } from 'rxjs';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NotificationService } from 'src/app/services/notification.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -100,6 +100,12 @@ export class DashboardComponent implements OnDestroy, OnInit {
   chartCallback: Highcharts.ChartCallbackFunction = function (chart) { }; // Optional callback
   updateFlag = false;
 
+  // Initial sort state
+  initialSort: Sort = { active: 'date', direction: 'desc' };
+
+  // Add sortedProfitableTrades and sortedLosedTrades properties
+  sortedProfitableTrades: any[] = [];
+  sortedLosedTrades: any[] = [];
 
   constructor(
     private notificationService: NotificationService,
@@ -109,7 +115,8 @@ export class DashboardComponent implements OnDestroy, OnInit {
     private functionsServiceRef: FunctionsService,
     private firebaseService: FirebaseDataService
   ) {
-
+    this.sortedProfitableTrades = [];
+    this.sortedLosedTrades = [];
   }
 
   ngOnInit(): void {
@@ -731,29 +738,45 @@ export class DashboardComponent implements OnDestroy, OnInit {
   onDatePillClick(date: string): void {
     if (this.selectedDate === date) {
       this.selectedDate = null;
-      // Clear date picker value when deselecting
       if (this.dateInput) {
         this.dateInput.nativeElement.value = '';
       }
     } else {
-      // Select the new date
       this.selectedDate = date;
-      // Update date picker value
       if (this.dateInput) {
         this.dateInput.nativeElement.value = date;
+      }
+      // Initialize sorted data
+      if (this.selectedDate && this.aggregatedData[this.selectedDate]) {
+        this.sortedProfitableTrades = this.aggregatedData[this.selectedDate].profitableTrades.slice();
+        this.sortedLosedTrades = this.aggregatedData[this.selectedDate].losedTrades.slice();
+        // Apply initial sort
+        this.sortProfitableTrades(this.initialSort);
+        this.sortLosedTrades(this.initialSort);
+        // Reset pagination
+        if (this.profitPaginator) this.profitPaginator.firstPage();
+        if (this.lossPaginator) this.lossPaginator.firstPage();
       }
     }
     this.updateCharts();
   }
 
   onDateSelected(event: MatDatepickerInputEvent<Date>): void {
-
     if (event.value) {
-      this.selectedDate = this.selectedDateCategory = 'daily';
+      this.selectedDateCategory = 'daily';
       this.onDateCategoryChanged({ value: this.selectedDate });
       const selectedDateStr = this.formatDate(event.value);
-      if (this.sheetDataGrouped[selectedDateStr]) {
+      if (this.aggregatedData[selectedDateStr]) {
         this.selectedDate = selectedDateStr;
+        // Initialize sorted data
+        this.sortedProfitableTrades = this.aggregatedData[selectedDateStr].profitableTrades.slice();
+        this.sortedLosedTrades = this.aggregatedData[selectedDateStr].losedTrades.slice();
+        // Apply initial sort
+        this.sortProfitableTrades(this.initialSort);
+        this.sortLosedTrades(this.initialSort);
+        // Reset pagination
+        if (this.profitPaginator) this.profitPaginator.firstPage();
+        if (this.lossPaginator) this.lossPaginator.firstPage();
       }
     }
     this.updateCharts();
@@ -975,6 +998,17 @@ export class DashboardComponent implements OnDestroy, OnInit {
     // Select the first date range if available
     if (this.visibleDates.length > 0) {
       this.selectedDate = this.visibleDates[0];
+      if (this.selectedDate) {
+        // Initialize sorted data
+        this.sortedProfitableTrades = this.aggregatedData[this.selectedDate].profitableTrades.slice();
+        this.sortedLosedTrades = this.aggregatedData[this.selectedDate].losedTrades.slice();
+        // Apply initial sort
+        this.sortProfitableTrades(this.initialSort);
+        this.sortLosedTrades(this.initialSort);
+        // Reset pagination
+        if (this.profitPaginator) this.profitPaginator.firstPage();
+        if (this.lossPaginator) this.lossPaginator.firstPage();
+      }
       // Update date picker value when category changes
       if (this.dateInput && category === 'daily') {
         this.dateInput.nativeElement.value = this.selectedDate;
@@ -1340,4 +1374,94 @@ export class DashboardComponent implements OnDestroy, OnInit {
 
   }
   //#endregion
+
+  // Add sorting function for profitable trades
+  sortProfitableTrades(sort: Sort) {
+    if (!this.selectedDate) return;
+    
+    const data = this.aggregatedData[this.selectedDate].profitableTrades.slice();
+    if (!sort.active || sort.direction === '') {
+      this.sortedProfitableTrades = data;
+      return;
+    }
+
+    this.sortedProfitableTrades = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'date':
+          return this.compare(new Date(a.Date).getTime(), new Date(b.Date).getTime(), isAsc);
+        case 'coin':
+          return this.compare(a.Coin, b.Coin, isAsc);
+        case 'type':
+          return this.compare(a.Type, b.Type, isAsc);
+        case 'quantity':
+          return this.compare(this.parseNumber(a.Quantity), this.parseNumber(b.Quantity), isAsc);
+        case 'leverage':
+          return this.compare(this.parseNumber(a.Leverage), this.parseNumber(b.Leverage), isAsc);
+        case 'margin':
+          return this.compare(this.parseNumber(a.Open_Margin), this.parseNumber(b.Open_Margin), isAsc);
+        case 'pnl':
+          return this.compare(this.parseNumber(a.Pnl), this.parseNumber(b.Pnl), isAsc);
+        case 'pnlPercentage':
+          return this.compare(this.parseNumber(a.Pnl_Percentage), this.parseNumber(b.Pnl_Percentage), isAsc);
+        default:
+          return 0;
+      }
+    });
+
+    // Reset to first page after sorting
+    if (this.profitPaginator) this.profitPaginator.firstPage();
+  }
+
+  // Add sorting function for loss trades
+  sortLosedTrades(sort: Sort) {
+    if (!this.selectedDate) return;
+    
+    const data = this.aggregatedData[this.selectedDate].losedTrades.slice();
+    if (!sort.active || sort.direction === '') {
+      this.sortedLosedTrades = data;
+      return;
+    }
+
+    this.sortedLosedTrades = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'date':
+          return this.compare(new Date(a.Date).getTime(), new Date(b.Date).getTime(), isAsc);
+        case 'coin':
+          return this.compare(a.Coin, b.Coin, isAsc);
+        case 'type':
+          return this.compare(a.Type, b.Type, isAsc);
+        case 'quantity':
+          return this.compare(this.parseNumber(a.Quantity), this.parseNumber(b.Quantity), isAsc);
+        case 'leverage':
+          return this.compare(this.parseNumber(a.Leverage), this.parseNumber(b.Leverage), isAsc);
+        case 'margin':
+          return this.compare(this.parseNumber(a.Open_Margin), this.parseNumber(b.Open_Margin), isAsc);
+        case 'pnl':
+          return this.compare(this.parseNumber(a.Pnl), this.parseNumber(b.Pnl), isAsc);
+        case 'pnlPercentage':
+          return this.compare(this.parseNumber(a.Pnl_Percentage), this.parseNumber(b.Pnl_Percentage), isAsc);
+        default:
+          return 0;
+      }
+    });
+
+    // Reset to first page after sorting
+    if (this.lossPaginator) this.lossPaginator.firstPage();
+  }
+
+  // Helper function for sorting
+  private compare(a: number | string, b: number | string, isAsc: boolean) {
+    if (a === null || a === undefined) a = isAsc ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+    if (b === null || b === undefined) b = isAsc ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  // Helper function to parse numbers safely
+  private parseNumber(value: any): number {
+    if (value === null || value === undefined || value === '') return 0;
+    const num = Number(value);
+    return isNaN(num) ? 0 : num;
+  }
 }

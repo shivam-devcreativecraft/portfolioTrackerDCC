@@ -217,27 +217,30 @@
                 <div class="trade-section profit-section">
                   <div class="section-header">
                     <h4 class="text-success fit-content pe-3"
-                      matBadge="{{(aggregatedData[selectedDate]!.profitableTrades)!.length}}">
+                      matBadge="{{sortedProfitableTrades.length}}">
                       Profitable Trades</h4>
                   </div>
                   <div class="table-container">
                     <div class="table-scroll-container">
-                      <table class="trade-table" *ngIf="aggregatedData[selectedDate]!.profitableTrades!.length > 0">
+                      <table class="trade-table" *ngIf="sortedProfitableTrades.length > 0" 
+                             matSort [matSortActive]="initialSort.active" 
+                             [matSortDirection]="initialSort.direction" 
+                             (matSortChange)="sortProfitableTrades($event)">
                         <thead>
                           <tr>
-                            <th>Coin</th>
-                            <th>Date</th>
-                            <th>Quantity</th>
-                            <th>Lev</th>
-                            <th>Margin</th>
-                            <th>P/L</th>
-                            <th>P/L %</th>
+                            <th mat-sort-header="coin">Coin</th>
+                            <th mat-sort-header="date">Date</th>
+                            <th mat-sort-header="quantity">Quantity</th>
+                            <th mat-sort-header="leverage">Lev</th>
+                            <th mat-sort-header="margin">Margin</th>
+                            <th mat-sort-header="pnl">P/L</th>
+                            <th mat-sort-header="pnlPercentage">P/L %</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr
-                            *ngFor="let trade of aggregatedData[selectedDate].profitableTrades | slice: (profitCurrentPage - 1) * profitItemsPerPage : profitCurrentPage * profitItemsPerPage"
-                            (click)="openTradeDetails(trade)" class="clickable-row">
+                          <tr *ngFor="let trade of sortedProfitableTrades | slice: (profitCurrentPage - 1) * profitItemsPerPage : profitCurrentPage * profitItemsPerPage"
+                              (click)="openTradeDetails(trade)" 
+                              class="clickable-row">
                             <td class="coin-cell"
                               [ngClass]="{'buy': trade.Type === 'BUY', 'sell': trade.Type === 'SELL'}">
                               <div class="coin-info">
@@ -256,16 +259,19 @@
                           </tr>
                         </tbody>
                       </table>
-                      <div *ngIf="aggregatedData[selectedDate]!.profitableTrades!.length === 0" class="no-data-message">
+                      <div *ngIf="sortedProfitableTrades.length === 0" class="no-data-message">
                         <span class="d-flex align-items-center">
                           <mat-icon class="me-2">info</mat-icon>
-
-                          No profitable trades found for this period</span>
+                          No profitable trades found for this period
+                        </span>
                       </div>
                     </div>
-                    <mat-paginator #profitPaginator *ngIf="aggregatedData[selectedDate]!.profitableTrades!.length > 0"
-                      [length]="aggregatedData[selectedDate].profitableTrades.length" [pageSize]="profitItemsPerPage"
-                      [pageSizeOptions]="[5, 10, 25, 50]" (page)="onProfitPageChange($event)">
+                    <mat-paginator #profitPaginator 
+                                   *ngIf="sortedProfitableTrades.length > 0"
+                                   [length]="sortedProfitableTrades.length" 
+                                   [pageSize]="profitItemsPerPage"
+                                   [pageSizeOptions]="[5, 10, 25, 50]" 
+                                   (page)="onProfitPageChange($event)">
                     </mat-paginator>
                   </div>
                 </div>
@@ -274,28 +280,31 @@
                 <div class="trade-section loss-section">
                   <div class="section-header">
                     <h4 class="text-danger fit-content pe-3"
-                      matBadge="{{(aggregatedData[selectedDate]!.losedTrades)!.length}}">Loss Trades
+                      matBadge="{{sortedLosedTrades.length}}">
+                      Loss Trades
                     </h4>
                   </div>
                   <div class="table-container">
                     <div class="table-scroll-container">
-
-                      <table class="trade-table" *ngIf="aggregatedData[selectedDate]!.losedTrades!.length > 0">
+                      <table class="trade-table" *ngIf="sortedLosedTrades.length > 0" 
+                             matSort [matSortActive]="initialSort.active" 
+                             [matSortDirection]="initialSort.direction" 
+                             (matSortChange)="sortLosedTrades($event)">
                         <thead>
                           <tr>
-                            <th>Coin</th>
-                            <th>Date</th>
-                            <th>Quantity</th>
-                            <th>Lev</th>
-                            <th>Margin</th>
-                            <th>P/L</th>
-                            <th>P/L %</th>
+                            <th mat-sort-header="coin">Coin</th>
+                            <th mat-sort-header="date">Date</th>
+                            <th mat-sort-header="quantity">Quantity</th>
+                            <th mat-sort-header="leverage">Lev</th>
+                            <th mat-sort-header="margin">Margin</th>
+                            <th mat-sort-header="pnl">P/L</th>
+                            <th mat-sort-header="pnlPercentage">P/L %</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr
-                            *ngFor="let trade of aggregatedData[selectedDate].losedTrades | slice: (lossCurrentPage - 1) * lossItemsPerPage : lossCurrentPage * lossItemsPerPage"
-                            (click)="openTradeDetails(trade)" class="clickable-row">
+                          <tr *ngFor="let trade of sortedLosedTrades | slice: (lossCurrentPage - 1) * lossItemsPerPage : lossCurrentPage * lossItemsPerPage"
+                              (click)="openTradeDetails(trade)" 
+                              class="clickable-row">
                             <td class="coin-cell"
                               [ngClass]="{'buy': trade.Type === 'BUY', 'sell': trade.Type === 'SELL'}">
                               <div class="coin-info">
@@ -314,14 +323,19 @@
                           </tr>
                         </tbody>
                       </table>
-                      <div *ngIf="aggregatedData[selectedDate]!.losedTrades!.length === 0" class="no-data-message">
-                        <mat-icon>info</mat-icon>
-                        <span>No loss trades found for this period</span>
+                      <div *ngIf="sortedLosedTrades.length === 0" class="no-data-message">
+                        <span class="d-flex align-items-center">
+                          <mat-icon class="me-2">info</mat-icon>
+                          No loss trades found for this period
+                        </span>
                       </div>
                     </div>
-                    <mat-paginator #lossPaginator *ngIf="aggregatedData[selectedDate]!.losedTrades!.length > 0"
-                      [length]="aggregatedData[selectedDate].losedTrades.length" [pageSize]="lossItemsPerPage"
-                      [pageSizeOptions]="[5, 10, 25, 50]" (page)="onLossPageChange($event)">
+                    <mat-paginator #lossPaginator 
+                                   *ngIf="sortedLosedTrades.length > 0"
+                                   [length]="sortedLosedTrades.length" 
+                                   [pageSize]="lossItemsPerPage"
+                                   [pageSizeOptions]="[5, 10, 25, 50]" 
+                                   (page)="onLossPageChange($event)">
                     </mat-paginator>
                   </div>
                 </div>
