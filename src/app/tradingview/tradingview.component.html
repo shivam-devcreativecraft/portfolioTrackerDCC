@@ -1,69 +1,97 @@
-
-
-<div class="row  m-0 my-3 py-3">
-    <div class="col-12 ">
-        <h2 class="">Ticker Tape</h2>
-        <div id="tv_tickerTape_widget" ></div>
+<!-- Chart Controls -->
+<div class="analysis-settings mb-4">
+  <div class="settings-header">
+    <h3>Chart Settings</h3>
+    <button mat-icon-button color="primary" (click)="openSettings()">
+      <mat-icon>settings</mat-icon>
+    </button>
+  </div>
+  <form [formGroup]="analysisForm" class="settings-form">
+    <div class="row">
+      <div class="col-md-4">
+        <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Exchange</mat-label>
+          <mat-select formControlName="exchange">
+            <mat-option *ngFor="let exchange of exchanges" [value]="exchange.value">
+              {{exchange.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
+      <div class="col-md-4">
+        <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Symbol</mat-label>
+          <input matInput formControlName="symbol" placeholder="e.g. BTC">
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <button mat-raised-button color="primary" class="w-100"
+                (click)="renderCharts()"
+                [disabled]="!analysisForm.valid || isLoading">
+          <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+          <span *ngIf="!isLoading">Render Charts</span>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" *ngIf="isLoading">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div class="row m-0 my-3 py-3">
+    <div class="col-12">
+        <h2>Ticker Tape</h2>
+        <div id="tv_tickerTape_widget"></div>
+    </div>
     <div class="col-12 mt-4">
-        <h2 class="">Trading View Chart</h2>
-  
+        <h2>Trading View Chart</h2>
         <div id="tv_chart_container_FUN"></div>
     </div>
   
-    <div class="col-lg-6 col-md-6 col-12  mt-4">
-        <h2 class="">Technical Analysis</h2>
-        <div id="technicalAnalysis" class="" ></div>
-  
+    <div class="col-lg-6 col-md-6 col-12 mt-4">
+        <h2>Technical Analysis</h2>
+        <div id="technicalAnalysis"></div>
     </div>
     <div class="col-lg-6 col-md-6 col-12 mt-4">
-        <h2 class="">Market Overview</h2>
-        <div id="marketOverview" class="" ></div>
-  
+        <h2>Market Overview</h2>
+        <div id="marketOverview"></div>
     </div>
     <div class="col-12 mt-4">
-      <h2 class="">Symbol Overview</h2>
-      <div id="tv_symbol_overview" class="tradingview-widget-container"></div>
+        <h2>Symbol Overview</h2>
+        <div id="tv_symbol_overview" class="tradingview-widget-container"></div>
     </div>
 
     <div class="col-12 mt-4">
-        <h2 class="">Screener Widget</h2>
-        <div id="tv_screener_widget" ></div>
-      </div>
-
-     <div class="col-12 mt-4">
-        <h2 class="">Heatmap</h2>
-        <div id="tv_heatmap_widget" ></div>
-      </div>
-      <div class="col-12 mt-4">
-        <h2 class="">Mini Chart</h2>
-        <div id="tv_minichart_widget" ></div>
-      </div>
-
-
-      <div class="col-lg-6 col-md-6 col-12 mt-4">
-        <h2 class="">Top Stories</h2>
-        <div id="topStories" class="" ></div>
-  
+        <h2>Screener Widget</h2>
+        <div id="tv_screener_widget"></div>
     </div>
 
-    <div class="col-lg-6 col-md-6 col-12  mt-4">
-        <h2 class="">Fundamental Data</h2>
-        <div id="fundamentalData" class="" ></div>
-  
+    <div class="col-12 mt-4">
+        <h2>Heatmap</h2>
+        <div id="tv_heatmap_widget"></div>
+    </div>
+    <div class="col-12 mt-4">
+        <h2>Mini Chart</h2>
+        <div id="tv_minichart_widget"></div>
+    </div>
+
+    <div class="col-lg-6 col-md-6 col-12 mt-4">
+        <h2>Top Stories</h2>
+        <div id="topStories"></div>
+    </div>
+
+    <div class="col-lg-6 col-md-6 col-12 mt-4">
+        <h2>Fundamental Data</h2>
+        <div id="fundamentalData"></div>
     </div>
     
-    <div class="col-lg-6 col-md-6 col-12  mt-4">
-        <h2 class="">Economic Calender</h2>
-        <div id="economicCalender" class="" ></div>
-  
+    <div class="col-lg-6 col-md-6 col-12 mt-4">
+        <h2>Economic Calendar</h2>
+        <div id="economicCalender"></div>
     </div>
 
     <div class="spacer-20"></div>
-
-
-
-
-
-
-  </div>
+</div>

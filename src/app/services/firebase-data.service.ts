@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Observable, from } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { AnalysisSettings } from '../models/analysis-settings.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +12,50 @@ import { AuthService } from './auth.service';
 export class FirebaseDataService {
   constructor(
     private firestore: AngularFirestore,
+    private auth: AngularFireAuth,
     private authService: AuthService
   ) {}
+
+  // Get the current user's ID
+  private getCurrentUserId(): Observable<string> {
+    return this.auth.user.pipe(
+      map(user => {
+        if (!user) throw new Error('User not authenticated');
+        return user.uid;
+      })
+    );
+  }
+
+  // Get analysis settings for the current user
+  getAnalysisSettings(): Observable<AnalysisSettings | null> {
+    return this.getCurrentUserId().pipe(
+      switchMap(userId => 
+        this.firestore
+          .collection('users')
+          .doc(userId)
+          .collection('settings')
+          .doc('analysis')
+          .get()
+      ),
+      map(doc => doc.exists ? doc.data() as AnalysisSettings : null)
+    );
+  }
+
+  // Save analysis settings for the current user
+  saveAnalysisSettings(settings: AnalysisSettings): Observable<void> {
+    return this.getCurrentUserId().pipe(
+      switchMap(userId => 
+        from(
+          this.firestore
+            .collection('users')
+            .doc(userId)
+            .collection('settings')
+            .doc('analysis')
+            .set(settings)
+        )
+      )
+    );
+  }
 
   // Upload trade data to Firebase
   async uploadTradeData(tradeData: any): Promise<void> {

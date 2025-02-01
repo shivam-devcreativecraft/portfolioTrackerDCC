@@ -7,3 +7,83 @@
   h2{
     color : $base-color_primary
   }
+
+.analysis-settings {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  .settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h3 {
+      margin: 0;
+      color: $base-color_primary;
+      font-weight: 500;
+    }
+  }
+
+  .settings-form {
+    .row {
+      margin: 0;
+      align-items: center;
+    }
+
+    mat-form-field {
+      width: 100%;
+    }
+
+    button {
+      height: 48px; // Match height with form fields
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      mat-spinner {
+        margin: 0;
+      }
+    }
+  }
+}
+
+// Loading Overlay
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+// Widget container styles
+.tradingview-widget-container {
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .analysis-settings {
+    .settings-form {
+      .col-md-4 {
+        margin-bottom: 16px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
