@@ -6,6 +6,8 @@ import { AnalysisSettings, DEFAULT_ANALYSIS_SETTINGS, formatSymbolPair } from '.
 import { MatDialog } from '@angular/material/dialog';
 import { ChartSettingsModalComponent } from '../SharedComponents/chart-settings-modal/chart-settings-modal.component';
 import { ConfirmDialogComponent, ConfirmDialogModel } from '../SharedComponents/confirm-dialog/confirm-dialog.component';
+import { MasterControlService } from '../services/master-control.service';
+import { MasterControlComponent } from '../SharedComponents/master-control/master-control.component';
 declare const TradingView: any;
 
 @Component({
@@ -18,6 +20,8 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
   currentSettings: AnalysisSettings = DEFAULT_ANALYSIS_SETTINGS;
   isLoading = false;
   private widgets: { [key: string]: any } = {};
+  isActionsAllowed: boolean = true;
+  IsMasterControlEnabled: boolean = false;
 
   // Available exchanges
   exchanges = [
@@ -40,7 +44,8 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     private fb: FormBuilder,
     private firebaseService: FirebaseDataService,
     private notificationService: NotificationService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private masterControlService: MasterControlService
   ) {
     this.analysisForm = this.fb.group({
       exchange: [DEFAULT_ANALYSIS_SETTINGS.chart_analysis.exchange, Validators.required],
@@ -48,6 +53,15 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
         Validators.required,
         Validators.pattern('^[A-Za-z]+(?:\.p)?$|^[A-Za-z]+(?:\.P)?$')
       ]]
+    });
+
+    // Subscribe to master control state
+    this.masterControlService.getGuestUserState().subscribe(isGuest => {
+      this.isActionsAllowed = !isGuest;
+    });
+
+    this.masterControlService.getMasterControlState().subscribe(state => {
+      this.IsMasterControlEnabled = state;
     });
   }
 
@@ -591,7 +605,23 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
   }
   //#endregion
 
-  deleteSettings(): void {
+  async deleteSettings(): Promise<void> {
+    if (!this.isActionsAllowed && !this.IsMasterControlEnabled) {
+      // Open master control dialog only if not enabled
+      const dialogRef = this.dialog.open(MasterControlComponent, {
+        maxWidth: '400px',
+        width: '100%',
+        data: { location: 'tradingview' },
+        panelClass: ['no-shadow-dialog', 'no-scroll-overlay'],
+        disableClose: true
+      });
+
+      const result = await dialogRef.afterClosed().toPromise();
+      if (!result) {
+        return;
+      }
+    }
+
     const dialogData = new ConfirmDialogModel(
       "Delete Settings",
       "Are you sure you want to delete all chart settings? This action cannot be undone."
