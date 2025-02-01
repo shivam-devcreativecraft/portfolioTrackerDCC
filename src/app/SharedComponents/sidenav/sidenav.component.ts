@@ -181,7 +181,8 @@ export class SidenavComponent implements OnInit {
     if (!this.isActionsAllowed && !this.IsMasterControlEnabled) {
       // Open master control dialog only if not enabled
       const dialogRef = this.dialog.open(MasterControlComponent, {
-        width: '400px',
+        maxWidth: '400px',
+        width: '100%',
         data: { location: 'sidenav' }
       });
 
@@ -237,8 +238,8 @@ export class SidenavComponent implements OnInit {
     // Only open if not already enabled
     if (!this.IsMasterControlEnabled) {
       const dialogRef = this.dialog.open(MasterControlComponent, {
-        width: '400px',
-        maxWidth: '90%',
+        maxWidth: '400px',
+        width: '100%',
         panelClass: 'custom-dialog-container',
         scrollStrategy: this.overlay.scrollStrategies.noop(),
         disableClose: true

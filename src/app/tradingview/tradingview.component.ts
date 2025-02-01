@@ -589,7 +589,13 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
-      data: dialogData
+      width: "95%",
+      maxHeight: "95vh",
+      data: dialogData,
+      disableClose: true,
+      panelClass: ['no-shadow-dialog', 'mat-typography'],
+      hasBackdrop: true,
+      backdropClass: 'dialog-backdrop'
     });
 
     dialogRef.afterClosed().subscribe(dialogResult => {
