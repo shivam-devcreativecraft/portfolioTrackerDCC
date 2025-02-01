@@ -15,14 +15,23 @@ export class ChartSettingsModalComponent {
   isLoading = false;
   watchlist: string[] = [];
   symbolOverviewList: string[] = [];
-  newWatchlistSymbol = new FormControl('', [
-    Validators.required, 
-    Validators.pattern('^[A-Za-z]+:[A-Za-z]+usdt(?:\.p)?$|^[A-Za-z]+:[A-Za-z]+USDT(?:\.P)?$')
-  ]);
-  newOverviewSymbol = new FormControl('', [
-    Validators.required, 
-    Validators.pattern('^[A-Za-z]+:[A-Za-z]+usdt(?:\.p)?$|^[A-Za-z]+:[A-Za-z]+USDT(?:\.P)?$')
-  ]);
+  
+  // New form groups for watchlist and overview inputs
+  watchlistForm = this.fb.group({
+    exchange: ['BINANCE', Validators.required],
+    symbol: ['', [
+      Validators.required,
+      Validators.pattern('^[A-Za-z]+(?:\.p)?$|^[A-Za-z]+(?:\.P)?$')
+    ]]
+  });
+
+  overviewForm = this.fb.group({
+    exchange: ['BINANCE', Validators.required],
+    symbol: ['', [
+      Validators.required,
+      Validators.pattern('^[A-Za-z]+(?:\.p)?$|^[A-Za-z]+(?:\.P)?$')
+    ]]
+  });
 
   exchanges = [
     { value: 'BINANCE', name: 'Binance' },
@@ -61,14 +70,51 @@ export class ChartSettingsModalComponent {
   }
 
   addToWatchlist(): void {
-    if (this.newWatchlistSymbol.valid && this.newWatchlistSymbol.value) {
-      const symbol = this.newWatchlistSymbol.value.toUpperCase();
-      if (!this.watchlist.includes(symbol)) {
-        this.watchlist.push(symbol);
-        this.newWatchlistSymbol.reset();
-        this.notificationService.success('Symbol added to watchlist');
-      } else {
-        this.notificationService.warning('Symbol already exists in watchlist');
+    if (this.watchlistForm.valid) {
+      const formValue = this.watchlistForm.value;
+      const exchange = formValue.exchange ?? '';
+      const symbol = formValue.symbol ?? '';
+      
+      if (exchange && symbol) {
+        // Check if it's a perpetual symbol
+        const isPerpetual = symbol.toUpperCase().endsWith('.P');
+        // Clean the base symbol (remove .P if exists)
+        const baseSymbol = symbol.replace(/\.P$/i, '');
+        // Format the final symbol
+        const formattedSymbol = `${exchange}:${baseSymbol.toUpperCase()}USDT${isPerpetual ? '.P' : ''}`;
+        
+        if (!this.watchlist.includes(formattedSymbol)) {
+          this.watchlist.push(formattedSymbol);
+          this.watchlistForm.get('symbol')?.reset();
+          this.notificationService.success('Symbol added to watchlist');
+        } else {
+          this.notificationService.warning('Symbol already exists in watchlist');
+        }
+      }
+    }
+  }
+
+  addToOverviewList(): void {
+    if (this.overviewForm.valid) {
+      const formValue = this.overviewForm.value;
+      const exchange = formValue.exchange ?? '';
+      const symbol = formValue.symbol ?? '';
+      
+      if (exchange && symbol) {
+        // Check if it's a perpetual symbol
+        const isPerpetual = symbol.toUpperCase().endsWith('.P');
+        // Clean the base symbol (remove .P if exists)
+        const baseSymbol = symbol.replace(/\.P$/i, '');
+        // Format the final symbol
+        const formattedSymbol = `${exchange}:${baseSymbol.toUpperCase()}USDT${isPerpetual ? '.P' : ''}`;
+        
+        if (!this.symbolOverviewList.includes(formattedSymbol)) {
+          this.symbolOverviewList.push(formattedSymbol);
+          this.overviewForm.get('symbol')?.reset();
+          this.notificationService.success('Symbol added to overview list');
+        } else {
+          this.notificationService.warning('Symbol already exists in overview list');
+        }
       }
     }
   }
@@ -78,19 +124,6 @@ export class ChartSettingsModalComponent {
     if (index >= 0) {
       this.watchlist.splice(index, 1);
       this.notificationService.success('Symbol removed from watchlist');
-    }
-  }
-
-  addToOverviewList(): void {
-    if (this.newOverviewSymbol.valid && this.newOverviewSymbol.value) {
-      const symbol = this.newOverviewSymbol.value.toUpperCase();
-      if (!this.symbolOverviewList.includes(symbol)) {
-        this.symbolOverviewList.push(symbol);
-        this.newOverviewSymbol.reset();
-        this.notificationService.success('Symbol added to overview list');
-      } else {
-        this.notificationService.warning('Symbol already exists in overview list');
-      }
     }
   }
 

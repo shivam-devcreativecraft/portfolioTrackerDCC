@@ -34,7 +34,10 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
   ) {
     this.analysisForm = this.fb.group({
       exchange: [DEFAULT_ANALYSIS_SETTINGS.chart_analysis.exchange, Validators.required],
-      symbol: [DEFAULT_ANALYSIS_SETTINGS.chart_analysis.symbol, Validators.required]
+      symbol: [DEFAULT_ANALYSIS_SETTINGS.chart_analysis.symbol, [
+        Validators.required,
+        Validators.pattern('^[A-Za-z]+(?:\.p)?$|^[A-Za-z]+(?:\.P)?$')
+      ]]
     });
   }
 
