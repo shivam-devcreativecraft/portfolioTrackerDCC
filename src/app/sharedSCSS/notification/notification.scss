@@ -1,0 +1,270 @@
+// Keyframes for progress line animation
+@keyframes progress-line {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+// Snackbar base styles
+.snackbar-margin {
+  margin-top: 70px !important;
+}
+
+.mat-snack-bar-container {
+  background: rgba(20, 23, 34, 0.8) !important;
+  color: white !important;
+  border-radius: 6px !important;
+  backdrop-filter: blur(10px) !important;
+  padding: 0 !important;
+  min-height: unset !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  max-width: 400px !important;
+  width: auto !important;
+}
+
+// Override Material's default snackbar positioning
+::ng-deep .mat-snack-bar-container.snackbar-margin {
+  margin-top: 64px !important;
+}
+
+// Ensure the overlay container doesn't interfere with positioning
+::ng-deep .cdk-global-overlay-wrapper {
+  margin-top: 64px !important;
+}
+
+// Success snackbar
+.success-snackbar {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #4caf50;
+    box-shadow: 0 0 8px #4caf50;
+    animation: progress-line 3s linear forwards;
+    transform-origin: left;
+  }
+  
+  .mat-simple-snackbar {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    
+    &::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 20px;
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234caf50"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>');
+      background-size: contain;
+    }
+
+    span {
+      flex: 1;
+      
+      strong {
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 2px;
+        color: rgba(255, 255, 255, 0.95);
+      }
+      
+      .message {
+        display: block;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+}
+
+// Error snackbar
+.error-snackbar {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #f44336;
+    box-shadow: 0 0 8px #f44336;
+    animation: progress-line 3s linear forwards;
+    transform-origin: left;
+  }
+  
+  .mat-simple-snackbar {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    
+    &::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 20px;
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23f44336"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>');
+      background-size: contain;
+    }
+
+    span {
+      flex: 1;
+      
+      strong {
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 2px;
+        color: rgba(255, 255, 255, 0.95);
+      }
+      
+      .message {
+        display: block;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+}
+
+// Warning snackbar
+.warning-snackbar {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #ff9800;
+    box-shadow: 0 0 8px #ff9800;
+    animation: progress-line 3s linear forwards;
+    transform-origin: left;
+  }
+  
+  .mat-simple-snackbar {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    
+    &::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 20px;
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff9800"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>');
+      background-size: contain;
+    }
+
+    span {
+      flex: 1;
+      
+      strong {
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 2px;
+        color: rgba(255, 255, 255, 0.95);
+      }
+      
+      .message {
+        display: block;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+}
+
+// Info snackbar
+.info-snackbar {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #2196f3;
+    box-shadow: 0 0 8px #2196f3;
+    animation: progress-line 3s linear forwards;
+    transform-origin: left;
+  }
+  
+  .mat-simple-snackbar {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    
+    &::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 20px;
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%232196f3"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>');
+      background-size: contain;
+    }
+
+    span {
+      flex: 1;
+      
+      strong {
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 2px;
+        color: rgba(255, 255, 255, 0.95);
+      }
+      
+      .message {
+        display: block;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+}
+
+// Common styles for close button
+.mat-simple-snackbar-action {
+  button {
+    color: rgba(255, 255, 255, 0.7) !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 8px !important;
+    min-width: 0 !important;
+    margin: 0 4px !important;
+    
+    &::before {
+      content: '×';
+      font-size: 24px;
+      line-height: 1;
+    }
+    
+    &:hover {
+      color: rgba(255, 255, 255, 0.95) !important;
+    }
+  }
+} 

@@ -8,15 +8,10 @@ $portfoliotrackerdcc-theme: mat.define-light-theme((color: (primary: $portfoliot
         warn: $portfoliotrackerdcc-warn)));
 @include mat.all-component-themes($portfoliotrackerdcc-theme);
 
-
-
-
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
-// @import 'ngx-toastr/toastr';
 @import '../src/app/sharedSCSS/scssVariable/colorVariable.scss';
-
-// @import '/src/app/sharedSCSS/animationStyle.scss';
+@import '../src/app/sharedSCSS/notification/notification.scss';
 
 html{
   scroll-behavior:smooth;
@@ -48,50 +43,6 @@ html{
 .opacity_100{
   opacity: 100%;
 }
-
-/* Custom CSS class for Toastr notifications */
-
-
-
-// .scroller {
-//   width: 100%;
-//   height: 5px;
-//   overflow-y: hidden;
-// }
-
-// /* width */
-// ::-webkit-scrollbar {
-//   width: 5px;
-//   height : 5px;
-//   border-radius: 20px !important;
-// }
-
-// /* Track */
-// ::-webkit-scrollbar-track {
-//   background: #eee;
-// }
-
-// /* Handle */
-// ::-webkit-scrollbar-thumb {
-//   background: 
-//   #f7a50070;
-//   // rgba(0, 0, 0, 0.336);
-// }
-
-// /* Handle on hover */
-// // ::-webkit-scrollbar-thumb:hover {
-// //   background: #00000071;
-// // }
-
-
-
-// // floating button
-
-
-
-
-
-
 
 /* Hide the scroll bar by default */
 ::-webkit-scrollbar {
@@ -125,89 +76,9 @@ html{
 
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css");
 
-
 .spacer-20{
   padding-top: 20px;
   padding-bottom: 20px;
-}
-
-// Snackbar Styles
-.success-snackbar {
-  background: rgba(76, 175, 80, 0.85) !important;
-  color: white;
-  margin-top: 66px !important;
-  border-radius: 8px !important;
-  backdrop-filter: blur(8px) !important;
-  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  
-  .mat-simple-snackbar-action {
-    color: white;
-  }
-}
-
-.error-snackbar {
-  background: rgba(244, 67, 54, 0.85) !important;
-  color: white;
-  margin-top: 66px !important;
-  border-radius: 8px !important;
-  backdrop-filter: blur(8px) !important;
-  box-shadow: 0 4px 15px rgba(244, 67, 54, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  
-  .mat-simple-snackbar-action {
-    color: white;
-  }
-}
-
-.warning-snackbar {
-  background: rgba(255, 152, 0, 0.85) !important;
-  color: white;
-  margin-top: 66px !important;
-  border-radius: 8px !important;
-  backdrop-filter: blur(8px) !important;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  
-  .mat-simple-snackbar-action {
-    color: white;
-  }
-}
-
-.info-snackbar {
-  background: rgba(33, 150, 243, 0.85) !important;
-  color: white;
-  margin-top: 66px !important;
-  border-radius: 8px !important;
-  backdrop-filter: blur(8px) !important;
-  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  
-  .mat-simple-snackbar-action {
-    color: white;
-  }
-}
-
-// Override Material snackbar styles
-.mat-snack-bar-container {
-  &.success-snackbar,
-  &.error-snackbar,
-  &.warning-snackbar,
-  &.info-snackbar {
-    button {
-      border: 1px solid rgba(255, 255, 255, 0.3) !important;
-      margin-left: 8px;
-      color: white;
-      border-radius: 4px !important;
-      backdrop-filter: blur(4px) !important;
-      transition: all 0.3s ease;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
-        border-color: rgba(255, 255, 255, 0.5) !important;
-      }
-    }
-  }
 }
 
 .custom-dialog-container {
