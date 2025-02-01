@@ -1,9 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { FirebaseDataService } from '../../services/firebase-data.service';
 import { NotificationService } from '../../services/notification.service';
 import { AnalysisSettings, formatSymbolPair } from '../../models/analysis-settings.model';
+import { MasterControlService } from '../../services/master-control.service';
+import { MasterControlComponent } from '../master-control/master-control.component';
 
 @Component({
   selector: 'app-chart-settings-modal',
@@ -15,6 +17,9 @@ export class ChartSettingsModalComponent {
   isLoading = false;
   watchlist: string[] = [];
   symbolOverviewList: string[] = [];
+  isActionsAllowed: boolean = true;
+  IsMasterControlEnabled: boolean = false;
+  hasChanges: boolean = false;
   
   // New form groups for watchlist and overview inputs
   watchlistForm = this.fb.group({
@@ -45,6 +50,8 @@ export class ChartSettingsModalComponent {
     private dialogRef: MatDialogRef<ChartSettingsModalComponent>,
     private firebaseService: FirebaseDataService,
     private notificationService: NotificationService,
+    private masterControlService: MasterControlService,
+    private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: AnalysisSettings
   ) {
     this.watchlist = [...data.chart_analysis.watchlist];
@@ -67,6 +74,20 @@ export class ChartSettingsModalComponent {
         ticker_tape: [data.enabled_charts.ticker_tape]
       })
     });
+
+    // Subscribe to master control state
+    this.masterControlService.getGuestUserState().subscribe(isGuest => {
+      this.isActionsAllowed = !isGuest;
+    });
+
+    this.masterControlService.getMasterControlState().subscribe(state => {
+      this.IsMasterControlEnabled = state;
+    });
+
+    // Track form changes
+    this.settingsForm.valueChanges.subscribe(() => {
+      this.hasChanges = true;
+    });
   }
 
   addToWatchlist(): void {
@@ -76,17 +97,15 @@ export class ChartSettingsModalComponent {
       const symbol = formValue.symbol ?? '';
       
       if (exchange && symbol) {
-        // Check if it's a perpetual symbol
         const isPerpetual = symbol.toUpperCase().endsWith('.P');
-        // Clean the base symbol (remove .P if exists)
         const baseSymbol = symbol.replace(/\.P$/i, '');
-        // Format the final symbol
         const formattedSymbol = `${exchange}:${baseSymbol.toUpperCase()}USDT${isPerpetual ? '.P' : ''}`;
         
         if (!this.watchlist.includes(formattedSymbol)) {
           this.watchlist.push(formattedSymbol);
           this.watchlistForm.get('symbol')?.reset();
           this.notificationService.success('Symbol added to watchlist');
+          this.hasChanges = true;
         } else {
           this.notificationService.warning('Symbol already exists in watchlist');
         }
@@ -101,17 +120,15 @@ export class ChartSettingsModalComponent {
       const symbol = formValue.symbol ?? '';
       
       if (exchange && symbol) {
-        // Check if it's a perpetual symbol
         const isPerpetual = symbol.toUpperCase().endsWith('.P');
-        // Clean the base symbol (remove .P if exists)
         const baseSymbol = symbol.replace(/\.P$/i, '');
-        // Format the final symbol
         const formattedSymbol = `${exchange}:${baseSymbol.toUpperCase()}USDT${isPerpetual ? '.P' : ''}`;
         
         if (!this.symbolOverviewList.includes(formattedSymbol)) {
           this.symbolOverviewList.push(formattedSymbol);
           this.overviewForm.get('symbol')?.reset();
           this.notificationService.success('Symbol added to overview list');
+          this.hasChanges = true;
         } else {
           this.notificationService.warning('Symbol already exists in overview list');
         }
@@ -124,6 +141,7 @@ export class ChartSettingsModalComponent {
     if (index >= 0) {
       this.watchlist.splice(index, 1);
       this.notificationService.success('Symbol removed from watchlist');
+      this.hasChanges = true;
     }
   }
 
@@ -132,10 +150,19 @@ export class ChartSettingsModalComponent {
     if (index >= 0) {
       this.symbolOverviewList.splice(index, 1);
       this.notificationService.success('Symbol removed from overview list');
+      this.hasChanges = true;
     }
   }
 
-  onSave(): void {
+  async onSave(): Promise<void> {
+    // Only check master control if there are changes
+    if (this.hasChanges && !this.isActionsAllowed && !this.IsMasterControlEnabled) {
+      const isVerified = await this.openMasterControlDialog();
+      if (!isVerified) {
+        return;
+      }
+    }
+
     if (this.settingsForm.valid) {
       this.isLoading = true;
       const formValue = this.settingsForm.value;
@@ -169,5 +196,18 @@ export class ChartSettingsModalComponent {
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  private async openMasterControlDialog(): Promise<boolean> {
+    const dialogRef = this.dialog.open(MasterControlComponent, {
+      maxWidth: '400px',
+      width: '100%',
+      data: { location: 'chart-settings' },
+      panelClass: ['no-shadow-dialog', 'no-scroll-overlay'],
+      disableClose: true
+    });
+
+    const result = await dialogRef.afterClosed().toPromise();
+    return !!result;
   }
 } 
