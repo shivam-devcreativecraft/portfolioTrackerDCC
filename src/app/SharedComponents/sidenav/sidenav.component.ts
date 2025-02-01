@@ -113,7 +113,7 @@ export class SidenavComponent implements OnInit {
       maxWidth: "400px",
       width: '100%',
       data: dialogData,
-      panelClass: 'custom-dialog-container',
+      panelClass: ['no-shadow-dialog', 'no-scroll-overlay'],
       scrollStrategy: this.overlay.scrollStrategies.noop(),
       disableClose: true
     });
@@ -121,7 +121,6 @@ export class SidenavComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async dialogResult => {
       if (dialogResult === true) {
         try {
-          // Clear master control token if exists
           await this.authService.signOut();
         } catch (error: any) {
           this.toastr.error(error.message || 'Logout failed');
@@ -183,7 +182,10 @@ export class SidenavComponent implements OnInit {
       const dialogRef = this.dialog.open(MasterControlComponent, {
         maxWidth: '400px',
         width: '100%',
-        data: { location: 'sidenav' }
+        data: { location: 'sidenav' },
+        panelClass: ['no-shadow-dialog', 'no-scroll-overlay'],
+        scrollStrategy: this.overlay.scrollStrategies.noop(),
+        disableClose: true
       });
 
       const result = await dialogRef.afterClosed().toPromise();
@@ -201,6 +203,7 @@ export class SidenavComponent implements OnInit {
       width: '100%',
       maxWidth: '800px',
       disableClose: true,
+      panelClass: ['no-shadow-dialog', 'no-scroll-overlay'],
       scrollStrategy: this.overlay.scrollStrategies.noop()
     });
 
@@ -221,7 +224,7 @@ export class SidenavComponent implements OnInit {
       maxWidth: "400px",
       width: '100%',
       data: dialogData,
-      panelClass: 'custom-dialog-container',
+      panelClass: ['no-shadow-dialog', 'no-scroll-overlay'],
       scrollStrategy: this.overlay.scrollStrategies.noop(),
       disableClose: true
     });
@@ -240,7 +243,7 @@ export class SidenavComponent implements OnInit {
       const dialogRef = this.dialog.open(MasterControlComponent, {
         maxWidth: '400px',
         width: '100%',
-        panelClass: 'custom-dialog-container',
+        panelClass: ['no-shadow-dialog', 'no-scroll-overlay'],
         scrollStrategy: this.overlay.scrollStrategies.noop(),
         disableClose: true
       });

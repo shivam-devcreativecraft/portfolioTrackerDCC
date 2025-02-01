@@ -21,10 +21,19 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
 
   // Available exchanges
   exchanges = [
-    { value: 'BINANCE', name: 'Binance' },
+    { value: 'BINANCE', name: 'BINANCE' },
     { value: 'MEXC', name: 'MEXC' },
-    { value: 'KUCOIN', name: 'KuCoin' },
-    { value: 'BYBIT', name: 'Bybit' }
+    { value: 'KUCOIN', name: 'KUCOIN' },
+    { value: 'BYBIT', name: 'BYBIT' },
+    { value: 'GATEIO', name: 'GATEIO' },
+    { value: 'BITGET', name: 'BITGET' },
+    { value: 'OKX', name: 'OKX' },
+    { value: 'BITFINEX', name: 'BITFINEX' },
+    { value: 'BITMEX', name: 'BITMEX' },
+    { value: 'BITSTAMP', name: 'BITSTAMP' },
+    { value: 'COINBASE', name: 'COINBASE' },
+    { value: 'HUOBI', name: 'HUOBI' },
+    { value: 'OKX', name: 'OKX' },
   ];
 
   constructor(
@@ -87,7 +96,8 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     const dialogRef = this.dialog.open(ChartSettingsModalComponent, {
       data: this.currentSettings,
       disableClose: true,
-      width: '600px'
+      maxWidth: '800px',
+      width: '100%',
     });
 
     dialogRef.afterClosed().subscribe((result: AnalysisSettings) => {
