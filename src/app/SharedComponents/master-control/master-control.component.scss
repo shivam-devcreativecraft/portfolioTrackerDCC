@@ -64,7 +64,7 @@
 }
 
 ::ng-deep .mat-mdc-dialog-container {
-  padding: 0 !important;
+  padding: 15px  !important;
   overflow: hidden;
 
   .mdc-dialog__content {
@@ -79,6 +79,6 @@
   }
 
   .mdc-dialog__actions {
-    padding: 0 !important;
+    padding: 0px 15px !important;
   }
 }
