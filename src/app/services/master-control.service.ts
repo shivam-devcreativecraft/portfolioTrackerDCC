@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService } from './auth.service';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ export class MasterControlService {
 
   constructor(
     private authService: AuthService,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private notificationService: NotificationService
   ) {
     // Initialize master control state from localStorage
     this.initializeMasterControl();
@@ -48,11 +50,12 @@ export class MasterControlService {
       if (doc?.exists) {
         const data = doc.data() as { password: string };
         this.masterPassword = data.password;
+        this.notificationService.success('Master password initialized successfully');
       } else {
-        console.error('Master password document not found in Firebase');
+        this.notificationService.error('Master password document not found');
       }
-    } catch (error) {
-      console.error('Error fetching master password:', error);
+    } catch (error: any) {
+      this.notificationService.error(error.message || 'Error initializing master password');
     }
   }
 
@@ -98,8 +101,10 @@ export class MasterControlService {
     if (state) {
       const token = this.generateToken();
       localStorage.setItem('masterControlToken', token);
+      this.notificationService.success('Master Control Enabled');
     } else {
       localStorage.removeItem('masterControlToken');
+      this.notificationService.success('Master Control Disabled');
     }
   }
 

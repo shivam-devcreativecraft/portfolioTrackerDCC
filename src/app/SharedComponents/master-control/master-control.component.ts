@@ -1,6 +1,6 @@
 import { Component, Inject, NgModule } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from 'src/app/services/notification.service';
 import { MasterControlService } from 'src/app/services/master-control.service';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -37,7 +37,7 @@ export class MasterControlComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<MasterControlComponent>,
-    private toastr: ToastrService,
+    private notificationService: NotificationService,
     private masterControlService: MasterControlService
   ) {}
 
@@ -52,23 +52,23 @@ export class MasterControlComponent {
     try {
       const result = await this.masterControlService.verifyMasterPassword(this.masterPassword);
       if (result.success) {
-        this.toastr.success(result.message);
+        this.notificationService.success(result.message);
         this.dialogRef.close(true);
       } else {
-        this.toastr.error(result.message);
+        this.notificationService.error(result.message);
       }
     } catch (error: any) {
-      this.toastr.error(error.message || 'Failed to verify master password');
+      this.notificationService.error(error.message || 'Failed to verify master password');
     } finally {
       this.isLoading = false;
     }
   }
 
   forgotMasterPassword(type: string) {
-    this.toastr.warning("currently unavailabe !");
+    this.notificationService.warning("Currently unavailable!");
   }
 
   alreadyHavePassword(type: string) {
-    this.toastr.warning("currently unavailabe !");
+    this.notificationService.warning("Currently unavailable!");
   }
 }

@@ -11,8 +11,8 @@ export class NotificationService {
     this.snackBar.open(message, 'Close', {
       duration: 3000,
       panelClass: ['success-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom'
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
     });
   }
 
@@ -20,8 +20,17 @@ export class NotificationService {
     this.snackBar.open(message, 'Close', {
       duration: 3000,
       panelClass: ['error-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom'
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
+  }
+
+  warning(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      panelClass: ['warning-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
     });
   }
 
@@ -29,17 +38,8 @@ export class NotificationService {
     this.snackBar.open(message, 'Close', {
       duration: 3000,
       panelClass: ['info-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom'
-    });
-  }
-
-  warn(message: string) {
-    this.snackBar.open(message, 'Close', {
-      duration: 3000,
-      panelClass: ['warning-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom'
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
     });
   }
 } 

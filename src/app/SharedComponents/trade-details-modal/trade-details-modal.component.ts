@@ -11,6 +11,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ConfirmDialogComponent, ConfirmDialogModel } from '../confirm-dialog/confirm-dialog.component';
 import { MasterControlService } from 'src/app/services/master-control.service';
 import { MasterControlComponent } from '../master-control/master-control.component';
+import { ToastrService } from 'ngx-toastr';
+import { Overlay } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-trade-confirmation-dialog',
@@ -88,9 +90,10 @@ export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<TradeDetailsModalComponent>,
     private firebaseService: FirebaseDataService,
-    private notificationService: NotificationService,
+    private toastr: ToastrService,
     private dialog: MatDialog,
-    private masterControlService: MasterControlService
+    private masterControlService: MasterControlService,
+    private overlay: Overlay
   ) {
     this.data = this.data || {};
     console.log(this.data)
@@ -126,6 +129,10 @@ export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
     return new Promise((resolve) => {
       const dialogRef = this.dialog.open(MasterControlComponent, {
         width: '400px',
+        maxWidth: '90%',
+        panelClass: 'custom-dialog-container',
+        scrollStrategy: this.overlay.scrollStrategies.noop(),
+        disableClose: true,
         data: { location: 'trade-details' }
       });
 
@@ -152,7 +159,11 @@ export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
-      data: dialogData
+      width: '100%',
+      data: dialogData,
+      panelClass: 'custom-dialog-container',
+      scrollStrategy: this.overlay.scrollStrategies.noop(),
+      disableClose: true
     });
 
     // Handle the dialog result
@@ -160,11 +171,11 @@ export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
       if (dialogResult) {
         try {
           await this.firebaseService.deleteTrade(this.data.sheetName, tradeId);
-          this.notificationService.success(`Trade deleted successfully from ${this.data.sheetName}`);
+          this.toastr.success(`Trade deleted successfully from ${this.data.sheetName}`);
           this.dialogRef.close('deleted'); // Close the trade details modal with 'deleted' result
         } catch (error: any) {
           console.error('Error deleting trade:', error);
-          this.notificationService.error(error.message || 'Error deleting trade');
+          this.toastr.error(error.message || 'Error deleting trade');
         }
       }
     });
