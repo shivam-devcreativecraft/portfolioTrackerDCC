@@ -1,11 +1,16 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FirebaseDataService } from 'src/app/services/firebase-data.service';
 import { NotificationService } from 'src/app/services/notification.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ConfirmDialogComponent, ConfirmDialogModel } from '../confirm-dialog/confirm-dialog.component';
+import { MasterControlService } from 'src/app/services/master-control.service';
+import { MasterControlComponent } from '../master-control/master-control.component';
 
 @Component({
   selector: 'app-trade-confirmation-dialog',
@@ -64,67 +69,124 @@ export class TradeConfirmationDialogComponent {
   templateUrl: './trade-details-modal.component.html',
   styleUrls: ['./trade-details-modal.component.scss'],
   standalone: true,
-  imports: [FormsModule, CommonModule, MatIconModule, MatButtonModule, MatDialogModule]
+  imports: [
+    FormsModule, 
+    CommonModule, 
+    MatIconModule, 
+    MatButtonModule, 
+    MatDialogModule, 
+    DragDropModule,
+    MatTooltipModule
+  ]
 })
-export class TradeDetailsModalComponent {
+export class TradeDetailsModalComponent implements OnInit, AfterViewInit {
+  @ViewChild('dialogContent') dialogContent?: ElementRef;
+  isActionsAllowed: boolean = true;
+  IsMasterControlEnabled: boolean = false;
+
   constructor(
-    public dialogRef: MatDialogRef<TradeDetailsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<TradeDetailsModalComponent>,
     private firebaseService: FirebaseDataService,
     private notificationService: NotificationService,
-    private dialog: MatDialog
-  ) { 
+    private dialog: MatDialog,
+    private masterControlService: MasterControlService
+  ) {
     this.data = this.data || {};
-    // console.log('Modal Data:', this.data);
+    console.log(this.data)
+
+    // Ensure dialog opens at top
+    this.dialogRef.afterOpened().subscribe(() => {
+      setTimeout(() => {
+        const dialogContainer = document.querySelector('.mat-dialog-content');
+        if (dialogContainer) {
+          dialogContainer.scrollTop = 0;
+        }
+      });
+    });
+  }
+
+  ngOnInit() {
+    // Subscribe to guest user state
+    this.masterControlService.getGuestUserState().subscribe(isGuest => {
+      this.isActionsAllowed = !isGuest;
+    });
+
+    // Subscribe to master control state
+    this.masterControlService.getMasterControlState().subscribe(state => {
+      this.IsMasterControlEnabled = state;
+    });
   }
 
   onClose(): void {
     this.dialogRef.close();
   }
 
-  async uploadToFirebase(): Promise<void> {
-    try {
-      // Calculate Quantity (Contracts * Lot_Value)
-      const quantity = Number(this.data.trade.Contracts) * Number(this.data.trade.Lot_Value);
-
-      // Create trade data using the original values from clicked trade
-      const tradeData = {
-        ID: String(this.data.trade.ID),
-        Sheet_Name: 'Futures_Trades',
-        Date: this.data.trade.Date || '',
-        Coin: String(this.data.trade.Coin || '').toUpperCase(),
-        Type: String(this.data.trade.Type || '').toUpperCase(),
-        Quantity: quantity,  // Using calculated quantity instead of Contracts
-        Open_Price: Number(Number(this.data.trade.Open_Price).toString().match(/^-?\d*\.?\d{0,8}/)?.[0] || this.data.trade.Open_Price) || 0,
-        Open_Margin: Number(this.data.trade.Open_Margin) || 0,
-        Close_Price: Number(Number(this.data.trade.Close_Price).toString().match(/^-?\d*\.?\d{0,8}/)?.[0] || this.data.trade.Close_Price) || 0,
-        Close_Margin: Number(this.data.trade.Close_Margin) || 0,
-        Pnl: Number(this.data.trade.Pnl) || 0,
-        Pnl_Percentage: Number(this.data.trade.Pnl_Percentage) || 0,
-        Influencer: String(this.data.trade.Influencer || '').toUpperCase(),
-        Exchange_Name: 'Delta_Exchange',
-        Leverage: Number(this.data.trade.Leverage) || 0,
-        Lot_Value: Number(this.data.trade.Lot_Value) || 0
-      };
-
-      // Open confirmation dialog
-      const dialogRef = this.dialog.open(TradeConfirmationDialogComponent, {
-        width: '500px',
-        data: tradeData
+  private openMasterControlDialog(): Promise<boolean> {
+    return new Promise((resolve) => {
+      const dialogRef = this.dialog.open(MasterControlComponent, {
+        width: '400px',
+        data: { location: 'trade-details' }
       });
 
-      // Wait for user confirmation
-      const result = await dialogRef.afterClosed().toPromise();
-      
-      if (result) {
-        // console.log('Uploading trade data:', tradeData);
-        await this.firebaseService.uploadTradeData(tradeData);
-        this.notificationService.success('Trade data uploaded to Firebase successfully');
-        this.dialogRef.close();
+      dialogRef.afterClosed().subscribe(result => {
+        resolve(result === true);
+      });
+    });
+  }
+
+  async deleteTrade(tradeId: string) {
+    if (!this.isActionsAllowed && !this.IsMasterControlEnabled) {
+      // Open master control dialog only if not enabled
+      const isVerified = await this.openMasterControlDialog();
+      if (!isVerified) {
+        return;
       }
-    } catch (error: any) {
-      console.error('Error uploading trade data:', error);
-      this.notificationService.error(error.message || 'Failed to upload trade data to Firebase');
     }
+
+    // Show confirm dialog
+    const dialogData = new ConfirmDialogModel(
+      "Confirm Delete",
+      "Are you sure you want to delete this trade?"
+    );
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      maxWidth: "400px",
+      data: dialogData
+    });
+
+    // Handle the dialog result
+    dialogRef.afterClosed().subscribe(async (dialogResult) => {
+      if (dialogResult) {
+        try {
+          await this.firebaseService.deleteTrade(this.data.sheetName, tradeId);
+          this.notificationService.success(`Trade deleted successfully from ${this.data.sheetName}`);
+          this.dialogRef.close('deleted'); // Close the trade details modal with 'deleted' result
+        } catch (error: any) {
+          console.error('Error deleting trade:', error);
+          this.notificationService.error(error.message || 'Error deleting trade');
+        }
+      }
+    });
+  }
+
+  async updateTrade() {
+    if (!this.isActionsAllowed && !this.IsMasterControlEnabled) {
+      // Open master control dialog only if not enabled
+      const isVerified = await this.openMasterControlDialog();
+      if (!isVerified) {
+        return;
+      }
+    }
+    // Implement update logic here
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      const dialogContainer = document.querySelector('.mat-dialog-content');
+      if (dialogContainer) {
+        dialogContainer.scrollTop = 0;
+      }
+    });
   }
 }

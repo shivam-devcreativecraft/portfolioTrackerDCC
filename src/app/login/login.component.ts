@@ -39,8 +39,17 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  async loginFromFirebase() {
-    if (!this.email || !this.password) {
+  onSampleLogin(){
+    this.email = 'devcreativecraft@gmail.com';
+    this.password = 'devcreativecraft'
+    this.loginFromFirebase().then(() => {
+      this.router.navigate(['/']);    
+    })
+  }
+
+
+  async loginFromFirebase(){ 
+    if ((!this.email || !this.password) ) {
       this.notificationService.error('Please enter both email and password');
       return;
     }
@@ -69,7 +78,8 @@ export class LoginComponent implements OnInit {
     } finally {
       this.isLoading = false;
     }
-  }
+  
+}
 
   async resendVerificationEmail() {
     if (!this.email) {

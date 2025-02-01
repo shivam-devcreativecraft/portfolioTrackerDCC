@@ -14,9 +14,13 @@ mat-form-field {
 }
 .login-image{
     border-radius: 1rem 0 0 1rem;
+    height: -webkit-fill-available;
 }
 form h5{
     letter-spacing: 1px;
     color: $base_color_primary;
     font-weight: 600 !important;
+}
+.sample-login:hover{
+cursor:pointer
 }

@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { getStorage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
+import { MasterControlService } from '../services/master-control.service';
+import { MatDialog } from '@angular/material/dialog';
+import { MasterControlComponent } from '../SharedComponents/master-control/master-control.component';
 
 @Component({
   selector: 'app-profile',
@@ -17,10 +20,14 @@ export class ProfileComponent implements OnInit {
   };
   selectedFile: File | null = null;
   imagePreview: string | null = null;
+  isActionsAllowed: boolean = true;
+  IsMasterControlEnabled: boolean = false;
 
   constructor(
     private authService: AuthService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private masterControlService: MasterControlService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -38,9 +45,34 @@ export class ProfileComponent implements OnInit {
       this.editForm.photoURL = currentUser.photoURL || '';
       this.imagePreview = currentUser.photoURL || '';
     }
+
+    this.masterControlService.getGuestUserState().subscribe(isGuest => {
+      this.isActionsAllowed = !isGuest;
+      if (isGuest && this.isEditing) {
+        this.isEditing = false;
+        this.toastr.warning('Guest users cannot edit their profile');
+      }
+    });
+
+    this.masterControlService.getMasterControlState().subscribe(state => {
+      this.IsMasterControlEnabled = state;
+    });
   }
 
-  toggleEdit() {
+  async toggleEdit(): Promise<void> {
+    if (!this.isActionsAllowed && !this.IsMasterControlEnabled) {
+      // Open master control dialog only if not enabled
+      const dialogRef = this.dialog.open(MasterControlComponent, {
+        width: '400px',
+        data: { location: 'profile' }
+      });
+
+      const result = await dialogRef.afterClosed().toPromise();
+      if (!result) {
+        return;
+      }
+    }
+
     this.isEditing = !this.isEditing;
     if (!this.isEditing) {
       // Reset form when canceling edit

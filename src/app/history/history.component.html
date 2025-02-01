@@ -63,7 +63,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let trade of tradeData">
+            <tr *ngFor="let trade of tradeData" (click)="openTradeDetails(trade)" style="cursor: pointer;">
               <td>{{ trade.ID }}</td>
               <td>{{ formatDate(trade.Date) }}</td>
               <td>{{ trade.Coin }}</td>
@@ -79,9 +79,7 @@
               <td>{{ trade.Sheet_Name }}</td>
               <td>{{ trade.Exchange_Name }}</td>
               <td>
-                <button class="btn btn-danger btn-sm" (click)="deleteTrade(trade.ID)">
-                  <i class="fas fa-trash"></i> Delete
-                </button>
+       
               </td>
             </tr>
           </tbody>
@@ -108,11 +106,10 @@
               <th>Influencer</th>
               <th>Sheet Name</th>
               <th>Exchange Name</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let trade of tradeData">
+            <tr *ngFor="let trade of tradeData" (click)="openTradeDetails(trade)" style="cursor: pointer;">
               <td>{{ trade.ID }}</td>
               <td>{{ formatDate(trade.Date) }}</td>
               <td>{{ trade.Time }}</td>
@@ -129,7 +126,7 @@
               <td>{{ trade.SheetName }}</td>
               <td>{{ trade.ExchangeName }}</td>
               <td>
-                <button class="btn btn-danger btn-sm" (click)="deleteTrade(trade.ID)">
+                <button class="btn btn-danger btn-sm" (click)="deleteTrade(trade.ID); $event.stopPropagation()">
                   <i class="fas fa-trash"></i> Delete
                 </button>
               </td>

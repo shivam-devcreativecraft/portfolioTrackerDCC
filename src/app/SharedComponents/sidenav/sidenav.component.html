@@ -4,7 +4,7 @@
     <div class="d-flex  text-white  bg-dark  justify-content-center align-items-center logo-div">
 
 
-      <h1 class=" text-light m-0">Portfio Tracker DCC</h1>
+      <h1 class=" text-light m-0">Portfolio Tracker DCC</h1>
 
     </div>
     <div class="d-flex  text-dark    justify-content-center dp-div">
@@ -74,7 +74,7 @@
 
         <a mat-list-item [routerLink]=" isTradingViewActive() ? []:['tradingview']"
           [ngClass]="{'active-bg': isTradingViewActive()}" (click)="handleNavLinkClickAutoCollapse()">
-          <img src="../../../assets/icons8-tradingview-240.png" alt="" srcset="">&nbsp;&nbsp;Tradingview
+          <mat-icon> bar_chart</mat-icon>&nbsp;Analysis
         </a>
 
 
@@ -136,19 +136,24 @@
 
 
        
-<!-- 
-          <button mat-icon-button *ngIf="IsMasterControlEnabled" (click)="onDisableMasterControl()"
-            matTooltip="Disable Master Control">
-            <mat-icon class="text-success">security</mat-icon>
-          </button>
 
-          <button mat-icon-button *ngIf="!IsMasterControlEnabled" (click)="openMasterControlDialog()"
-            matTooltip="Enable Master Control">
-            <mat-icon class="text-danger">security</mat-icon>
-          </button> -->
+          <!-- Master Control Buttons -->
+          <ng-container *ngIf="!isActionsAllowed">
+            <button mat-icon-button *ngIf="IsMasterControlEnabled" (click)="onDisableMasterControl()"
+              matTooltip="Disable Master Control">
+              <mat-icon class="text-success">security</mat-icon>
+            </button>
 
-          <button mat-icon-button (click)="openAddDialog()" matTooltip="Add New Entry">
-            <mat-icon class="text-success bg-white p-0 rounded-5 add-mat-icon">add_circle</mat-icon>
+            <button mat-icon-button *ngIf="!IsMasterControlEnabled" (click)="openMasterControlDialog()"
+              matTooltip="Enable Master Control">
+              <mat-icon class="text-danger">security</mat-icon>
+            </button>
+          </ng-container>
+
+          <!-- Add Button -->
+          <button mat-icon-button (click)="openAddDialog()" [matTooltip]="isAddDialogOpen ? 'Dialog already open' : 'Add New Entry'">
+            <mat-icon class="text-success bg-white p-0 rounded-5 add-mat-icon" 
+              [class.opacity-50]="isAddDialogOpen">add_circle</mat-icon>
           </button>
 
           <button mat-icon-button [matMenuTriggerFor]="accountsMenu" #Accounts_menuTrigger="matMenuTrigger"

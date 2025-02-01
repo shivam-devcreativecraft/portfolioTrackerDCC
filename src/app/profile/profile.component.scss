@@ -1,3 +1,5 @@
+@import '../sharedSCSS/scssVariable/colorVariable.scss';
+
 .profile-image {
   width: 150px;
   height: 150px;
@@ -21,7 +23,8 @@
 }
 
 .card-header {
-  background: linear-gradient(45deg, #1976d2, #2196f3);
+  background: linear-gradient(45deg, $base-color_primary, $base-color_primary_light);
+  color: $base-color_Text;
 }
 
 .user-details {

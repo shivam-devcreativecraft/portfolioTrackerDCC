@@ -227,7 +227,7 @@
                           <tr>
                             <th>Coin</th>
                             <th>Date</th>
-                            <th>Contracts</th>
+                            <th>Quantity</th>
                             <th>Lev</th>
                             <th>Margin</th>
                             <th>P/L</th>
@@ -248,7 +248,7 @@
                               </div>
                             </td>
                             <td>{{trade.Date}}</td>
-                            <td>{{trade.Contracts}}</td>
+                            <td>{{trade.Quantity ? trade.Quantity : (trade.Contracts * trade.Lot_Value)}}</td>
                             <td>{{trade.Leverage}} X</td>
                             <td>{{trade.Open_Margin | number:'1.2-2'}}</td>
                             <td class="profit">{{trade.Pnl | number:'1.2-2'}}</td>
@@ -285,7 +285,7 @@
                           <tr>
                             <th>Coin</th>
                             <th>Date</th>
-                            <th>Contracts</th>
+                            <th>Quantity</th>
                             <th>Lev</th>
                             <th>Margin</th>
                             <th>P/L</th>
@@ -306,7 +306,7 @@
                               </div>
                             </td>
                             <td>{{trade.Date}}</td>
-                            <td>{{trade.Contracts}}</td>
+                            <td>{{trade.Quantity ? trade.Quantity : (trade.Contracts * trade.Lot_Value)}}</td>
                             <td>{{trade.Leverage}} X</td>
                             <td>${{trade.Open_Margin | number:'1.2-2'}}</td>
                             <td class="loss">{{trade.Pnl | number:'1.2-2'}}</td>

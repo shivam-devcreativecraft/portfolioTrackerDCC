@@ -9,14 +9,17 @@
 */
 // @import '../src/app/sharedSCSS/scssVariable/colorVariable.scss';
 
-
-
-
+// Primary Colors
 $base-color_primary: #66347f;
-// $base_color_primary:red;
-$base-color_primary_background:rgb(#66347f, 0.0625);
-$base-color_Text : white;
-$base-color_Text_Light : white
+$base-color_primary_light: lighten($base-color_primary, 15%);
+$base-color_primary_dark: darken($base-color_primary, 15%);
+
+// Background Colors
+$base-color_primary_background: rgba($base-color_primary, 0.0625);
+
+// Text Colors
+$base-color_Text: white;
+$base-color_Text_Light: white;
 
 
 

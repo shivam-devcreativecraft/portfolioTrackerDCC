@@ -5,6 +5,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent, ConfirmDialogModel } from '../SharedComponents/confirm-dialog/confirm-dialog.component';
 import { NotificationService } from '../services/notification.service';
+import { TradeDetailsModalComponent } from '../SharedComponents/trade-details-modal/trade-details-modal.component';
+import { Overlay } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-history',
@@ -20,7 +22,8 @@ export class HistoryComponent implements OnInit {
     private firebaseService: FirebaseDataService,
     private datePipe: DatePipe,
     private dialog: MatDialog,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private overlay: Overlay
   ) {}
 
   ngOnInit() {
@@ -91,6 +94,31 @@ export class HistoryComponent implements OnInit {
           console.error('Error deleting trade:', error);
           this.notificationService.error(error.message || 'Error deleting trade');
         }
+      }
+    });
+  }
+
+  openTradeDetails(trade: any): void {
+    const dialogRef = this.dialog.open(TradeDetailsModalComponent, {
+      data: {
+        trade: trade,
+        sheetName: this.activeTab === 'futures' ? 'Futures_Trades' : 'Spot_Trades'
+      },
+      width: '600px',
+      maxHeight: '90vh',
+      disableClose: false,
+      autoFocus: true,
+      restoreFocus: true,
+      hasBackdrop: false,
+      panelClass: ['custom-dialog-container', 'no-scroll-overlay'],
+      backdropClass: 'dialog-backdrop',
+      scrollStrategy: this.overlay.scrollStrategies.noop(),
+    });
+
+    // Reload data if trade was deleted
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'deleted') {
+        this.loadTradeData();
       }
     });
   }

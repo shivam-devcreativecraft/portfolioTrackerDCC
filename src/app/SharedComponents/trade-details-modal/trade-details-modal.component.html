@@ -1,97 +1,127 @@
-<div class="modal-container">
-    <div class="modal-header">
-        <div class="header-content">
-            <div class="sheet-name text-muted">{{data.sheetName}}</div>
-            <!-- <h2>&nbsp;</h2> -->
-            <!-- <div class="trade-type text-center" [ngClass]="data?.Type?.toLowerCase()">{{data?.Type || 'N/A'}}</div>
-            <div class="date">{{data?.Date ? (data.Date | date:'medium') : 'N/A'}}</div> -->
+<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" class="TradeDetails_Dialog">
 
-        </div>
-        <button mat-icon-button class="close-btn text-danger" (click)="onClose()">
-            <mat-icon>close</mat-icon>
-        </button>
-    </div>
 
-    <div class="modal-body">
-        <!-- Coin Info -->
+    <div mat-dialog-title cdkDragHandle>
         <div class="coin-info">
-            <div class="coin-symbol" [ngClass]="{'text-success': (data.trade.Type).toUpperCase() === 'BUY', 'text-danger': (data.trade.Type).toUpperCase() === 'SELL'}"> <mat-icon class="trade-arrow">
+            <div class="coin-symbol"
+                [ngClass]="{'text-success': (data.trade.Type).toUpperCase() === 'BUY', 'text-danger': (data.trade.Type).toUpperCase() === 'SELL'}">
+                <mat-icon class="trade-arrow">
                     {{(data.trade.Type).toUpperCase() === 'BUY' ? 'arrow_upward' : 'arrow_downward'}}
                 </mat-icon>{{data.trade?.Coin || 'N/A'}}</div>
             <div class="date">{{data.trade?.Date ? (data.trade.Date | date:'medium') : 'N/A'}}</div>
         </div>
 
-        <!-- Key Metrics -->
-        <div class="metrics-grid">
-            <div class="metric-item">
-                <div class="label">Contracts</div>
-                <div class="value">{{data.trade?.Contracts || 'N/A'}}</div>
-            </div>
-            <div class="metric-item">
-                <div class="label">Leverage</div>
-                <div class="value">{{data.trade?.Leverage ? (data.trade.Leverage + ' X') : 'N/A'}}</div>
-            </div>
-            <div class="metric-item">
-                <div class="label">Size</div>
-                <div class="value">{{((data.trade?.Contracts ? data.trade.Contracts : 0)*(data.trade?.Lot_Value ? data.trade.Lot_Value : 0)) |
-                    number:'1.2-2'}} {{data.trade?.Coin || 'N/A'}}</div>
-            </div>
-            <div class="metric-item">
-                <div class="label">Open_Margin</div>
-                <div class="value">${{data.trade?.Open_Margin ? (data.trade.Open_Margin | number:'1.2-2') + '' : 'N/A'}}</div>
-            </div>
-        </div>
+    </div>
 
-        <!-- Price Info -->
-        <div class="price-info">
-            <div class="price-box">
-                <div class="label">Open Price</div>
-                <div class="value">{{data.trade?.Open_Price ? (data.trade.Open_Price | number:'1.2-2') : 'N/A'}}</div>
-                <!-- <div class="time">{{data?.Date ? (data.Date | date:'medium') : 'N/A'}}</div> -->
-            </div>
-            <mat-icon>arrow_forward</mat-icon>
-            <div class="price-box">
-                <div class="label">Close Price</div>
-                <div class="value">{{data.trade?.Close_Price ? (data.trade.Close_Price | number:'1.2-2') : 'N/A'}}</div>
-                <!-- <div class="time">{{data?.Date ? (data.Date | date:'medium') : 'N/A'}}</div> -->
-            </div>
-        </div>
+    <mat-dialog-content #dialogContent>
+        <div class="modal-body">
+                <!-- Coin Info -->
+              
+                <!-- Key Metrics -->
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="label">Quantity</div>
+                        <div class="value">{{data.trade?.Quantity || data.Contracts*data.Lot_Value }}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="label">Leverage</div>
+                        <div class="value">{{data.trade?.Leverage ? (data.trade.Leverage + ' X') : 'N/A'}}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="label">Type</div>
+                        <div class="value d-flex" [ngClass]="{'text-success': (data.trade.Type).toUpperCase() === 'BUY', 'text-danger': (data.trade.Type).toUpperCase() === 'SELL'}" >
+                            <mat-icon class="trade-arrow">
+                                {{(data.trade.Type).toUpperCase() === 'BUY' ? 'arrow_upward' : 'arrow_downward'}}
+                            </mat-icon>
+                            
+                            {{((data.trade?.Type ||  '-'))}}</div>
 
-        <!-- PNL Info -->
-        <div class="pnl-info" [ngClass]="data.trade?.Pnl ? (data.trade.Pnl > 0 ? 'profit' : 'loss') : ''">
-            <div class="pnl-header">
-                <span>Profit/Loss</span>
-                <mat-icon>{{data.trade?.Pnl ? (data.trade.Pnl > 0 ? 'trending_up' : 'trending_down') : 'remove'}}</mat-icon>
-            </div>
-            <div class="pnl-value">
-                {{data.trade?.Pnl ? ((data.trade.Pnl > 0 ? '+' : '') + (data.trade.Pnl | number:'1.2-2') + ' USDT') : 'N/A'}}
-            </div>
-            <div class="pnl-percentage">
-                {{data.trade?.Pnl_Percentage ? ((data.trade.Pnl_Percentage > 0 ? '+' : '') + (data.trade.Pnl_Percentage | number:'1.2-2')
-                + '%') : 'N/A'}}
-            </div>
-        </div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="label">Open_Margin</div>
+                        <div class="value">${{data.trade?.Open_Margin ? (data.trade.Open_Margin | number:'1.2-2') + '' :
+                            'N/A'}}</div>
+                    </div>
+                </div>
 
-        <!-- Additional Info -->
-        <div class="additional-info">
-            <!-- <div class="info-row">
+                <!-- Price Info -->
+                <div class="price-info">
+                    <div class="price-box">
+                        <div class="label">Open Price</div>
+                        <div class="value">{{data.trade?.Open_Price ? (data.trade.Open_Price | number:'1.2-2') : 'N/A'}}
+                        </div>
+                        <!-- <div class="time">{{data?.Date ? (data.Date | date:'medium') : 'N/A'}}</div> -->
+                    </div>
+                    <mat-icon>arrow_forward</mat-icon>
+                    <div class="price-box">
+                        <div class="label">Close Price</div>
+                        <div class="value">{{data.trade?.Close_Price ? (data.trade.Close_Price | number:'1.2-2') :
+                            'N/A'}}</div>
+                        <!-- <div class="time">{{data?.Date ? (data.Date | date:'medium') : 'N/A'}}</div> -->
+                    </div>
+                </div>
+
+                <!-- PNL Info -->
+                <div class="pnl-info" [ngClass]="data.trade?.Pnl ? (data.trade.Pnl > 0 ? 'profit' : 'loss') : ''">
+                    <div class="pnl-header">
+                        <span>Profit/Loss</span>
+                        <mat-icon>{{data.trade?.Pnl ? (data.trade.Pnl > 0 ? 'trending_up' : 'trending_down') :
+                            'remove'}}</mat-icon>
+                    </div>
+                    <div class="pnl-value">
+                        ₮  {{data.trade?.Pnl ? ((data.trade.Pnl > 0 ? '+' : '') + (data.trade.Pnl | number:'1.2-2') + '') : 'N/A'}}
+                    </div>
+                    <div class="pnl-percentage">
+                        {{data.trade?.Pnl_Percentage ? ((data.trade.Pnl_Percentage > 0 ? '+' : '') +
+                        (data.trade.Pnl_Percentage | number:'1.2-2')
+                        + '%') : 'N/A'}}
+                    </div>
+                </div>
+
+                <!-- Additional Info -->
+                <div class="additional-info">
+                    <!-- <div class="info-row">
                 <span class="label">Trade Type</span>
                 <span class="value" [ngClass]="{'text-success': data?.Type?.toLowerCase() === 'buy', 'text-danger': data?.Type?.toLowerCase() === 'sell'}">{{data?.Type || 'N/A'}}</span>
             </div> -->
-            <div class="info-row">
-                <span class="label">Lot Value</span>
-                <span class="value">{{data.trade?.Lot_Value || 'N/A'}} = 1 {{data.trade?.Coin || 'N/A'}}</span>
-            </div>
-            <div class="info-row">
-                <span class="label">Influencer</span>
-                <span class="value">{{data.trade?.Influencer || 'N/A'}}</span>
-            </div>
+                    <!-- <div class="info-row">
+                        <span class="label">Lot Value</span>
+                        <span class="value" *ngIf="data.trade?.Lot_Value">{{data.trade?.Lot_Value || 'N/A'}} = 1
+                            {{data.trade?.Coin || 'N/A'}}</span>
+                    </div> -->
+                    <div class="info-row">
+                        <span class="label">Influencer</span>
+                        <span class="value text-muted">{{data.trade?.Influencer || 'N/A'}}</span>
+                    </div>
 
-            <div class="info-row d-flex align-items-between justify-content-between">
-                <button class="btn btn-warning btn-sm">Update</button>
-                <button class="btn btn-primary btn-sm" (click)="uploadToFirebase()">UploadToFirebase</button>
-                <button class="btn btn-danger btn-sm">Delete</button>
+                    <!-- <div class="info-row d-flex align-items-between justify-content-between">
+                        <button class="btn btn-warning btn-sm">Update</button>
+                        <button class="btn btn-danger btn-sm" (click)="deleteTrade(data.trade.ID)">Delete</button>
+                    </div> -->
+                </div>
             </div>
+        
+    </mat-dialog-content>
+
+    <div mat-dialog-actions class="action d-flex justify-content-between">
+        <div class="d-flex gap-2">
+            <button class="btn btn-warning btn-sm" (click)="updateTrade()">Update</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteTrade(data.trade.ID)">Delete</button>
         </div>
+        <div>
+            <button mat-raised-button color="" (click)="onClose()" tabindex="-1">Close</button>
+        </div>
+        <!-- <button mat-raised-button color="primary" (click)="uploadTradeData()"
+            [disabled]="!isFormValid() || isNewEntrySubmitted">
+            <span *ngIf="isNewEntrySubmitted">Adding...</span>
+            <span *ngIf="!isNewEntrySubmitted">Add</span>
+        </button> -->
     </div>
+
+
+
+
+
+
+
 </div>

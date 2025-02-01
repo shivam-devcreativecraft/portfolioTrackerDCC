@@ -150,7 +150,8 @@ export class AuthService {
   async signOut() {
     try {
       await signOut(this.auth);
-      // console.log('Token cleared from IndexedDB');
+      // Clear master control token on explicit logout
+      localStorage.removeItem('masterControlToken');
       this.toastr.success('Logged out successfully');
       // Force clear any cached data here if needed
       this.router.navigate(['/login'], { replaceUrl: true });
