@@ -1,12 +1,40 @@
 @import '../sharedSCSS/scssVariable/colorVariable.scss';
 
-.spacer-20 {
-    padding: 20px;
-  }
+.setup-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 20px;
 
-  h2{
-    color : $base-color_primary
+  mat-card {
+    max-width: 600px;
+    width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    mat-card-title {
+      color: $base-color_primary;
+      font-size: 24px;
+    }
+
+    p {
+      color: #666;
+      font-size: 16px;
+      line-height: 1.5;
+      margin: 20px 0;
+    }
   }
+}
+
+.spacer-20 {
+  padding: 20px;
+}
+
+h2 {
+  color: $base-color_primary;
+}
 
 .analysis-settings {
   background: #fff;
@@ -24,6 +52,11 @@
       margin: 0;
       color: $base-color_primary;
       font-weight: 500;
+    }
+
+    div {
+      display: flex;
+      gap: 8px;
     }
   }
 

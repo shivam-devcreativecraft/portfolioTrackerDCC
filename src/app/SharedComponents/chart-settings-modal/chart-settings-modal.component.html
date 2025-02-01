@@ -3,25 +3,123 @@
   
   <mat-dialog-content>
     <form [formGroup]="settingsForm" class="settings-form">
-      <mat-form-field appearance="fill" class="w-100">
-        <mat-label>Exchange</mat-label>
-        <mat-select formControlName="exchange">
-          <mat-option *ngFor="let exchange of exchanges" [value]="exchange.value">
-            {{exchange.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div class="section">
+        <h3>Chart Analysis Settings</h3>
+        <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Exchange</mat-label>
+          <mat-select formControlName="exchange">
+            <mat-option *ngFor="let exchange of exchanges" [value]="exchange.value">
+              {{exchange.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-      <mat-form-field appearance="fill" class="w-100">
-        <mat-label>Symbol</mat-label>
-        <input matInput formControlName="symbol" placeholder="e.g. BTC">
-        <mat-error *ngIf="settingsForm.get('symbol')?.hasError('required')">
-          Symbol is required
-        </mat-error>
-        <mat-error *ngIf="settingsForm.get('symbol')?.hasError('minlength')">
-          Symbol must not be empty
-        </mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="fill" class="w-100">
+          <mat-label>Symbol</mat-label>
+          <input matInput formControlName="symbol" placeholder="e.g. BTC">
+          <mat-error *ngIf="settingsForm.get('symbol')?.hasError('required')">
+            Symbol is required
+          </mat-error>
+          <mat-error *ngIf="settingsForm.get('symbol')?.hasError('minlength')">
+            Symbol must not be empty
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="section">
+        <h3>Enable/Disable Charts</h3>
+        <div formGroupName="enabled_charts" class="chart-toggles">
+          <mat-slide-toggle formControlName="trading_view">
+            Trading View Chart
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="technical_analysis">
+            Technical Analysis
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="symbol_overview">
+            Symbol Overview
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="heatmap">
+            Heatmap
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="top_stories">
+            Top Stories
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="fundamental_data">
+            Fundamental Data
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="economic_calendar">
+            Economic Calendar
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="ticker_tape">
+            Ticker Tape
+          </mat-slide-toggle>
+        </div>
+      </div>
+
+      <div class="section" *ngIf="settingsForm.get('enabled_charts.trading_view')?.value">
+        <h3>Watchlist</h3>
+        <div class="watchlist-chips">
+          <div class="mdc-evolution-chip-set" role="grid">
+            <div class="mdc-evolution-chip-set__chips" role="presentation">
+              <mat-chip-grid #chipGrid>
+                <mat-chip-row *ngFor="let symbol of watchlist"
+                             [removable]="true" 
+                             (removed)="removeFromWatchlist(symbol)">
+                  {{symbol}}
+                  <button matChipRemove>
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+            </div>
+          </div>
+        </div>
+        <div class="add-to-watchlist">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Add to Watchlist</mat-label>
+            <input matInput [formControl]="newWatchlistSymbol" placeholder="EXCHANGE:SYMBOLUSDT">
+          </mat-form-field>
+          <button mat-mini-fab color="primary" (click)="addToWatchlist()" [disabled]="!newWatchlistSymbol.valid">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="section" *ngIf="settingsForm.get('enabled_charts.symbol_overview')?.value">
+        <h3>Symbol Overview List</h3>
+        <div class="watchlist-chips">
+          <div class="mdc-evolution-chip-set" role="grid">
+            <div class="mdc-evolution-chip-set__chips" role="presentation">
+              <mat-chip-grid #overviewChipGrid>
+                <mat-chip-row *ngFor="let symbol of symbolOverviewList"
+                             [removable]="true" 
+                             (removed)="removeFromOverviewList(symbol)">
+                  {{symbol}}
+                  <button matChipRemove>
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+            </div>
+          </div>
+        </div>
+        <div class="add-to-watchlist">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Add to Overview List</mat-label>
+            <input matInput [formControl]="newOverviewSymbol" placeholder="EXCHANGE:SYMBOLUSDT">
+          </mat-form-field>
+          <button mat-mini-fab color="primary" (click)="addToOverviewList()" [disabled]="!newOverviewSymbol.valid">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
     </form>
   </mat-dialog-content>
 

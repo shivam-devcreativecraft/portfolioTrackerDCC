@@ -20,11 +20,26 @@ service cloud.firestore {
 
     // Validation for analysis document fields
     function hasValidAnalysisFields(data) {
-      return data.keys().hasAll(['exchange', 'symbol'])
-        && data.exchange is string
-        && data.symbol is string
-        && data.exchange.size() > 0
-        && data.symbol.size() > 0;
+      return data.keys().hasAll(['chart_analysis', 'symbol_overview_symbols', 'enabled_charts', 'is_configured'])
+        && data.chart_analysis.keys().hasAll(['exchange', 'symbol', 'watchlist'])
+        && data.chart_analysis.exchange is string
+        && data.chart_analysis.symbol is string
+        && data.chart_analysis.watchlist is list
+        && data.symbol_overview_symbols is list
+        && data.enabled_charts.keys().hasAll([
+          'trading_view', 'technical_analysis', 'symbol_overview',
+          'heatmap', 'top_stories', 'fundamental_data',
+          'economic_calendar', 'ticker_tape'
+        ])
+        && data.enabled_charts.trading_view is bool
+        && data.enabled_charts.technical_analysis is bool
+        && data.enabled_charts.symbol_overview is bool
+        && data.enabled_charts.heatmap is bool
+        && data.enabled_charts.top_stories is bool
+        && data.enabled_charts.fundamental_data is bool
+        && data.enabled_charts.economic_calendar is bool
+        && data.enabled_charts.ticker_tape is bool
+        && data.is_configured is bool;
     }
 
     // Match user document and all subcollections

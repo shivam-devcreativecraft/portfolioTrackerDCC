@@ -7,6 +7,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ChartSettingsModalComponent } from './chart-settings-modal.component';
 
@@ -22,7 +27,12 @@ import { ChartSettingsModalComponent } from './chart-settings-modal.component';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatSlideToggleModule,
+    MatChipsModule,
+    MatCardModule,
+    MatTooltipModule
   ],
   exports: [
     ChartSettingsModalComponent

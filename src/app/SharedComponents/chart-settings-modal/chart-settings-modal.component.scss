@@ -7,14 +7,68 @@
     color: #333;
   }
 
+  .section {
+    margin-bottom: 24px;
+
+    h3 {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+  }
+
   .settings-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
+
+    mat-form-field {
+      width: 100%;
+    }
   }
 
-  mat-form-field {
-    width: 100%;
+  .chart-toggles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .watchlist-chips {
+    margin: 8px 0;
+    min-height: 40px;
+    
+    .mdc-evolution-chip-set {
+      .mdc-evolution-chip-set__chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+    }
+
+    mat-chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    mat-chip-row {
+      margin: 4px;
+    }
+  }
+
+  .add-to-watchlist {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+
+    mat-form-field {
+      flex: 1;
+    }
+
+    button {
+      margin-top: 4px;
+    }
   }
 
   mat-dialog-actions {

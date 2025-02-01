@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirebaseDataService } from '../services/firebase-data.service';
 import { NotificationService } from '../services/notification.service';
-import { AnalysisSettings } from '../models/analysis-settings.model';
+import { AnalysisSettings, DEFAULT_ANALYSIS_SETTINGS, formatSymbolPair } from '../models/analysis-settings.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ChartSettingsModalComponent } from '../SharedComponents/chart-settings-modal/chart-settings-modal.component';
 declare const TradingView: any;
@@ -14,7 +14,7 @@ declare const TradingView: any;
 })
 export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
   analysisForm: FormGroup;
-  currentSymbol: string = 'BINANCE:FUNUSDT';
+  currentSettings: AnalysisSettings = DEFAULT_ANALYSIS_SETTINGS;
   isLoading = false;
   private widgets: { [key: string]: any } = {};
 
@@ -33,8 +33,8 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     private dialog: MatDialog
   ) {
     this.analysisForm = this.fb.group({
-      exchange: ['BINANCE', Validators.required],
-      symbol: ['FUN', Validators.required]
+      exchange: [DEFAULT_ANALYSIS_SETTINGS.chart_analysis.exchange, Validators.required],
+      symbol: [DEFAULT_ANALYSIS_SETTINGS.chart_analysis.symbol, Validators.required]
     });
   }
 
@@ -61,13 +61,14 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     this.firebaseService.getAnalysisSettings().subscribe({
       next: (settings: AnalysisSettings | null) => {
         if (settings) {
+          this.currentSettings = settings;
           this.analysisForm.patchValue({
-            exchange: settings.exchange,
-            symbol: settings.symbol
+            exchange: settings.chart_analysis.exchange,
+            symbol: settings.chart_analysis.symbol
           }, { emitEvent: false });
           
-          this.currentSymbol = `${settings.exchange.toUpperCase()}:${settings.symbol.toUpperCase()}USDT`;
-          this.updateCharts();
+          // Render charts immediately after loading settings
+          this.renderCharts();
         }
       },
       error: (error: Error) => {
@@ -80,14 +81,18 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
   // Open settings modal
   openSettings(): void {
     const dialogRef = this.dialog.open(ChartSettingsModalComponent, {
-      data: this.analysisForm.value,
-      disableClose: true
+      data: this.currentSettings,
+      disableClose: true,
+      width: '600px'
     });
 
     dialogRef.afterClosed().subscribe((result: AnalysisSettings) => {
       if (result) {
-        this.analysisForm.patchValue(result);
-        this.currentSymbol = `${result.exchange.toUpperCase()}:${result.symbol.toUpperCase()}USDT`;
+        this.currentSettings = result;
+        this.analysisForm.patchValue({
+          exchange: result.chart_analysis.exchange,
+          symbol: result.chart_analysis.symbol
+        });
         this.renderCharts();
       }
     });
@@ -98,7 +103,10 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.analysisForm.valid) {
       this.isLoading = true;
       const values = this.analysisForm.value;
-      this.currentSymbol = `${values.exchange.toUpperCase()}:${values.symbol.toUpperCase()}USDT`;
+      
+      // Update current settings
+      this.currentSettings.chart_analysis.exchange = values.exchange;
+      this.currentSettings.chart_analysis.symbol = values.symbol;
       
       // Small delay to ensure loading state is shown
       setTimeout(() => {
@@ -108,11 +116,10 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  // Save analysis settings to Firebase
+  // Save current settings to Firebase
   saveAnalysisSettings() {
     if (this.analysisForm.valid) {
-      const settings: AnalysisSettings = this.analysisForm.value;
-      this.firebaseService.saveAnalysisSettings(settings).subscribe({
+      this.firebaseService.saveAnalysisSettings(this.currentSettings).subscribe({
         next: () => {
           this.notificationService.success('Analysis settings saved successfully');
         },
@@ -129,9 +136,7 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     this.showTickerTapeWidget();
     this.showChart();
     this.renderTechnicalAnalysis();
-    this.renderMarketOverview();
     this.showSymbolOverview();
-    this.showScreenerWidget();
     this.showHeatmapWidget();
     this.showMiniChartWidget();
     this.showTopStoriesWidget();
@@ -183,6 +188,13 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
+  private getCurrentSymbol(): string {
+    return formatSymbolPair(
+      this.currentSettings.chart_analysis.exchange,
+      this.currentSettings.chart_analysis.symbol
+    );
+  }
+
   //#region Trading view chart
   renderTechnicalAnalysis() {
     const script = document.createElement('script');
@@ -193,7 +205,7 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
       width: "100%",
       isTransparent: false,
       height: "500",
-      symbol: this.currentSymbol,
+      symbol: this.getCurrentSymbol(),
       showIntervalTabs: true,
       locale: "in",
       colorTheme: "light"
@@ -208,7 +220,7 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     
     this.widgets['mainChart'] = new TradingView.widget({
-      symbol: this.currentSymbol,
+      symbol: this.getCurrentSymbol(),
       interval: 'D',
       timezone: 'Asia/Kolkata',
       theme: 'light',
@@ -221,7 +233,8 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
       allow_symbol_change: true,
       container_id: 'tv_chart_container_FUN',
       width: 'inherit',
-      height: 500
+      height: 500,
+      watchlist: this.currentSettings.chart_analysis.watchlist
     });
   }
 
@@ -230,24 +243,7 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     script.type = 'text/javascript';
     script.async = true;
     script.innerHTML = JSON.stringify({
-      symbols: [
-        ["MEXC:LINKUSDT|ALL"],
-        ["MEXC:SOLUSDT|ALL"],
-        ["MEXC:AVAXUSDT|ALL"],
-        ["MEXC:ETHUSDT|ALL"],
-        ["MEXC:DOGEUSDT|ALL"],
-        ["MEXC:FUNUSDT|ALL"],
-        ["MEXC:DOTUSDT|ALL"],
-        ["MEXC:THETAUSDT|ALL"],
-        ["MEXC:OCEANUSDT|ALL"],
-        ["MEXC:CHRUSDT|ALL"],
-        ["MEXC:BNBUSDT|ALL"],
-        ["MEXC:SHIBUSDT|ALL"],
-        ["MEXC:RVNUSDT|ALL"],
-        ["MEXC:MANAUSDT|ALL"],
-        ["MEXC:MATICUSDT|ALL"],
-        ["MEXC:GALAUSDT|ALL"]
-      ],
+      symbols: this.currentSettings.symbol_overview_symbols.map(symbol => [symbol + '|ALL']),
       chartOnly: false,
       width: "100%",
       height: 500,
@@ -514,7 +510,7 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     script.type = 'text/javascript';
     script.async = true;
     script.innerHTML = JSON.stringify({
-      symbol: this.currentSymbol,
+      symbol: this.getCurrentSymbol(),
       width: "100%",
       height: "500",
       locale: "in",
@@ -550,7 +546,7 @@ export class TradingviewComponent implements AfterViewInit, OnInit, OnDestroy {
     script.type = 'text/javascript';
     script.async = true;
     script.innerHTML = JSON.stringify({
-      symbol: this.currentSymbol,
+      symbol: this.getCurrentSymbol(),
       colorTheme: "light",
       isTransparent: false,
       largeChartUrl: "",
