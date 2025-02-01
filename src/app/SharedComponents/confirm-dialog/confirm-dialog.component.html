@@ -1,9 +1,13 @@
-<div class="confirm-dialog">
-  <h1 mat-dialog-title class="text-center">{{title}}</h1>
-  <div mat-dialog-content>
+<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" class="confirm-dialog">
+  <div mat-dialog-title cdkDragHandle>
+    <h1>{{title}}</h1>
+  </div>
+  
+  <div mat-dialog-content class="content">
     <p class="text-center mb-3">{{message}}</p>
   </div>
-  <div mat-dialog-actions class="dialog-actions">
+  
+  <div mat-dialog-actions class="action">
     <button mat-button (click)="onDismiss()">No</button>
     <button mat-raised-button color="primary" (click)="onConfirm()">Yes</button>
   </div>
